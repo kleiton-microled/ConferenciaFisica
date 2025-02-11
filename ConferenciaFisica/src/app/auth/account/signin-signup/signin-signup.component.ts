@@ -36,7 +36,7 @@ export class SigninSignupComponent implements OnInit {
     this.currentYear = Date.now();
 
     this.loginForm2 = this.fb.group({
-      email: ['mechanical@coderthemes.com', [Validators.required, Validators.email]],
+      email: ['conferencia-fisica@coderthemes.com', [Validators.required, Validators.email]],
       password: ['test', Validators.required]
     });
 

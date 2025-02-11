@@ -10,12 +10,13 @@ import { ToolsService } from '../tools.service';
 })
 export class CardComponent implements OnInit {
 
-  tools: ToolsModel[] = [];
+  tools: ToolsModel[] = TOOLS;
 
   constructor(private service: ToolsService) { }
 
   ngOnInit(): void {
-    this.loadToolsCard();
+    this.tools;
+    //this.loadToolsCard();
   }
 
   loadToolsCard(): void {

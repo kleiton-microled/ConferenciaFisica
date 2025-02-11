@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'mechanical-os'`, () => {
+  it(`should have as title 'conferencia-fisica'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('mechanical-os');
+    expect(app.title).toEqual('conferencia-fisica');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('mechanical-os app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('conferencia-fisica app is running!');
   });
 });

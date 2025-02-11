@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "mechanical-os": {
+    "conferencia-fisica": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -30,7 +30,7 @@
             "localize": false,
             "aot": true,
             "outputPath": {
-              "base": "dist/mechanical-os"
+              "base": "dist/conferencia-fisica"
             },
             "index": "src/index.html",
             "polyfills": [
@@ -108,16 +108,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "mechanical-os:build:production"
+              "buildTarget": "conferencia-fisica:build:production"
             },
             "development": {
-              "buildTarget": "mechanical-os:build:development"
+              "buildTarget": "conferencia-fisica:build:development"
             },
             "es": {
-              "buildTarget": "mechanical-os:build:es"
+              "buildTarget": "conferencia-fisica:build:es"
             },
             "en": {
-              "buildTarget": "mechanical-os:build:en"
+              "buildTarget": "conferencia-fisica:build:en"
             }
           },
           "defaultConfiguration": "development"
@@ -125,7 +125,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "mechanical-os:build"
+            "buildTarget": "conferencia-fisica:build"
           }
         },
         "test": {
