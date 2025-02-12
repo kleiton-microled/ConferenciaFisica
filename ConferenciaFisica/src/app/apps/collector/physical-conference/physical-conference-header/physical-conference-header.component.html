@@ -1,0 +1,65 @@
+<div class="card">
+    <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-3">
+                    <label for="pesquisa">PESQUISA</label>
+                    <input id="pesquisa" type="text" class="form-control" formControlName="pesquisa">
+                </div>
+                <div class="col-3">
+                    <label for="conteiner">CONTEINER</label>
+                    <select id="conteiner" class="form-control" formControlName="conteiner">
+                        <option value="">Selecione</option>
+                        <option value="conteiner1">Conteiner 1</option>
+                        <option value="conteiner2">Conteiner 2</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label for="lote">LOTE</label>
+                    <select id="lote" class="form-control" formControlName="lote">
+                        <option value="">Selecione</option>
+                        <option value="lote1">Lote 1</option>
+                        <option value="lote2">Lote 2</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label for="numero">NÚMERO</label>
+                    <input id="numero" type="text" class="form-control" formControlName="numero">
+                </div>
+            </div>
+        
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label for="tipoCarga">TIPO CARGA</label>
+                    <input id="tipoCarga" type="text" class="form-control" formControlName="tipoCarga">
+                </div>
+                <div class="col-3">
+                    <label for="viagem">VIAGEM</label>
+                    <input id="viagem" type="text" class="form-control" formControlName="viagem">
+                </div>
+                <div class="col-3">
+                    <label for="motivoAbertura">MOTIVO ABERTURA</label>
+                    <input id="motivoAbertura" type="text" class="form-control" formControlName="motivoAbertura">
+                </div>
+                <div class="col-3">
+                    <label for="embalagem">EMBALAGEM</label>
+                    <select id="embalagem" class="form-control" formControlName="embalagem">
+                        <option value="">Selecione</option>
+                        <option value="caixa">Caixa</option>
+                        <option value="saco">Saco</option>
+                    </select>
+                </div>
+            </div>
+        
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label for="quantidade">QUANTIDADE</label>
+                    <input id="quantidade" type="text" class="form-control" formControlName="quantidade">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-indigo mt-3">FILTRAR</button>
+        </form>
+    </div>
+</div>
+
+

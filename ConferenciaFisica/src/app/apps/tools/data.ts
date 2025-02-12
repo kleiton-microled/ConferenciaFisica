@@ -3,10 +3,10 @@ import { ToolsModel } from "./tools.model";
 export const TOOLS: ToolsModel[] = [
   {
     id: 1,
-    title: "Confêrencia Física",
+    title: "Coletor Redex",
     description:
-      "Modulo de conferência física de mercadorias.",
+      "Modulo Coletor REDEX.",
     version: 1,
-    link: "",
+    link: "apps/collector",
   }
 ];
