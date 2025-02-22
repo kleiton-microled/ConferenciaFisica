@@ -1,0 +1,29 @@
+.footer-container {
+    position: fixed;
+    bottom: 0;
+    left: 15px;
+    width: 99%;
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    border: 2px solid #cccccc;
+    //box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+  }
+  
+  button {
+    border: 1px solid #cccccc;
+    height: 40px;
+    padding: 5px 15px;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background: #e2e6ea;
+  }
+  

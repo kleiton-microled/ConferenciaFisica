@@ -13,3 +13,27 @@
   .btn-indigo:hover {
     background-color: rgb(242, 12, 62); /* Cor de fundo ao passar o mouse */
   }
+
+  .btn-servicos-executados {
+    width: 180px; /* Largura de 200px */
+    height: 35px; /* Altura de 50px */
+    background-color: rgb(48, 103, 255); /* Cor de fundo indigo */
+    font-weight: bold; /* Fonte em negrito */
+    font-size: 12px;
+    color: white; /* Cor do texto */
+    border: none; /* Remove a borda padrão */
+    border-radius: 0px; /* Borda arredondada */
+    cursor: pointer; /* Muda o cursor para pointer ao passar o mouse */
+  }
+  
+  .btn-servicos-executados:hover {
+    background-color: rgb(12, 16, 242); /* Cor de fundo ao passar o mouse */
+  }
+
+  .conferencia-container {
+    width: 100%;
+    padding: 15px;
+    border: 1px dashed #cccccc;
+    border-radius: 5px;
+    background-color: #f9f9f9; /* Cor de fundo leve para destaque */
+  }

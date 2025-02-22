@@ -1,0 +1,19 @@
+.lacres-container {
+  width: 100%;
+  padding: 15px;
+  border: 1px dashed #cccccc;
+  border-radius: 5px;
+  background-color: #f9f9f9; /* Cor de fundo leve para destaque */
+}
+
+.row {
+  padding-bottom: 8px;
+}
+
+.btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

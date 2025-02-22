@@ -1,65 +1,227 @@
-<div class="card">
-    <div class="card-body">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <div class="row">
-                <div class="col-3">
-                    <label for="pesquisa">PESQUISA</label>
-                    <input id="pesquisa" type="text" class="form-control" formControlName="pesquisa">
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100;">Conferência Física de Mercadorias</h4>
+                        <!-- Botão para abrir a modal -->
+                        <button class="btn btn-link p-0 ms-3 custom-btn" (click)="openModal(advancedFilterModal)">
+                            <strong><i class="fas fa-filter"></i> Filtrar</strong>
+                        </button>
+
+                    </div>
                 </div>
-                <div class="col-3">
-                    <label for="conteiner">CONTEINER</label>
-                    <select id="conteiner" class="form-control" formControlName="conteiner">
-                        <option value="">Selecione</option>
-                        <option value="conteiner1">Conteiner 1</option>
-                        <option value="conteiner2">Conteiner 2</option>
-                    </select>
-                </div>
-                <div class="col-3">
-                    <label for="lote">LOTE</label>
-                    <select id="lote" class="form-control" formControlName="lote">
-                        <option value="">Selecione</option>
-                        <option value="lote1">Lote 1</option>
-                        <option value="lote2">Lote 2</option>
-                    </select>
-                </div>
-                <div class="col-3">
-                    <label for="numero">NÚMERO</label>
-                    <input id="numero" type="text" class="form-control" formControlName="numero">
-                </div>
+                <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-3">
+                    <div class="row mt-3">
+                        <div class="col-2">
+                            <label for="tipoCarga">TIPO CARGA</label>
+                            <input id="tipoCarga" type="text" class="form-control" formControlName="tipoCarga">
+                        </div>
+                        <div class="col-2">
+                            <label for="viagem">VIAGEM</label>
+                            <input id="viagem" type="text" class="form-control" formControlName="viagem">
+                        </div>
+                        <div class="col-2">
+                            <label for="dataPrevista">Data Prevista</label>
+                            <input id="dataPrevista" type="text" class="form-control" formControlName="dataPrevista">
+                        </div>
+                        <div class="col-2">
+                            <label for="motivoAbertura">MOTIVO ABERTURA</label>
+                            <input id="motivoAbertura" type="text" class="form-control"
+                                formControlName="motivoAbertura">
+                        </div>
+                        <div class="col-2">
+                            <label for="embalagem">EMBALAGEM</label>
+                            <select id="embalagem" class="form-select" formControlName="embalagem">
+                                <option value="">Selecione</option>
+                                <option value="caixa">Caixa</option>
+                                <option value="saco">Saco</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="quantidade">QUANTIDADE</label>
+                            <input id="quantidade" type="text" class="form-control" formControlName="quantidade">
+                        </div>
+                    </div>
+
+                    <div class="conferencia-container mt-3">
+                        <div class="row mt-3">
+                            <div class="col-2">
+                                <label for="tipoConferencia">Tipo Conferência</label>
+                                <select id="tipoConferencia" class="form-select" formControlName="tipoConferencia">
+                                    <option value="0">Selecione</option>
+                                    <option value="1">FÍSICA</option>
+                                    <option value="2">REMOTA</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="inicioConferencia">Inicio Conferência</label>
+                                <input id="inicioConferencia" type="text" class="form-control"
+                                    formControlName="inicioConferencia">
+                            </div>
+                            <div class="col-2">
+                                <label for="fimConferencia">Fim Conferência</label>
+                                <input id="fimConferencia" type="text" class="form-control"
+                                    formControlName="fimConferencia">
+                            </div>
+                            <div class="col-2">
+                                <label for="cpfCliente">Cpf Cliente</label>
+                                <input id="cpfCliente" type="text" class="form-control" formControlName="cpfCliente">
+                            </div>
+                            <div class="col-2">
+                                <label for="nomeCliente">Nome Cliente</label>
+                                <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-2">
+                                <label for="tipoConferencia">Retirada Amostra</label>
+                                <select id="tipoConferencia" class="form-control" formControlName="tipoConferencia">
+                                    <option value="0">Selecione</option>
+                                    <option value="1">SIM</option>
+                                    <option value="2">Não</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="cpfConferente">Cpf Conferente</label>
+                                <input id="cpfConferente" type="text" class="form-control"
+                                    formControlName="cpfConferente">
+                            </div>
+                            <div class="col-2">
+                                <label for="nomeConferente">Nome Conferente</label>
+                                <input id="nomeConferente" type="text" class="form-control"
+                                    formControlName="nomeConferente">
+                            </div>
+                            <div class="col-2">
+                                <label for="qtdDocumento">Qtd. Documento</label>
+                                <input id="qtdDocumento" type="text" class="form-control"
+                                    formControlName="qtdDocumento">
+                            </div>
+                            <div class="col-2">
+                                <label for="nomeCliente">Nome Cliente</label>
+                                <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente">
+                            </div>
+                            <div class="col-2">
+                                <button type="submit" #btnServicosExecutados
+                                    class="btn btn-servicos-executados mt-3">SERVIÇOS
+                                    EXECUTADOS</button>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-2">
+                                <label for="tipoConferencia">Quantidade Divergente?</label>
+                                <select id="quantidadeDivergente" class="form-select"
+                                    formControlName="quantidadeDivergente">
+                                    <option value="0">Selecione</option>
+                                    <option value="1">SIM</option>
+                                    <option value="2">NÃO</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="qtdVolumesDivergentes">Qtd. de Volumes Divergentes</label>
+                                <input id="qtdVolumesDivergentes" type="text" class="form-control"
+                                    formControlName="qtdVolumesDivergentes">
+                            </div>
+                            <div class="col-2">
+                                <label for="qtdRepresentantes">Qtd. de Representantes</label>
+                                <input id="qtdRepresentantes" type="text" class="form-control"
+                                    formControlName="qtdRepresentantes">
+                            </div>
+                            <div class="col-2">
+                                <label for="qtdAjudantes">Quantidade de Ajudantes</label>
+                                <input id="qtdAjudantes" type="text" class="form-control"
+                                    formControlName="qtdAjudantes">
+                            </div>
+                            <div class="col-2">
+                                <label for="qtdOperadores">Quantidade de Operadores</label>
+                                <input id="qtdOperadores" type="text" class="form-control"
+                                    formControlName="qtdOperadores">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-2">
+                            <label for="divergenciaQualificacao">Divergencia de Qualificação</label>
+                            <select id="divergenciaQualificacao" class="form-select"
+                                formControlName="divergenciaQualificacao">
+                                <option value="0">Selecione</option>
+                                <option value="1">SIM</option>
+                                <option value="2">NÃO</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="movimentacao">Movimentação</label>
+                            <select id="movimentacao" class="form-select" formControlName="movimentacao">
+                                <option value="0">Selecione</option>
+                                <option value="1">MECÂNICA</option>
+                                <option value="2">MANUAL</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="desunitizacao">Desunitização</label>
+                            <select id="desunitizacao" class="form-select" formControlName="desunitizacao">
+                                <option value="0">Selecione</option>
+                                <option value="1">SIM</option>
+                                <option value="2">NÃO</option>
+                                <option value="3">PARCIAL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <app-lacres-form></app-lacres-form>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <label for="divergenciaQualificacao">Observação sobre as Divergências</label>
+                            <textarea class="form-control" id="observacaoDivergencias" rows="5"></textarea>
+                        </div>
+                    </div>
+                </form>
             </div>
-        
-            <div class="row mt-3">
-                <div class="col-3">
-                    <label for="tipoCarga">TIPO CARGA</label>
-                    <input id="tipoCarga" type="text" class="form-control" formControlName="tipoCarga">
-                </div>
-                <div class="col-3">
-                    <label for="viagem">VIAGEM</label>
-                    <input id="viagem" type="text" class="form-control" formControlName="viagem">
-                </div>
-                <div class="col-3">
-                    <label for="motivoAbertura">MOTIVO ABERTURA</label>
-                    <input id="motivoAbertura" type="text" class="form-control" formControlName="motivoAbertura">
-                </div>
-                <div class="col-3">
-                    <label for="embalagem">EMBALAGEM</label>
-                    <select id="embalagem" class="form-control" formControlName="embalagem">
-                        <option value="">Selecione</option>
-                        <option value="caixa">Caixa</option>
-                        <option value="saco">Saco</option>
-                    </select>
-                </div>
-            </div>
-        
-            <div class="row mt-3">
-                <div class="col-3">
-                    <label for="quantidade">QUANTIDADE</label>
-                    <input id="quantidade" type="text" class="form-control" formControlName="quantidade">
-                </div>
-            </div>
-            <button type="submit" class="btn btn-indigo mt-3">FILTRAR</button>
-        </form>
+            <app-action-footer></app-action-footer>
+        </div>
     </div>
 </div>
 
-
+<!-- Template da modal -->
+<ng-template #advancedFilterModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Filtro Avançado</h5>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <!-- Formulário -->
+        <form>
+            <div class="row">
+                <div class="col-3">
+                    <label for="pesquisa" class="form-label">Pesquisa</label>
+                    <input id="pesquisa" type="text" class="form-control">
+                </div>
+                <div class="col-3">
+                    <label for="dispatcher" class="form-label">Conteiner</label>
+                    <select class="form-select" id="dispatcher">
+                        <option value="1">ACLU278392</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label for="nvocc" class="form-label">Lote</label>
+                    <select class="form-select" id="nvocc">
+                        <option value="1">2471266</option>
+                        <option value="1">2471765</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <label for="numero" class="form-label">Numero</label>
+                    <input id="numero" type="text" class="form-control">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Fechar</button>
+        <button type="button" class="btn btn-primary">Aplicar Filtro</button>
+    </div>
+</ng-template>

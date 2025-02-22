@@ -1,0 +1,37 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-12 lacres-container">
+        <form [formGroup]="lacresForm">
+          <div formArrayName="lacres">
+            <div *ngFor="let lacre of lacres.controls; let i = index" [formGroupName]="i" class="row align-items-center mb-2 p-2">
+              <!-- Campo Lacre -->
+              <div class="col-md-3">
+                <input type="text" class="form-control" formControlName="NumeroLacre" placeholder="Lacre">
+              </div>
+  
+              <!-- Select Tipo Lacre -->
+              <div class="col-md-3">
+                <select class="form-control" formControlName="TipoLacre">
+                  <option value="">Selecione o tipo</option>
+                  <option value="1">Tipo 1</option>
+                  <option value="2">Tipo 2</option>
+                </select>
+              </div>
+  
+              <!-- Campo Lacre de Fechamento -->
+              <div class="col-md-3">
+                <input type="text" class="form-control" formControlName="LacreFechamento" placeholder="Lacre de Fechamento">
+              </div>
+  
+              <!-- Botões -->
+              <div class="col-md-3 d-flex">
+                <button type="button" class="btn btn-success me-2" (click)="adicionarLacre()">➕</button>
+                <button *ngIf="i > 0" type="button" class="btn btn-danger" (click)="removerLacre(i)">❌</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

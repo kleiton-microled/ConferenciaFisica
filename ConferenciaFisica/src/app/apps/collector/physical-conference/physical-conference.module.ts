@@ -4,9 +4,14 @@ import { PhysicalConferenceHeaderComponent } from "./physical-conference-header/
 import { PhysicalConferenceComponent } from "./physical-conference.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { PageTitleModule } from "src/app/shared/page-title/page-title.module";
+import { LacresFormComponent } from "./lacres-form/lacres-form.component";
+import { ActionFooterComponent } from "./action-footer/action-footer.component";
 
 @NgModule({
-  declarations: [PhysicalConferenceComponent, PhysicalConferenceHeaderComponent],
-  imports: [CommonModule,PageTitleModule, ReactiveFormsModule],
+  declarations: [PhysicalConferenceComponent,
+    PhysicalConferenceHeaderComponent,
+    LacresFormComponent,
+    ActionFooterComponent],
+  imports: [CommonModule, PageTitleModule, ReactiveFormsModule],
 })
-export class PhysicalConferenceModule {}
+export class PhysicalConferenceModule { }
