@@ -1,6 +1,9 @@
 import { Component, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConferenceContainer, PhysicalConferenceService } from '../physical-conference.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 
 @Component({
   selector: 'app-physical-conference-header',
@@ -9,8 +12,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class PhysicalConferenceHeaderComponent {
   form!: FormGroup;
-
-  constructor(private fb: FormBuilder, private modalService: NgbModal) {}
+  containers: ConferenceContainer[] = [];
+  filtro: string = '';
+  constructor(private fb: FormBuilder,
+    private modalService: NgbModal,
+    private conferenceService: PhysicalConferenceService,
+    private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     this.inicializarFormulario();
@@ -18,14 +25,15 @@ export class PhysicalConferenceHeaderComponent {
 
   // Método para abrir a modal
   openModal(content: TemplateRef<any>) {
-    this.modalService.open(content, { size: 'lg' }); // Abre a modal com tamanho grande (lg)
+    this.modalService.open(content, { size: 'lg' });
+    this.loadContainers();
   }
 
   // Método para fechar a modal
   closeModal() {
     this.modalService.dismissAll(); // Fecha todas as modais abertas
   }
-  
+
   inicializarFormulario(): void {
     this.form = this.fb.group({
       //pesquisa: [''],
@@ -56,6 +64,21 @@ export class PhysicalConferenceHeaderComponent {
       movimentacao: [{ value: '', disabled: true }],
       desunitizacao: [{ value: '', disabled: true }],
     });
+  }
+
+  loadContainers() {
+    this.conferenceService.getContainers().subscribe({
+      next: (response: ServiceResult<any>) => {
+        if (response.status) { 
+          this.containers = response.result;
+        }
+      },
+      error: (err) => console.error('Erro na requisição:', err)
+    });
+  }
+
+  applyFilter(): void {
+    this.loadContainers();
   }
 
   onSubmit(): void {

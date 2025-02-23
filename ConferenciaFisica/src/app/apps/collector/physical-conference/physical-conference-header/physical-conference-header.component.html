@@ -202,9 +202,9 @@
                 </div>
                 <div class="col-3">
                     <label for="dispatcher" class="form-label">Conteiner</label>
-                    <select class="form-select" id="dispatcher">
-                        <option value="1">ACLU278392</option>
-                    </select>
+                    <option *ngFor="let container of containers" [value]="container.autonum">
+                        {{ container.display }}
+                    </option>
                 </div>
                 <div class="col-3">
                     <label for="nvocc" class="form-label">Lote</label>

@@ -45,4 +45,6 @@ export class BaseService<T> {
     delete(id: number | string): Observable<OperationResult<string>> {
         return this.http.delete<OperationResult<string>>(`${this.baseUrl}/${id}`);
     }
+
+    //
 }

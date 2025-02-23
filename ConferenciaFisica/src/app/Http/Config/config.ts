@@ -1,11 +1,13 @@
 // src/app/constants/app-urls.ts
 
-export const CUSTOMER_URL = 'https://api.conferencia-fisica.com.br/api/customers';
+export const CUSTOMER_URL = 'https://localhost:5000/api/Conferencia/conteineres';
 export const VEHICLE_URL = 'https://api.conferencia-fisica.com.br/api/vehicles';
 export const SERVICES_URL = 'https://api.conferencia-fisica.com.br/api/Service';
 export const TOOLS_URL = 'https://api.conferencia-fisica.com.br/api/Bootstrap';
 export const ORDERS_URL = 'https://api.conferencia-fisica.com.br/api/orders';
 export const AUTH_URL = 'https://api.conferencia-fisica.com.br/api/auth';
+
+export const CONTEINER_URL = 'https://localhost:5000/api/Conferencia/conteineres';
 
 export const MODULE_URLS = {
   customers: CUSTOMER_URL,
@@ -14,4 +16,5 @@ export const MODULE_URLS = {
   tools: TOOLS_URL,
   orders: ORDERS_URL,
   auth: AUTH_URL,
+  conteiner: CONTEINER_URL
 };
