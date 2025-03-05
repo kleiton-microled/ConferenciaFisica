@@ -11,7 +11,6 @@ import { PhysicalConferenceModule } from "./physical-conference/physical-confere
   imports: [CommonModule,
     PhysicalConferenceModule,
     CollectorRoutingModule
-    
   ],
 })
 export class CollectorModule { }

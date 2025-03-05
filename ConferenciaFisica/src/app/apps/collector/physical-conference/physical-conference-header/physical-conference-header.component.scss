@@ -37,3 +37,15 @@
     border-radius: 5px;
     background-color: #f9f9f9; /* Cor de fundo leve para destaque */
   }
+
+  .form-control:disabled {
+    background-color: #e9ecef !important; /* Cinza claro */
+    opacity: 1; /* Evita que o Bootstrap reduza a opacidade */
+}
+
+.badge-custom {
+  font-size: 0.75rem;  /* Ajusta o tamanho da fonte */
+  padding: 0.4em 0.6em; /* Controla o tamanho do badge */
+  min-width: 22px; /* Mantém um tamanho mínimo */
+  min-height: 22px;
+}

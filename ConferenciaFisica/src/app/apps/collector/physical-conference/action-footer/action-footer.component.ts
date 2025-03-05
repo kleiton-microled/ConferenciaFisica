@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-action-footer',
@@ -7,6 +7,8 @@ import { Component } from '@angular/core';
 })
 export class ActionFooterComponent {
   
+  @Output() saveEvent = new EventEmitter<void>();
+
   iniciar(): void {
     console.log('Início acionado');
   }
@@ -29,6 +31,7 @@ export class ActionFooterComponent {
 
   gravar(): void {
     console.log('Gravar acionado');
+    this.saveEvent.emit();
   }
 
   excluir(): void {

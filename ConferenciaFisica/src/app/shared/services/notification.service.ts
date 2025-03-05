@@ -22,10 +22,21 @@ export class NotificationService {
     });
   }
 
+  showAlert<T>(response: ServiceResult<T>, title: string = 'Info') {
+    this.hideLoading();
+    setTimeout(() => { // Pequeno delay para evitar que a modal de erro feche antes de abrir
+      Swal.fire({
+        title: 'Info',
+        text: response.mensagens[0],
+        icon: 'info',
+        confirmButtonText: 'Fechar'
+      });
+    }, 200);
+  }
+
   // Exibe um alerta de erro formatado com base no ServiceResult<T>
   showError(errorResponse: any) {
-    console.log(errorResponse);
-    this.hideLoading(); // Fecha o loading antes de mostrar o erro
+    this.hideLoading();
 
     let errorMessage = 'Ocorreu um erro desconhecido.';
 
