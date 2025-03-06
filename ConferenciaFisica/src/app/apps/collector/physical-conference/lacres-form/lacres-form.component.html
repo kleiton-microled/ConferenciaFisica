@@ -37,7 +37,7 @@
       </form>
 
       <!-- Tabela de Lacres -->
-      <div class="table-responsive mt-3" *ngIf="lacresSalvos.length > 0">
+      <div class="table-responsive mt-3" *ngIf="lacresConferencia.length > 0">
         <table class="table table-striped mt-3">
           <thead>
             <tr>
@@ -46,11 +46,18 @@
               <th>Lacre Fechamento</th>
             </tr>
           </thead>
+          <!-- Skeleton Loader -->
+          <tr *ngIf="isLoading">
+            <td colspan="4">
+              <div class="skeleton-loader"></div>
+            </td>
+          </tr>
           <tbody>
-            <tr *ngFor="let lacre of lacresSalvos; let i = index" (click)="selecionarLacre(i)" class="cursor-pointer">
-              <td>{{ lacre.NumeroLacre }}</td>
-              <td>{{ lacre.TipoLacre }}</td>
-              <td>{{ lacre.LacreFechamento }}</td>
+            <tr *ngFor="let lacre of lacresConferencia; let i = index" (click)="selecionarLacre(i)"
+              class="cursor-pointer">
+              <td>{{ lacre.numero }}</td>
+              <td>{{ lacre.descricaoTipo }}</td>
+              <td>{{ lacre.lacreFechamento }}</td>
             </tr>
           </tbody>
         </table>

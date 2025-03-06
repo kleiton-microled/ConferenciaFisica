@@ -1,5 +1,8 @@
 export class LacresModel {
-    Numero: string = "";
-    Tipo!: number;
-    LacreFechamento: string = "";
+    id: number | null = null;
+    idConferencia!: number;
+    numero!: string;
+    tipo!: number;
+    descricaoTipo!: string | null; //usado para exibir a descricao na tabela de lacres
+    lacreFechamento!: string; 
 }

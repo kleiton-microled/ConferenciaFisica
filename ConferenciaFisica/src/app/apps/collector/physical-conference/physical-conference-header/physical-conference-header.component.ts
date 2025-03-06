@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import { GenericFormComponent } from '../generic-form/generic-form.component';
 import { CadastroAdicionalModel } from '../models/cadastro-adicional.model';
 import { TipoLacre } from '../models/tipo-lacre.model';
+import { LacresModel } from '../models/lacres.model';
 
 @Component({
   selector: 'app-physical-conference-header',
@@ -23,6 +24,7 @@ export class PhysicalConferenceHeaderComponent {
   containers: ConferenceContainer[] = [];
   lotes: ConferenceLotes[] = [];
   tipolacres: TipoLacre[] = [];
+  lacresConferencia: LacresModel[] = [];
 
   conferences: PhysicalConferenceModel[] = [];
 
@@ -169,9 +171,15 @@ export class PhysicalConferenceHeaderComponent {
 
     this.conferenceService.updateConference(conference);
 
+    this.loadLacresConferencia(conference.id);
+
     this.loadCadastrosAdicionais(conference?.id || 0);
   }
 
+  /**
+   * Update conference SUB
+   * @param values 
+   */
   atualizarConference(values: any): void {
     const updatedConference: PhysicalConferenceModel = {
       //...this.conferenceService.getCurrentConference(), // Mantém os valores atuais
@@ -202,6 +210,9 @@ export class PhysicalConferenceHeaderComponent {
     });
   }
 
+  /**
+   * Carregar os lotes
+   */
   loadLotes() {
     this.conferenceService.getMockLotes().subscribe({
       next: (response: ServiceResult<any>) => {
@@ -213,11 +224,36 @@ export class PhysicalConferenceHeaderComponent {
     });
   }
 
+  /**
+   * Carregar os tipos de Lacres
+   */
   loadTiposLAcres() {
     this.conferenceService.getTipoLacres().subscribe({
       next: (response: ServiceResult<TipoLacre[]>) => {
         if (response.status) {
           this.tipolacres = response.result != null ? response.result : [];
+        } else {
+          Swal.fire({
+            title: 'Info',
+            text: response.mensagens[0],
+            icon: 'info',
+            confirmButtonText: 'Fechar'
+          });
+        }
+      },
+      //error: (err) => console.error('Erro na requisição:', err)
+    });
+  }
+
+  /**
+   * Listar os lacres da conferencia na tabela
+   * @param id 
+   */
+  loadLacresConferencia(id: number) {
+    this.conferenceService.getLacresConferencia(id).subscribe({
+      next: (response: ServiceResult<LacresModel[]>) => {
+        if (response.status) {
+          this.lacresConferencia = response.result != null ? response.result : [];
         } else {
           Swal.fire({
             title: 'Info',
