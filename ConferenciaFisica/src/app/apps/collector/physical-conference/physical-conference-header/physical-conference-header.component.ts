@@ -11,6 +11,7 @@ import { catchError, debounceTime, distinctUntilChanged, map, Observable, of, sk
 import Swal from 'sweetalert2';
 import { GenericFormComponent } from '../generic-form/generic-form.component';
 import { CadastroAdicionalModel } from '../models/cadastro-adicional.model';
+import { TipoLacre } from '../models/tipo-lacre.model';
 
 @Component({
   selector: 'app-physical-conference-header',
@@ -21,6 +22,7 @@ export class PhysicalConferenceHeaderComponent {
   form!: FormGroup;
   containers: ConferenceContainer[] = [];
   lotes: ConferenceLotes[] = [];
+  tipolacres: TipoLacre[] = [];
 
   conferences: PhysicalConferenceModel[] = [];
 
@@ -80,6 +82,8 @@ export class PhysicalConferenceHeaderComponent {
         this.form.controls["qtdVolumesDivergentes"].enable();
       }
     });
+
+    this.loadTiposLAcres();
   }
 
   ngOnDestroy(): void {
@@ -208,6 +212,29 @@ export class PhysicalConferenceHeaderComponent {
       error: (err) => console.error('Erro na requisição:', err)
     });
   }
+
+  loadTiposLAcres() {
+    this.conferenceService.getTipoLacres().subscribe({
+      next: (response: ServiceResult<TipoLacre[]>) => {
+        if (response.status) {
+          this.tipolacres = response.result != null ? response.result : [];
+        } else {
+          Swal.fire({
+            title: 'Info',
+            text: response.mensagens[0],
+            icon: 'info',
+            confirmButtonText: 'Fechar'
+          });
+        }
+      },
+      //error: (err) => console.error('Erro na requisição:', err)
+    });
+  }
+
+  onTipoLacreRecebido(tipoLacre: TipoLacre): void {
+    console.log('Tipo de Lacre Recebido:', tipoLacre);
+  }
+  
 
   applyFilter(): void {
     this.loadContainers();

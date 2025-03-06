@@ -6,6 +6,7 @@ import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { CONTEINERS, LOTES } from './mock/data';
 import { PhysicalConferenceModel } from './models/physical-conference.model';
 import { CadastroAdicionalModel } from './models/cadastro-adicional.model';
+import { TipoLacre } from './models/tipo-lacre.model';
 
 export interface ConferenceContainer {
   display: string;
@@ -74,7 +75,25 @@ export class PhysicalConferenceService {
       finalize(() => this.notificationService.hideLoading()) // Fecha loading corretamente
     );
   }
+  
+  getTipoLacres(): Observable<ServiceResult<TipoLacre[]>> {
+    this.notificationService.showLoading();
 
+    return this.http.get<ServiceResult<TipoLacre[]>>(`${this.apiUrl}/tipos-lacres`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showAlert(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading()) 
+    );
+  }
   /**
    * Busca a conferencia.
    * @param filtro (opcional) Filtro de busca

@@ -1,37 +1,61 @@
 <div class="container-fluid">
-    <div class="row">
-      <div class="col-12 lacres-container">
-        <form [formGroup]="lacresForm">
-          <div formArrayName="lacres">
-            <div *ngFor="let lacre of lacres.controls; let i = index" [formGroupName]="i" class="row align-items-center mb-2 p-2">
-              <!-- Campo Lacre -->
-              <div class="col-md-3">
-                <input type="text" class="form-control" formControlName="NumeroLacre" placeholder="Lacre">
-              </div>
-  
-              <!-- Select Tipo Lacre -->
-              <div class="col-md-3">
-                <select class="form-control" formControlName="TipoLacre">
-                  <option value="">Selecione o tipo</option>
-                  <option value="1">Tipo 1</option>
-                  <option value="2">Tipo 2</option>
-                </select>
-              </div>
-  
-              <!-- Campo Lacre de Fechamento -->
-              <div class="col-md-3">
-                <input type="text" class="form-control" formControlName="LacreFechamento" placeholder="Lacre de Fechamento">
-              </div>
-  
-              <!-- Botões -->
-              <div class="col-md-3 d-flex">
-                <button type="button" class="btn btn-success me-2" (click)="adicionarLacre()">➕</button>
-                <button *ngIf="i > 0" type="button" class="btn btn-danger" (click)="removerLacre(i)">❌</button>
-              </div>
-            </div>
+  <div class="row">
+    <div class="col-12 lacres-container">
+      <form [formGroup]="lacresForm">
+        <div class="row align-items-center mb-2 p-2">
+          <!-- Campo Lacre -->
+          <div class="col-md-3">
+            <input type="text" class="form-control" formControlName="NumeroLacre" placeholder="Lacre"
+              (blur)="onNumeroLacreBlur()">
           </div>
-        </form>
+
+          <!-- Select Tipo Lacre -->
+          <div class="col-md-3">
+            <select class="form-select" formControlName="TipoLacre">
+              <option value="">Selecione o tipo</option>
+              <option *ngFor="let tipo of tiposLacres" [value]="tipo.id">
+                {{ tipo.codigo }} - {{ tipo.descricao }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Campo Lacre de Fechamento -->
+          <div class="col-md-3">
+            <input type="text" class="form-control" formControlName="LacreFechamento" placeholder="Lacre de Fechamento">
+          </div>
+
+          <div class="col-md-3 d-flex align-items-center">
+            <!-- Botão de Salvar/Atualizar -->
+            <button style="width: 100%; font-weight: 900;" type="button"
+              class="btn btn-success me-2 d-flex align-items-center" (click)="salvarOuAtualizarLacre()"
+              [disabled]="!lacresForm.valid">
+              <i class="fas fa-save me-2" style="color: darkcyan;"></i>
+              {{ selectedIndex !== null ? 'ATUALIZAR' : 'SALVAR' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Tabela de Lacres -->
+      <div class="table-responsive mt-3" *ngIf="lacresSalvos.length > 0">
+        <table class="table table-striped mt-3">
+          <thead>
+            <tr>
+              <th>Numero Lacre</th>
+              <th>Tipo Lacre</th>
+              <th>Lacre Fechamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lacre of lacresSalvos; let i = index" (click)="selecionarLacre(i)" class="cursor-pointer">
+              <td>{{ lacre.NumeroLacre }}</td>
+              <td>{{ lacre.TipoLacre }}</td>
+              <td>{{ lacre.LacreFechamento }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
     </div>
   </div>
-  
+</div>
