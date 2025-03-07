@@ -1,11 +1,26 @@
 <div class="footer-container">
-    <button (click)="iniciar()">Início</button>
-    <button (click)="terminar()">Término</button>
-    <button (click)="avarias()">Avarias</button>
-    <button (click)="limpar()">Limpar</button>
-    <button (click)="sair()">Sair</button>
-    <button (click)="gravar()">Gravar</button>
-    <button (click)="excluir()">Excluir</button>
-    <button (click)="fotosContainer()">Fotos Container</button>
-  </div>
-  
+  <button class="win10-tile start" (click)="iniciar()">
+    <i class="fas fa-play"></i> Início
+  </button>
+  <button class="win10-tile stop" (click)="terminar()">
+    <i class="fas fa-stop"></i> Término
+  </button>
+  <button class="win10-tile alert" (click)="avarias()">
+    <i class="fas fa-exclamation-triangle"></i> Avarias
+  </button>
+  <button class="win10-tile clear" (click)="limpar()">
+    <i class="fas fa-eraser"></i> Limpar
+  </button>
+  <button class="win10-tile exit" (click)="sair()">
+    <i class="fas fa-sign-out-alt"></i> Sair
+  </button>
+  <button class="win10-tile save" (click)="gravar()">
+    <i class="fas fa-save"></i> Gravar
+  </button>
+  <button class="win10-tile delete" (click)="excluir()">
+    <i class="fas fa-trash-alt"></i> Excluir
+  </button>
+  <button class="win10-tile photo" (click)="fotosContainer()">
+    <i class="fas fa-camera"></i> Fotos
+  </button>
+</div>

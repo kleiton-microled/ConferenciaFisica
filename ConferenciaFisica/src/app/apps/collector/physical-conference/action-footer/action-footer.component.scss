@@ -26,4 +26,101 @@
   button:hover {
     background: #e2e6ea;
   }
+
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f3f3f3;
+    border-top: 2px solid #ccc;
+  }
+  
+  .win10-tile {
+    width: 90px;
+    height: 90px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+  }
+  
+  .win10-tile i {
+    font-size: 32px;
+    margin-bottom: 5px;
+  }
+  
+  /* Cores individuais dos botões */
+  .start {
+    background-color: #0078D7;
+  }
+  .start:hover {
+    background-color: #005a9e;
+  }
+  
+  .stop {
+    background-color: #D70000;
+  }
+  .stop:hover {
+    background-color: #a50000;
+  }
+  
+  .alert {
+    background-color: #FFA500;
+  }
+  .alert:hover {
+    background-color: #d48800;
+  }
+  
+  .clear {
+    background-color: #8A2BE2;
+  }
+  .clear:hover {
+    background-color: #6a1bbf;
+  }
+  
+  .exit {
+    background-color: #A52A2A;
+  }
+  .exit:hover {
+    background-color: #7f1f1f;
+  }
+  
+  .save {
+    background-color: #008000;
+  }
+  .save:hover {
+    background-color: #006600;
+  }
+  
+  .delete {
+    background-color: #FF4500;
+  }
+  .delete:hover {
+    background-color: #cc3700;
+  }
+  
+  .photo {
+    background-color: #4682B4;
+  }
+  .photo:hover {
+    background-color: #365e89;
+  }
+  
+  /* Efeito de clique */
+  .win10-tile:active {
+    transform: scale(0.95);
+  }
+  
   
