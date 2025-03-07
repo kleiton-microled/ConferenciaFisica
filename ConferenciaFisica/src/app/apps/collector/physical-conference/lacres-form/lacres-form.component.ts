@@ -6,6 +6,7 @@ import { LacresModel } from '../models/lacres.model';
 import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { catchError, map, Observable, of, skip, Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import Swal from 'sweetalert2';
 
 interface Lacre {
   NumeroLacre: string;
@@ -126,7 +127,13 @@ export class LacresFormComponent implements OnInit {
 
       this.saveLacre(novoLacre).subscribe((result) => {
         if (result) {
+          this.isLoading = false;
           this.lacresConferencia.push(novoLacre);
+          this.lacresForm.patchValue({
+            NumeroLacre: '',
+            TipoLacre: 0,
+            LacreFechamento: ''
+          });
         } else {
           console.log('Falha no cadastro.');
         }
@@ -174,9 +181,38 @@ export class LacresFormComponent implements OnInit {
     );
   }
 
-  removerLacre(index: number): void {
-    this.lacresConferencia.splice(index, 1);
+  removerLacre(index: number, id: number): void {
+    Swal.fire({
+      title: 'Excluir Lacre?',
+      text: "Tem certeza que deseja excluir este lacre?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true; // Ativa loading na tabela
+
+        this.service.deleteLacreConferencia(id).subscribe({
+          next: () => {
+            this.lacresConferencia.splice(index, 1);
+            this.isLoading = false;
+            Swal.fire('Excluído!', 'O lacre foi removido com sucesso.', 'success');
+          },
+          error: () => {
+            this.isLoading = false;
+            Swal.fire('Erro!', 'Não foi possível excluir o lacre.', 'error');
+          }
+        });
+      }
+    });
   }
+
+  // removerLacre(index: number): void {
+  //   this.lacresConferencia.splice(index, 1);
+  // }
 
   onNumeroLacreBlur(): void {
     const numeroLacre = this.lacresForm.get('NumeroLacre')?.value;

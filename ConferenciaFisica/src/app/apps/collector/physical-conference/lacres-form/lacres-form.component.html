@@ -44,6 +44,7 @@
               <th>Numero Lacre</th>
               <th>Tipo Lacre</th>
               <th>Lacre Fechamento</th>
+
             </tr>
           </thead>
           <!-- Skeleton Loader -->
@@ -53,11 +54,17 @@
             </td>
           </tr>
           <tbody>
-            <tr *ngFor="let lacre of lacresConferencia; let i = index" (click)="selecionarLacre(i)"
+            <tr *ngFor="let lacre of lacresConferencia; let i = index" (click)="selecionarLacre(i)" [ngClass]="{ 'table-active': selectedIndex === i }"
               class="cursor-pointer">
               <td>{{ lacre.numero }}</td>
               <td>{{ lacre.descricaoTipo }}</td>
               <td>{{ lacre.lacreFechamento }}</td>
+              <td>
+                <!-- Botão de excluir -->
+                <button class="btn btn-danger btn-sm" (click)="removerLacre(i, lacre.id ?? 0); $event.stopPropagation();">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
