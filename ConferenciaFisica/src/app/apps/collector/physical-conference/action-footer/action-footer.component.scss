@@ -32,20 +32,20 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-    padding: 20px;
+    padding: 5px;
     background-color: #f3f3f3;
-    border-top: 2px solid #ccc;
+    border-top: none; //2px solid #ccc;
   }
   
   .win10-tile {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     font-size: 12px;
     font-weight: bold;
     text-align: center;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 0px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     display: flex;
@@ -57,7 +57,7 @@
   }
   
   .win10-tile i {
-    font-size: 32px;
+    font-size: 20px;
     margin-bottom: 5px;
   }
   
