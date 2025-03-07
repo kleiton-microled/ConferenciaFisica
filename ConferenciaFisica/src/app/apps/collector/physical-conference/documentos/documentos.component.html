@@ -1,0 +1,60 @@
+<div class="modal-header">
+    <h5 class="modal-title">Gerenciar Documentos</h5>
+    <button type="button" class="btn-close" (click)="fecharModal()"></button>
+  </div>
+  
+  <div class="modal-body">
+    <!-- Formulário -->
+    <form [formGroup]="documentoForm">
+      <div class="row">
+        <!-- Número do Documento -->
+        <div class="col-4">
+          <label for="numeroDocumento">Número do Documento</label>
+          <input id="numeroDocumento" type="text" class="form-control" formControlName="numero">
+        </div>
+  
+        <!-- Tipo do Documento -->
+        <div class="col-4">
+          <label for="tipoDocumento">Tipo do Documento</label>
+          <select id="tipoDocumento" class="form-select" formControlName="tipo">
+            <option value="">Selecione</option>
+            <option *ngFor="let tipo of tiposDocumentos" [value]="tipo.id">{{ tipo.codigo }}</option>
+          </select>
+        </div>
+  
+        <!-- Botão Adicionar -->
+        <div class="col-4 d-flex align-items-end">
+          <button type="button" class="btn btn-success w-100" (click)="adicionarDocumento()" [disabled]="!documentoForm.valid">
+            <i class="fas fa-plus me-2"></i> Adicionar
+          </button>
+        </div>
+      </div>
+    </form>
+  
+    <!-- Tabela de Documentos -->
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>Número do Documento</th>
+          <th>Tipo do Documento</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of registros; let i = index">
+          <td>{{ doc.numero }}</td>
+          <td>{{ doc.tipoDescricao}}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="removerDocumento(i)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="fecharModal()">Fechar</button>
+  </div>
+  

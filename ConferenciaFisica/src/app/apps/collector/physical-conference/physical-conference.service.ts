@@ -8,6 +8,8 @@ import { PhysicalConferenceModel } from './models/physical-conference.model';
 import { CadastroAdicionalModel } from './models/cadastro-adicional.model';
 import { TipoLacre } from './models/tipo-lacre.model';
 import { LacresModel } from './models/lacres.model';
+import { TiposDocumentos } from './models/tipos-documentos.model';
+import { DocumentosConferencia } from './models/documentos-conferencia.model';
 
 export interface ConferenceContainer {
   display: string;
@@ -23,7 +25,7 @@ export interface ConferenceLotes {
   providedIn: 'root'
 })
 export class PhysicalConferenceService {
-  private apiUrl = 'https://localhost:5000/api/Conferencia';
+  private apiUrl = 'https://localhost:5000/api';
 
   constructor(private http: HttpClient, private notificationService: NotificationService) { }
 
@@ -61,7 +63,7 @@ export class PhysicalConferenceService {
   getContainers(): Observable<ServiceResult<any>> {
     this.notificationService.showLoading(); // Mostra loading
 
-    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conteineres`).pipe(
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/conteineres`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showAlert(response);
@@ -76,11 +78,15 @@ export class PhysicalConferenceService {
       finalize(() => this.notificationService.hideLoading()) // Fecha loading corretamente
     );
   }
-  
+
+  /**
+   * Carrega os tipos de lacres
+   * @returns 
+   */
   getTipoLacres(): Observable<ServiceResult<TipoLacre[]>> {
     this.notificationService.showLoading();
 
-    return this.http.get<ServiceResult<TipoLacre[]>>(`${this.apiUrl}/tipos-lacres`).pipe(
+    return this.http.get<ServiceResult<TipoLacre[]>>(`${this.apiUrl}/conferencia/tipos-lacres`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showAlert(response);
@@ -92,9 +98,10 @@ export class PhysicalConferenceService {
         this.notificationService.showError(error);
         return throwError(() => error);
       }),
-      finalize(() => this.notificationService.hideLoading()) 
+      finalize(() => this.notificationService.hideLoading())
     );
   }
+
   /**
    * Busca a conferencia.
    * @param filtro (opcional) Filtro de busca
@@ -102,7 +109,7 @@ export class PhysicalConferenceService {
    */
   getConference(filter: { conteiner?: string; lote?: string; numero?: string }): Observable<ServiceResult<PhysicalConferenceModel>> {
     this.notificationService.showLoading();
-    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/buscar?cntr=${filter.conteiner}`).pipe(
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/buscar?cntr=${filter.conteiner}`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -126,7 +133,7 @@ export class PhysicalConferenceService {
   startConference(conference: PhysicalConferenceModel | null): Observable<ServiceResult<any>> {
     this.notificationService.showLoading();
 
-    return this.http.post<ServiceResult<any>>(`${this.apiUrl}/iniciar-conferencia`, conference).pipe(
+    return this.http.post<ServiceResult<any>>(`${this.apiUrl}/conferencia/iniciar-conferencia`, conference).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -142,8 +149,13 @@ export class PhysicalConferenceService {
     );
   }
 
+  /**
+   * Atualiza a conferencia
+   * @param conference 
+   * @returns 
+   */
   updatePhysicalConference(conference: PhysicalConferenceModel): Observable<ServiceResult<boolean>> {
-    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/atualizar-conferencia`, conference).pipe(
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/atualizar-conferencia`, conference).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -159,10 +171,14 @@ export class PhysicalConferenceService {
     );
   }
 
-
+  /**
+   * Lista os cadastros adicionais da conferencia - Ajudantes...
+   * @param idConferencia 
+   * @returns 
+   */
   getCadastrosAdicionais(idConferencia: number): Observable<ServiceResult<CadastroAdicionalModel[]>> {
     this.notificationService.showLoading();
-    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/carregar-cadastros-adicionais?idConferencia=${idConferencia}`).pipe(
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/carregar-cadastros-adicionais?idConferencia=${idConferencia}`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -171,7 +187,7 @@ export class PhysicalConferenceService {
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        this.notificationService.showError(error); 
+        this.notificationService.showError(error);
         return throwError(() => error);
       }),
       finalize(() => this.notificationService.hideLoading())
@@ -184,7 +200,7 @@ export class PhysicalConferenceService {
    * @returns 
    */
   saveCadastroAdicional(cadastro: CadastroAdicionalModel): Observable<ServiceResult<boolean>> {
-    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/cadastro-adicional`, cadastro).pipe(
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/cadastro-adicional`, cadastro).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -200,8 +216,13 @@ export class PhysicalConferenceService {
     );
   }
 
+  /**
+   * Exclui cadastro adicional
+   * @param id 
+   * @returns 
+   */
   deleteCadastroAdicional(id: number): Observable<ServiceResult<boolean>> {
-    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/excluir-cadastro-adicional?id=${id}`,).pipe(
+    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-cadastro-adicional?id=${id}`,).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -225,7 +246,7 @@ export class PhysicalConferenceService {
    * @returns 
    */
   saveLacreConferencia(lacre: LacresModel): Observable<ServiceResult<boolean>> {
-    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/cadastro-lacres-conferencia`, lacre).pipe(
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/cadastro-lacres-conferencia`, lacre).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -248,7 +269,7 @@ export class PhysicalConferenceService {
    */
   getLacresConferencia(idConferencia: number): Observable<ServiceResult<LacresModel[]>> {
     this.notificationService.showLoading();
-    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/lacres-conferencia?idConferencia=${idConferencia}`).pipe(
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/lacres-conferencia?idConferencia=${idConferencia}`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -257,7 +278,7 @@ export class PhysicalConferenceService {
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        this.notificationService.showError(error); 
+        this.notificationService.showError(error);
         return throwError(() => error);
       }),
       finalize(() => this.notificationService.hideLoading())
@@ -270,7 +291,7 @@ export class PhysicalConferenceService {
    * @returns 
    */
   updateLacreConferencia(conference: LacresModel): Observable<ServiceResult<boolean>> {
-    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/atualizar-lacre-conferencia`, conference).pipe(
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/atualizar-lacre-conferencia`, conference).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -292,7 +313,7 @@ export class PhysicalConferenceService {
    * @returns 
    */
   deleteLacreConferencia(id: number): Observable<ServiceResult<boolean>> {
-    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/excluir-lacre-conferencia?id=${id}`,).pipe(
+    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-lacre-conferencia?id=${id}`,).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -308,7 +329,117 @@ export class PhysicalConferenceService {
     );
   }
 
+  /**
+   * Lista os tipos de documentos
+   * @returns ServiceResult<TiposDocumentos[]>
+   */
+  getTiposDocumentos(): Observable<ServiceResult<TiposDocumentos[]>> {
+    this.notificationService.showLoading();
 
+    return this.http.get<ServiceResult<TiposDocumentos[]>>(`${this.apiUrl}/tipos-documentos/listar`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showAlert(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error); 
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
+  /**
+   * Lista os documentos atrelados a conferencia
+   * @param idConferencia 
+   * @returns ServiceResult<DocumetosConferencia[]
+   */
+  getDocumentosConferencia(idConferencia: number): Observable<ServiceResult<DocumentosConferencia[]>> {
+    this.notificationService.showLoading();
+    return this.http.get<ServiceResult<DocumentosConferencia[]>>(`${this.apiUrl}/conferencia/documentos-conferencia?idConferencia=${idConferencia}`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
+  /**
+   * Cadastra um novo documento a conferencia
+   * @param lacre 
+   * @returns bool
+   */
+  saveDocumentoConferencia(data: DocumentosConferencia): Observable<ServiceResult<boolean>> {
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/cadastro-documento-conferencia`, data).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
+  /**
+   * Atualiza um documento da conferencia
+   * @param conference 
+   * @returns bool
+   */
+  updateDocumentosConferencia(conference: DocumentosConferencia): Observable<ServiceResult<boolean>> {
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/atualizar-documento-conferencia`, conference).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
+  /**
+   * Exclui um documento da conferencia
+   * @param id 
+   * @returns bool
+   */
+  deleteDocumentoConferencia(id: number): Observable<ServiceResult<boolean>> {
+    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-documento-conferencia?id=${id}`,).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
 
   //#region Subscribe PhysicalConference
 
@@ -322,7 +453,7 @@ export class PhysicalConferenceService {
   }
 
   // Método para obter a conference atual sem Observable
-  getCurrentConference(): PhysicalConferenceModel{
+  getCurrentConference(): PhysicalConferenceModel {
     return this.conferenceSubject.value;
   }
 

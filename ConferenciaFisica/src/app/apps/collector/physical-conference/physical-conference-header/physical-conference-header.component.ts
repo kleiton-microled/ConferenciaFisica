@@ -13,6 +13,9 @@ import { GenericFormComponent } from '../generic-form/generic-form.component';
 import { CadastroAdicionalModel } from '../models/cadastro-adicional.model';
 import { TipoLacre } from '../models/tipo-lacre.model';
 import { LacresModel } from '../models/lacres.model';
+import { DocumentosComponent } from '../documentos/documentos.component';
+import { TiposDocumentos } from '../models/tipos-documentos.model';
+import { DocumentosConferencia } from '../models/documentos-conferencia.model';
 
 @Component({
   selector: 'app-physical-conference-header',
@@ -42,7 +45,7 @@ export class PhysicalConferenceHeaderComponent {
   ajudantes: CadastroAdicionalModel[] = [];
   representantes: CadastroAdicionalModel[] = [];
   operadores: CadastroAdicionalModel[] = [];
-  documentos: CadastroAdicionalModel[] = [];
+  documentos: DocumentosConferencia[] = [];
 
   filtro: string = '';
   constructor(private fb: FormBuilder,
@@ -174,6 +177,8 @@ export class PhysicalConferenceHeaderComponent {
     this.loadLacresConferencia(conference.id);
 
     this.loadCadastrosAdicionais(conference?.id || 0);
+
+    this.loadDocumentosConferencia(conference?.id || 0);
   }
 
   /**
@@ -270,7 +275,7 @@ export class PhysicalConferenceHeaderComponent {
   onTipoLacreRecebido(tipoLacre: TipoLacre): void {
     console.log('Tipo de Lacre Recebido:', tipoLacre);
   }
-  
+
 
   applyFilter(): void {
     this.loadContainers();
@@ -500,17 +505,21 @@ export class PhysicalConferenceHeaderComponent {
   }
 
   abrirModalDocumentos() {
-    const modalRef = this.modalService.open(GenericFormComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.titulo = 'Documentos';
-    modalRef.componentInstance.frase = 'Cadastro de Documentos';
-    modalRef.componentInstance.opcoesSelect = ['LPCO','LI'];
+    const modalRef = this.modalService.open(DocumentosComponent, { size: 'lg', backdrop: 'static' });
+
     modalRef.componentInstance.registros = this.documentos;
 
-    modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
-      let conference = this.conferenceService.getCurrentConference();
-      let cadastro = CadastroAdicionalModel.New(conference.id, reg.nome, reg.cpf, reg.qualificacao, "Documentos");
+    this.conferenceService.getTiposDocumentos().subscribe((ret: ServiceResult<TiposDocumentos[]>) => {
+      if (ret.status) {
+        modalRef.componentInstance.tiposDocumentos = ret.result
+      }
+    });
 
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
+    modalRef.componentInstance.saveEvent.subscribe((reg: DocumentosConferencia) => {
+      let conference = this.conferenceService.getCurrentConference();
+      let cadastro = DocumentosConferencia.New(conference.id, reg.numero, reg.tipo);
+
+      this.saveDocumentoConferencia(cadastro).subscribe((result) => {
         if (result) {
           this.documentos.push(reg);
         } else {
@@ -519,10 +528,60 @@ export class PhysicalConferenceHeaderComponent {
       });
     });
 
-    // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
-      this.excluirCadastroAdicional(id);
+      this.excluirDocumentoConferencia(id);
     });
+  }
+
+  /**
+   * Salvar um novo cadastro adicional
+   * @param cadastro 
+   */
+  saveDocumentoConferencia(cadastro: DocumentosConferencia): Observable<boolean> {
+    return this.conferenceService.saveDocumentoConferencia(cadastro).pipe(
+      map((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+        return ret.status;
+      }),
+      catchError((error) => {
+        this.notificationService.showError(error);
+        return of(false);
+      })
+    );
+  }
+
+  /**
+   * Chama o metodo de exclusao de documentos da conferencia
+   * @param id 
+   */
+  excluirDocumentoConferencia(id: number): void {
+
+    this.conferenceService.deleteDocumentoConferencia(id).subscribe((ret: ServiceResult<boolean>) => {
+      if (ret.status) {
+        this.notificationService.showSuccess(ret);
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+
+  }
+
+  /**
+   * Chama o metodo que lista os documentos da conferencia
+   * @param idConferencia 
+   */
+  loadDocumentosConferencia(idConferencia: number) {
+    this.conferenceService.getDocumentosConferencia(idConferencia).subscribe(((ret: ServiceResult<DocumentosConferencia[]>) => {
+      if (ret.status) {
+        this.documentos = ret.result || [];
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    }))
   }
 
   /**
@@ -564,6 +623,10 @@ export class PhysicalConferenceHeaderComponent {
     }))
   }
 
+  /**
+   * Chama o metodo de exclusao de cadastro adicional
+   * @param id 
+   */
   excluirCadastroAdicional(id: number): void {
 
     this.conferenceService.deleteCadastroAdicional(id).subscribe((ret: ServiceResult<boolean>) => {

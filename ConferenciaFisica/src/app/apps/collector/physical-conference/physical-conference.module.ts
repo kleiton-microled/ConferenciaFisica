@@ -8,12 +8,15 @@ import { LacresFormComponent } from "./lacres-form/lacres-form.component";
 import { ActionFooterComponent } from "./action-footer/action-footer.component";
 import { CpfMaskDirective } from "src/app/shared/directives/cpf-mask.directive";
 import { GenericFormComponent } from "./generic-form/generic-form.component";
+import { DocumentosComponent } from "./documentos/documentos.component";
 
 @NgModule({
   declarations: [PhysicalConferenceComponent,
     PhysicalConferenceHeaderComponent,
     LacresFormComponent,
-    ActionFooterComponent, CpfMaskDirective, GenericFormComponent],
+    ActionFooterComponent,
+    CpfMaskDirective,
+    GenericFormComponent, DocumentosComponent],
   imports: [CommonModule, PageTitleModule, ReactiveFormsModule, FormsModule],
 })
 export class PhysicalConferenceModule { }
