@@ -1,4 +1,4 @@
-<div class="row">
+<!-- <div class="row">
     <div *ngFor="let tool of tools" class="col-md-4 mt-3">
         <div class="tool-card">
             <h4>{{tool.title}}</h4>
@@ -12,4 +12,17 @@
             </div>
         </div>
     </div>
+</div> -->
+<div class="row">
+    <div *ngFor="let tool of tools" class="col-md-4 mt-3">
+        <a *ngIf="tool.link" [href]="tool.link" target="_self" class="tool-card metro-tile">
+            <h4>{{ tool.title }}</h4>
+            <p>{{ tool.description }}</p>
+            <div class="tool-card-footer">
+                <span class="tool-version"><strong>Versão:</strong> {{ tool.version }}</span>
+                <span class="tool-access"><i class="fas fa-external-link-alt"></i> Acessar</span>
+            </div>
+        </a>
+    </div>
 </div>
+

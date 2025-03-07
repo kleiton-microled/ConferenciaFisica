@@ -161,7 +161,8 @@
                             </div>
 
                             <div class="col-2 d-flex align-items-end position-relative">
-                                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalDocumentos()">Cad. de Documentos
+                                <button class="btn btn-primary w-100 position-relative"
+                                    (click)="abrirModalDocumentos()">Cad. de Documentos
                                     <span
                                         class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
                                         {{ documentos.length }}
@@ -205,7 +206,8 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col-12">
-                            <app-lacres-form [tiposLacres]="tipolacres" [lacresConferencia]="lacresConferencia"></app-lacres-form>
+                            <app-lacres-form [tiposLacres]="tipolacres"
+                                [lacresConferencia]="lacresConferencia"></app-lacres-form>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -216,7 +218,9 @@
                     </div>
                 </form>
             </div>
-            <app-action-footer (saveEvent)="updatePhysicalConference()"></app-action-footer>
+            <app-action-footer (saveEvent)="updatePhysicalConference()"
+                (startEvent)="openModal(advancedFilterModal)"
+                (cleanupEvent)="limparConferenciaAtual()"></app-action-footer>
         </div>
     </div>
 </div>

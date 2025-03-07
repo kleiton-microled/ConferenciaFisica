@@ -276,6 +276,31 @@ export class PhysicalConferenceHeaderComponent {
     console.log('Tipo de Lacre Recebido:', tipoLacre);
   }
 
+  limparConferenciaAtual() {
+    Swal.fire({
+      title: 'Inicio de Conferência!!!',
+      text: 'Deseja limpar a conferência atual?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'SIM',
+      cancelButtonText: 'NÃO',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ResetConferencia();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+
+      }
+    });
+
+  }
+  ResetConferencia() {
+    this.form.reset();
+    this.lacresConferencia = [];
+    this.representantes = [];
+    this.documentos = [];
+    this.operadores = [];
+    this.ajudantes = [];
+  }
 
   applyFilter(): void {
     this.loadContainers();
@@ -297,7 +322,6 @@ export class PhysicalConferenceHeaderComponent {
       }
     });
 
-    console.log('Conferencia Atual: ', this.conferenceService.getCurrentConference());
     this.conferenceService.startConference(this.conferenceService.getCurrentConference())
       .subscribe({
         next: (response) => {

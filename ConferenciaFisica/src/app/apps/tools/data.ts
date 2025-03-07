@@ -8,5 +8,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo Coletor REDEX.",
     version: 1,
     link: "apps/collector",
+  },
+  {
+    id: 2,
+    title: "Conferência Física",
+    description:
+      "Conferência física",
+    version: 1,
+    link: "apps/collector/physical-conference",
   }
 ];

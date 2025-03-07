@@ -6,11 +6,15 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./action-footer.component.scss']
 })
 export class ActionFooterComponent {
-  
+
+  @Output() startEvent = new EventEmitter<void>();
   @Output() saveEvent = new EventEmitter<void>();
+  @Output() cleanupEvent = new EventEmitter<void>();
+
 
   iniciar(): void {
     console.log('Início acionado');
+    this.startEvent.emit();
   }
 
   terminar(): void {
@@ -23,6 +27,7 @@ export class ActionFooterComponent {
 
   limpar(): void {
     console.log('Limpar acionado');
+    this.cleanupEvent.emit();
   }
 
   sair(): void {
