@@ -10,6 +10,16 @@ export class ActionFooterComponent {
   // Recebe um objeto do pai para controlar quais botões ficam habilitados
   @Input() buttonsState: { [key: string]: boolean } = {};
 
+  // @Input() btnInicioEnable: boolean = false;
+  // @Input() btnTerminoEnable: boolean = false;
+  // @Input() btnAvariasEnable: boolean = false;
+  // @Input() btnLimparEnable: boolean = false;
+  // @Input() btnSairEnable: boolean = false;
+  // @Input() btnGravarEnable: boolean = false;
+  // @Input() btnExcluirEnable: boolean = false;
+  // @Input() btnFotosEnable: boolean = false;
+
+
   @Output() startEvent = new EventEmitter<void>();
   @Output() saveEvent = new EventEmitter<void>();
   @Output() cleanupEvent = new EventEmitter<void>();

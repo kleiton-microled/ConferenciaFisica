@@ -47,16 +47,29 @@ export class PhysicalConferenceHeaderComponent {
   lacresConferencia: LacresModel[] = [];
 
   conferences: PhysicalConferenceModel[] = [];
-  footerButtonsState = {
+  footerButtonsState: Record<string, boolean> = {
     start: true,
-    stop: false,   // Botão de término desativado
+    stop: false,
     alert: false,
-    clear: false,  // Botão de limpar desativado
+    clear: false,
     exit: true,
     save: false,
-    delete: false, // Excluir desativado
+    delete: false,
     photo: true
   };
+
+  atualizarBotoes(botoes: { nome: string; state: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
+    botoes.forEach(botao => {
+      if (botao.nome in novoEstado) {
+        novoEstado[botao.nome] = botao.state;
+      }
+    });
+    this.footerButtonsState = novoEstado;
+  }
+
+  //Botoes Modais Enabled
+  isDisableBtnModal: boolean = true;
 
   //SUBS
   private conferenceSubscription!: Subscription;
@@ -340,9 +353,12 @@ export class PhysicalConferenceHeaderComponent {
     console.log("Tipo de Lacre Recebido:", tipoLacre);
   }
 
+  /**
+   * Reset do formulario de conferencia
+   */
   limparConferenciaAtual() {
     Swal.fire({
-      title: "Inicio de Conferência!!!",
+      title: "Limpar Conferência!!!",
       text: "Deseja limpar a conferência atual?",
       icon: "question",
       showCancelButton: true,
@@ -364,6 +380,14 @@ export class PhysicalConferenceHeaderComponent {
     this.operadores = [];
     this.ajudantes = [];
     this.avariasConferencia = null;
+    this.isDisableBtnModal = true;
+    this.atualizarBotoes([
+      { nome: 'stop', state: false },
+      { nome: 'alert', state: false },
+      { nome: 'start', state: true },
+      { nome: 'clear', state: false },
+      { nome: 'delete', state: false }
+    ]);
   }
 
   applyFilter(): void {
@@ -379,6 +403,7 @@ export class PhysicalConferenceHeaderComponent {
   }
 
   startPhysicalConference() {
+    console.log('startPhysicalConference');
     this.conferenceService.getConference$().subscribe((conference) => {
       if (conference) {
         conference.inicio = new Date();
@@ -405,7 +430,9 @@ export class PhysicalConferenceHeaderComponent {
 
   //#region MOCK
 
-
+  /**
+   * Filtro avancado por conteier ou lotes
+   */
   async filterConferences() {
     const filter = {
       conteiner: this.selectedContainer || undefined,
@@ -438,6 +465,17 @@ export class PhysicalConferenceHeaderComponent {
             }, 200);
           } else {
             let infoResponse = "Conferência encontrada, abrindo para edição?";
+            this.atualizarBotoes([
+              { nome: 'stop', state: true },
+              { nome: 'alert', state: true },
+              { nome: 'start', state: false },
+              { nome: 'clear', state: true },
+              { nome: 'exit', state: true },
+              { nome: 'delete', state: true },
+              { nome: 'save', state: true }
+            ]);
+
+            this.isDisableBtnModal = false;
             this.modalService.dismissAll();
             setTimeout(() => {
               Swal.fire({
@@ -448,6 +486,7 @@ export class PhysicalConferenceHeaderComponent {
               });
             }, 200);
           }
+
 
           this.atualizarFormulario(
             response.result != null ? response.result : this.conference
@@ -706,6 +745,10 @@ export class PhysicalConferenceHeaderComponent {
       .catch(() => { });
   }
 
+  /**
+   * Reload avarias da conferencia
+   * @param id 
+   */
   reloadAvariaConferencia(id: number) {
     this.conferenceService.getAvariaConferencia(id).subscribe((response: ServiceResult<AvariaConferencia>) => {
       if (response.status) {

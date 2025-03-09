@@ -124,7 +124,7 @@
             </div>
             <div class="row mt-3">
               <div class="col-2 d-flex align-items-end position-relative">
-                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalRepresentantes()">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalRepresentantes()" [disabled]="isDisableBtnModal">
                   Cad. de Representantes
                   <span
                     class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
@@ -134,7 +134,7 @@
               </div>
 
               <div class="col-2 d-flex align-items-end position-relative">
-                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalAjudantes()">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalAjudantes()" [disabled]="isDisableBtnModal">
                   Cadastro de Ajudantes
                   <span
                     class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
@@ -144,7 +144,7 @@
               </div>
 
               <div class="col-2 d-flex align-items-end position-relative">
-                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalOperadores()">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalOperadores()" [disabled]="isDisableBtnModal">
                   Cadastro de Operadores
                   <span
                     class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
@@ -154,7 +154,7 @@
               </div>
 
               <div class="col-2 d-flex align-items-end position-relative">
-                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalDocumentos()">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalDocumentos()" [disabled]="isDisableBtnModal">
                   Cad. de Documentos
                   <span
                     class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
