@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { PhysicalConferenceModel } from './models/physical-conference.model';
-import { AvariaModel } from './models/avaria.modal';
 
 const STORAGE_KEY = 'physicalConferences';
 

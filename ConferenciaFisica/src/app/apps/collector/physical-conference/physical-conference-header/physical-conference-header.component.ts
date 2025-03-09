@@ -31,6 +31,8 @@ import { TiposDocumentos } from "../models/tipos-documentos.model";
 import { DocumentosConferencia } from "../models/documentos-conferencia.model";
 import { AvariasModalComponent } from "src/app/shared/avarias/avarias-modal.component";
 import { TiposAvarias } from "src/app/shared/avarias/tipos-avarias.model";
+import { AvariaConferencia } from "../models/avaria.model";
+import { TiposEmbalagens } from "../models/tipos-embalagens.model";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -61,6 +63,9 @@ export class PhysicalConferenceHeaderComponent {
   representantes: CadastroAdicionalModel[] = [];
   operadores: CadastroAdicionalModel[] = [];
   documentos: DocumentosConferencia[] = [];
+  tiposAvarias: TiposAvarias[] = [];
+  tiposEmbalagens: TiposEmbalagens[] = [];
+  avariasConferencia!: AvariaConferencia | null;
 
   filtro: string = "";
   constructor(
@@ -69,7 +74,7 @@ export class PhysicalConferenceHeaderComponent {
     private conferenceService: PhysicalConferenceService,
     private storageService: PhysicalConferenceStorageService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     //this.loadConferences();
@@ -203,6 +208,30 @@ export class PhysicalConferenceHeaderComponent {
     this.loadCadastrosAdicionais(conference?.id || 0);
 
     this.loadDocumentosConferencia(conference?.id || 0);
+
+    this.conferenceService
+      .getTiposAvarias()
+      .subscribe((ret: ServiceResult<TiposAvarias[]>) => {
+        if (ret.status) {
+          this.tiposAvarias = ret.result ?? [];
+        }
+      });
+
+    this.conferenceService
+      .getTiposEmbalagens()
+      .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
+        if (ret.status) {
+          this.tiposEmbalagens = ret.result ?? [];
+        }
+      });
+
+    this.conferenceService
+      .getAvariaConferencia(conference.id)
+      .subscribe((ret: ServiceResult<AvariaConferencia>) => {
+        if (ret.status && ret.result) {
+          this.avariasConferencia = ret.result;
+        }
+      });
   }
 
   /**
@@ -316,6 +345,7 @@ export class PhysicalConferenceHeaderComponent {
       }
     });
   }
+
   ResetConferencia() {
     this.form.reset();
     this.lacresConferencia = [];
@@ -363,14 +393,7 @@ export class PhysicalConferenceHeaderComponent {
   }
 
   //#region MOCK
-  /**
-   * 🔥 Carrega todas as conferências simuladas
-   */
-  // loadConferences() {
-  //   this.storageService.getConferences().subscribe(data => {
-  //     this.conferences = data;
-  //   });
-  // }
+
 
   async filterConferences() {
     const filter = {
@@ -641,22 +664,28 @@ export class PhysicalConferenceHeaderComponent {
       centered: false,
     });
 
-    this.conferenceService
-      .getTiposAvarias()
-      .subscribe((ret: ServiceResult<TiposAvarias[]>) => {
+    modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
+
+    modalRef.componentInstance.embalagens = this.tiposEmbalagens;
+
+    if (this.avariasConferencia) {
+      this.reloadAvariaConferencia(this.conferenceService.getCurrentConference().id);
+      modalRef.componentInstance.avariaConferencia = this.avariasConferencia;
+    }
+
+    modalRef.componentInstance.conteiner = this.form.controls['numeroConteiner'].value;
+    modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
+
+    modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
+      this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
-          modalRef.componentInstance.tiposAvarias = ret.result;
+          this.notificationService.showSuccess(ret);
+          
+        } else {
+          this.notificationService.showAlert(ret);
         }
       });
-
-    modalRef.componentInstance.embalagens = [
-      { id: 1, descricao: "Caixa" },
-      { id: 2, descricao: "Saco" },
-    ];
-    modalRef.componentInstance.conteiners = [
-      { id: 101, numero: "CONT-001" },
-      { id: 102, numero: "CONT-002" },
-    ];
+    });
 
     modalRef.result
       .then((dados) => {
@@ -664,7 +693,15 @@ export class PhysicalConferenceHeaderComponent {
           console.log("Avarias salvas:", dados);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
+  }
+
+  reloadAvariaConferencia(id: number) {
+    this.conferenceService.getAvariaConferencia(id).subscribe((response: ServiceResult<AvariaConferencia>) => {
+      if (response.status) {
+        this.avariasConferencia = response.result;
+      }
+    });
   }
 
   /**
@@ -780,6 +817,19 @@ export class PhysicalConferenceHeaderComponent {
       .subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+  }
+
+  //AVARIAS
+  loadAvariasConferencia(idConferencia: number) {
+    this.conferenceService
+      .getAvariaConferencia(idConferencia)
+      .subscribe((ret: ServiceResult<AvariaConferencia>) => {
+        if (ret.status) {
+
         } else {
           this.notificationService.showAlert(ret);
         }

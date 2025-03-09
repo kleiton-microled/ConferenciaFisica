@@ -11,6 +11,8 @@ import { LacresModel } from './models/lacres.model';
 import { TiposDocumentos } from './models/tipos-documentos.model';
 import { DocumentosConferencia } from './models/documentos-conferencia.model';
 import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
+import { AvariaConferencia } from './models/avaria.model';
+import { TiposEmbalagens } from './models/tipos-embalagens.model';
 
 export interface ConferenceContainer {
   display: string;
@@ -466,7 +468,36 @@ export class PhysicalConferenceService {
     this.conferenceSubject.next(updatedConference);
   }
 
+  //EMBALAGENS
+
+  /**
+   * Carrega os tipos de embalagens
+   * @returns 
+   */
+  getTiposEmbalagens(): Observable<ServiceResult<TiposEmbalagens[]>> {
+    this.notificationService.showLoading();
+
+    return this.http.get<ServiceResult<TiposEmbalagens[]>>(`${this.apiUrl}/embalagens/listar`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showAlert(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error); 
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
   //AVARIAS
+  /**
+   * Lista todos os tipos disponiveis de Avarias
+   * @returns TiposAvarias[]
+   */
   getTiposAvarias(): Observable<ServiceResult<TiposAvarias[]>> {
     this.notificationService.showLoading();
 
@@ -486,6 +517,45 @@ export class PhysicalConferenceService {
     );
   }
 
+  /**
+   * Carrega as avarias da conferencia
+   * @param idConferencia 
+   * @returns AvariaConferencia
+   */
+  getAvariaConferencia(idConferencia: number): Observable<ServiceResult<AvariaConferencia>> {
+    //this.notificationService.showLoading();
+    return this.http.get<ServiceResult<AvariaConferencia>>(`${this.apiUrl}/avarias/avarias-conferencia?idConferencia=${idConferencia}`).pipe(
+      map(response => {
+        if (!response.status && response.error) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => '')
+    );
+  }
+
+  saveAvariaConferencia(data: AvariaConferencia): Observable<ServiceResult<boolean>> {
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/avarias/cadastrar-avaria`, data).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
   /**
    * Reseta a conferência para null.
    */
