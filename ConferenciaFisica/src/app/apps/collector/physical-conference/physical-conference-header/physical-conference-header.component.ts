@@ -669,7 +669,6 @@ export class PhysicalConferenceHeaderComponent {
     modalRef.componentInstance.embalagens = this.tiposEmbalagens;
 
     if (this.avariasConferencia) {
-      this.reloadAvariaConferencia(this.conferenceService.getCurrentConference().id);
       modalRef.componentInstance.avariaConferencia = this.avariasConferencia;
     }
 
@@ -680,7 +679,7 @@ export class PhysicalConferenceHeaderComponent {
       this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
-          
+
         } else {
           this.notificationService.showAlert(ret);
         }
