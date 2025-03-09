@@ -10,6 +10,7 @@ export class ActionFooterComponent {
   @Output() startEvent = new EventEmitter<void>();
   @Output() saveEvent = new EventEmitter<void>();
   @Output() cleanupEvent = new EventEmitter<void>();
+  @Output() avariasEvent = new EventEmitter<void>();
 
 
   iniciar(): void {
@@ -23,6 +24,7 @@ export class ActionFooterComponent {
 
   avarias(): void {
     console.log('Avarias acionado');
+    this.avariasEvent.emit();
   }
 
   limpar(): void {

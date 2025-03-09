@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CpfMaskDirective } from './directives/cpf-mask.directive';
+import { AvariasModalComponent } from './avarias/avarias-modal.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    CpfMaskDirective 
+    AvariasModalComponent 
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule
   ]
 })
 export class SharedModule { }

@@ -10,6 +10,7 @@ import { TipoLacre } from './models/tipo-lacre.model';
 import { LacresModel } from './models/lacres.model';
 import { TiposDocumentos } from './models/tipos-documentos.model';
 import { DocumentosConferencia } from './models/documentos-conferencia.model';
+import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
 
 export interface ConferenceContainer {
   display: string;
@@ -463,6 +464,26 @@ export class PhysicalConferenceService {
   updateConference(conference: PhysicalConferenceModel) {
     const updatedConference = { ...conference };
     this.conferenceSubject.next(updatedConference);
+  }
+
+  //AVARIAS
+  getTiposAvarias(): Observable<ServiceResult<TiposAvarias[]>> {
+    this.notificationService.showLoading();
+
+    return this.http.get<ServiceResult<TiposAvarias[]>>(`${this.apiUrl}/avarias/tipos-listar`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showAlert(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error); 
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
   }
 
   /**

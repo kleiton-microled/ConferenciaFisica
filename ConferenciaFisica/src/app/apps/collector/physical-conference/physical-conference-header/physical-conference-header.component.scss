@@ -49,3 +49,13 @@
   min-width: 22px; /* Mantém um tamanho mínimo */
   min-height: 22px;
 }
+
+.modal-90w .modal-dialog {
+  max-width: 90vw; /* 🔹 Define a largura como 90% da tela */
+  height: 90vh; /* 🔹 Define a altura como 90% da tela */
+  margin: auto;
+}
+
+.modal-90w .modal-content {
+  height: 100%;
+}

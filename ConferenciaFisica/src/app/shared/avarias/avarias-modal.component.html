@@ -1,0 +1,108 @@
+<!-- Modal -->
+<div class="modal-header">
+  <h5 class="modal-title">Cadastro de Avarias</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="fecharModal()"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="avariasForm">
+    <div class="row">
+      <!-- Quantidade Avariada -->
+      <div class="col-3">
+        <label for="quantidadeAvariada">Quantidade Avariada</label>
+        <input
+          id="quantidadeAvariada"
+          type="text"
+          class="form-control"
+          formControlName="quantidadeAvariada"
+        />
+      </div>
+
+      <!-- Peso Avariado -->
+      <div class="col-3">
+        <label for="pesoAvariado">Peso Avariado</label>
+        <input
+          id="pesoAvariado"
+          type="text"
+          class="form-control"
+          formControlName="pesoAvariado"
+        />
+      </div>
+
+      <!-- Embalagem -->
+      <div class="col-3">
+        <label for="embalagem">Embalagem</label>
+        <select id="embalagem" class="form-control" formControlName="embalagem">
+          <option *ngFor="let embalagem of embalagens" [value]="embalagem.id">
+            {{ embalagem.descricao }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Contêiner -->
+      <div class="col-3">
+        <label for="conteiner">Contêiner</label>
+        <select id="conteiner" class="form-control" formControlName="conteiner">
+          <option *ngFor="let conteiner of conteiners" [value]="conteiner.id">
+            {{ conteiner.numero }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Drag & Drop de Tipos de Avaria -->
+    <div class="row mt-4">
+      <!-- Tipos de Avarias (Badges Arrastáveis) -->
+      <div class="col-6 dropzone-container">
+        <h5>Tipos de Avarias</h5>
+        <div class="d-flex flex-wrap gap-2 dropzone">
+          <span *ngFor="let tipo of tiposAvarias" 
+                class="badge badge-pill bg-danger p-2 draggable"
+                draggable="true"
+                (dragstart)="onDragStart($event, tipo)">
+            {{ tipo.descricao }}
+          </span>
+        </div>
+      </div>
+
+  <div class="col-6 dropzone-container">
+    <h5>Avarias Selecionadas ("Arraste as avarias para dentro do quadro")</h5>
+    <div class="dropzone-selecionados" (drop)="onDrop($event)" (dragover)="allowDrop($event)">
+      <div class="d-flex flex-wrap gap-2">
+        <span *ngFor="let avaria of avariasSelecionadas" 
+              class="badge badge-pill bg-success p-2">
+          {{ avaria.descricao }}
+          <i class="fas fa-times ms-2" (click)="removerAvaria(avaria)" style="cursor: pointer;"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+    </div>
+
+    <!-- Observação -->
+    <div class="row mt-4">
+      <div class="col-6">
+        <label for="observacao">Observação</label>
+        <textarea
+          id="observacao"
+          class="form-control"
+          formControlName="observacao"
+        ></textarea>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="fecharModal()">
+    Fechar
+  </button>
+  <button type="button" class="btn btn-primary" (click)="salvarAvarias()">
+    Salvar
+  </button>
+</div>

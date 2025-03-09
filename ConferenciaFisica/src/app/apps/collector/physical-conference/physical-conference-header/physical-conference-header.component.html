@@ -1,270 +1,433 @@
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-lg-12 d-flex align-items-center">
-                        <h4 style="font-weight: 100;">Conferência Física de Mercadorias</h4>
-                        <!-- Botão para abrir a modal -->
-                        <button class="btn btn-link p-0 ms-3 custom-btn" (click)="openModal(advancedFilterModal)">
-                            <strong><i class="fas fa-filter"></i> Filtrar</strong>
-                        </button>
-
-                    </div>
-                </div>
-                <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-3">
-                    <div class="row mt-3">
-                        <div class="col-2">
-                            <label for="numeroConteiner">NUMERO CONTEINER</label>
-                            <input id="numeroConteiner" type="text" class="form-control"
-                                formControlName="numeroConteiner">
-                        </div>
-                        <div class="col-2">
-                            <label for="numeroLote">LOTE (BL)</label>
-                            <input id="numeroLote" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-2">
-                            <label for="tipoCarga">TIPO CARGA</label>
-                            <input id="tipoCarga" type="text" class="form-control" formControlName="tipoCarga">
-                        </div>
-                        <div class="col-2">
-                            <label for="viagem">VIAGEM</label>
-                            <input id="viagem" type="text" class="form-control" formControlName="viagem">
-                        </div>
-                        <div class="col-2">
-                            <label for="dataPrevista">Data Prevista</label>
-                            <input id="dataPrevista" type="text" class="form-control" formControlName="dataPrevista">
-                        </div>
-                        <div class="col-2">
-                            <label for="motivoAbertura">MOTIVO ABERTURA</label>
-                            <input id="motivoAbertura" type="text" class="form-control"
-                                formControlName="motivoAbertura">
-                        </div>
-                        <div class="col-2">
-                            <label for="embalagem">EMBALAGEM</label>
-                            <select id="embalagem" class="form-select" formControlName="embalagem">
-                                <option value="0">Selecione</option>
-                                <option value="1">Caixa</option>
-                                <option value="2">Saco</option>
-                            </select>
-                        </div>
-                        <div class="col-2">
-                            <label for="quantidade">QUANTIDADE</label>
-                            <input id="quantidade" type="text" class="form-control" formControlName="quantidade">
-                        </div>
-                    </div>
-
-                    <div class="conferencia-container mt-3">
-                        <div class="row mt-3">
-                            <div class="col-2">
-                                <label for="tipoConferencia">Tipo Conferência</label>
-                                <select id="tipoConferencia" class="form-select" formControlName="tipoConferencia">
-                                    <option value="0">Selecione</option>
-                                    <option value="1">FÍSICA</option>
-                                    <option value="2">REMOTA</option>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <label for="inicioConferencia">Inicio Conferência</label>
-                                <input id="inicioConferencia" type="text" class="form-control"
-                                    formControlName="inicioConferencia">
-                            </div>
-                            <div class="col-2">
-                                <label for="fimConferencia">Fim Conferência</label>
-                                <input id="fimConferencia" type="text" class="form-control"
-                                    formControlName="fimConferencia">
-                            </div>
-                            <div class="col-2">
-                                <label for="cpfCliente">Cpf Cliente</label>
-                                <input id="cpfCliente" type="text" appCpfMask maxlength="14" class="form-control"
-                                    formControlName="cpfCliente">
-                            </div>
-                            <div class="col-2">
-                                <label for="nomeCliente">Nome Cliente</label>
-                                <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente">
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-2">
-                                <label for="retiradaAmostra">Retirada Amostra</label>
-                                <select id="retiradaAmostra" class="form-select" formControlName="retiradaAmostra">
-                                    <option value="0">SIM</option>
-                                    <option value="1">Não</option>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <label for="cpfConferente">Cpf Conferente</label>
-                                <input id="cpfConferente" type="text" appCpfMask maxlength="14" class="form-control"
-                                    formControlName="cpfConferente">
-                            </div>
-                            <div class="col-2">
-                                <label for="nomeConferente">Nome Conferente</label>
-                                <input id="nomeConferente" type="text" class="form-control"
-                                    formControlName="nomeConferente">
-                            </div>
-                            <div class="col-2">
-                                <label for="qtdDocumento">Qtd. Documento</label>
-                                <input id="qtdDocumento" type="text" class="form-control"
-                                    formControlName="qtdDocumento">
-                            </div>
-                            <div class="col-2">
-                                <label for="nomeCliente">Nome Cliente</label>
-                                <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente">
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-2">
-                                <label for="tipoConferencia">Quantidade Divergente?</label>
-                                <select id="quantidadeDivergente" class="form-select"
-                                    formControlName="quantidadeDivergente">
-                                    <option value="0">Selecione</option>
-                                    <option value="1">SIM</option>
-                                    <option value="2">NÃO</option>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <label for="qtdVolumesDivergentes">Qtd. de Volumes Divergentes</label>
-                                <input id="qtdVolumesDivergentes" type="text" class="form-control"
-                                    formControlName="qtdVolumesDivergentes">
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-2 d-flex align-items-end position-relative">
-                                <button class="btn btn-primary w-100 position-relative"
-                                    (click)="abrirModalRepresentantes()">
-                                    Cad. de Representantes
-                                    <span
-                                        class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
-                                        {{ representantes.length }}
-                                    </span>
-                                </button>
-                            </div>
-
-                            <div class="col-2 d-flex align-items-end position-relative">
-                                <button class="btn btn-primary w-100 position-relative"
-                                    (click)="abrirModalAjudantes()">Cadastro de Ajudantes
-                                    <span
-                                        class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
-                                        {{ ajudantes.length }}
-                                    </span></button>
-                            </div>
-
-                            <div class="col-2 d-flex align-items-end position-relative">
-                                <button class="btn btn-primary w-100 position-relative"
-                                    (click)="abrirModalOperadores()">Cadastro de Operadores
-                                    <span
-                                        class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
-                                        {{ operadores.length }}
-                                    </span></button>
-                            </div>
-
-                            <div class="col-2 d-flex align-items-end position-relative">
-                                <button class="btn btn-primary w-100 position-relative"
-                                    (click)="abrirModalDocumentos()">Cad. de Documentos
-                                    <span
-                                        class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
-                                        {{ documentos.length }}
-                                    </span></button>
-                            </div>
-
-                            <div class="col-2 d-flex align-items-end position-relative">
-                                <button type="submit" #btnServicosExecutados
-                                    class="btn btn-servicos-executados mt-3">SERVIÇOS
-                                    EXECUTADOS</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-2">
-                            <label for="divergenciaQualificacao">Divergencia de Qualificação</label>
-                            <select id="divergenciaQualificacao" class="form-select"
-                                formControlName="divergenciaQualificacao">
-                                <option value="0">Selecione</option>
-                                <option value="1">SIM</option>
-                                <option value="2">NÃO</option>
-                            </select>
-                        </div>
-                        <div class="col-2">
-                            <label for="movimentacao">Movimentação</label>
-                            <select id="movimentacao" class="form-select" formControlName="movimentacao">
-                                <option value="0">Selecione</option>
-                                <option value="1">MECÂNICA</option>
-                                <option value="2">MANUAL</option>
-                            </select>
-                        </div>
-                        <div class="col-2">
-                            <label for="desunitizacao">Desunitização</label>
-                            <select id="desunitizacao" class="form-select" formControlName="desunitizacao">
-                                <option value="0">Selecione</option>
-                                <option value="1">SIM</option>
-                                <option value="2">NÃO</option>
-                                <option value="3">PARCIAL</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <app-lacres-form [tiposLacres]="tipolacres"
-                                [lacresConferencia]="lacresConferencia"></app-lacres-form>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-6">
-                            <label for="divergenciaQualificacao">Observação sobre as Divergências</label>
-                            <textarea class="form-control" id="observacaoDivergencias" rows="5"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <app-action-footer (saveEvent)="updatePhysicalConference()"
-                (startEvent)="openModal(advancedFilterModal)"
-                (cleanupEvent)="limparConferenciaAtual()"></app-action-footer>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-lg-12 d-flex align-items-center">
+            <h4 style="font-weight: 100">Conferência Física de Mercadorias</h4>
+            <!-- Botão para abrir a modal -->
+            <button
+              class="btn btn-link p-0 ms-3 custom-btn"
+              (click)="openModal(advancedFilterModal)"
+            >
+              <strong><i class="fas fa-filter"></i> Filtrar</strong>
+            </button>
+          </div>
         </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-3">
+          <div class="row mt-3">
+            <div class="col-2">
+              <label for="numeroConteiner">NUMERO CONTEINER</label>
+              <input
+                id="numeroConteiner"
+                type="text"
+                class="form-control"
+                formControlName="numeroConteiner"
+              />
+            </div>
+            <div class="col-2">
+              <label for="numeroLote">LOTE (BL)</label>
+              <input id="numeroLote" type="text" class="form-control" />
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-2">
+              <label for="tipoCarga">TIPO CARGA</label>
+              <input
+                id="tipoCarga"
+                type="text"
+                class="form-control"
+                formControlName="tipoCarga"
+              />
+            </div>
+            <div class="col-2">
+              <label for="viagem">VIAGEM</label>
+              <input
+                id="viagem"
+                type="text"
+                class="form-control"
+                formControlName="viagem"
+              />
+            </div>
+            <div class="col-2">
+              <label for="dataPrevista">Data Prevista</label>
+              <input
+                id="dataPrevista"
+                type="text"
+                class="form-control"
+                formControlName="dataPrevista"
+              />
+            </div>
+            <div class="col-2">
+              <label for="motivoAbertura">MOTIVO ABERTURA</label>
+              <input
+                id="motivoAbertura"
+                type="text"
+                class="form-control"
+                formControlName="motivoAbertura"
+              />
+            </div>
+            <div class="col-2">
+              <label for="embalagem">EMBALAGEM</label>
+              <select
+                id="embalagem"
+                class="form-select"
+                formControlName="embalagem"
+              >
+                <option value="0">Selecione</option>
+                <option value="1">Caixa</option>
+                <option value="2">Saco</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <label for="quantidade">QUANTIDADE</label>
+              <input
+                id="quantidade"
+                type="text"
+                class="form-control"
+                formControlName="quantidade"
+              />
+            </div>
+          </div>
+
+          <div class="conferencia-container mt-3">
+            <div class="row mt-3">
+              <div class="col-2">
+                <label for="tipoConferencia">Tipo Conferência</label>
+                <select
+                  id="tipoConferencia"
+                  class="form-select"
+                  formControlName="tipoConferencia"
+                >
+                  <option value="0">Selecione</option>
+                  <option value="1">FÍSICA</option>
+                  <option value="2">REMOTA</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="inicioConferencia">Inicio Conferência</label>
+                <input
+                  id="inicioConferencia"
+                  type="text"
+                  class="form-control"
+                  formControlName="inicioConferencia"
+                />
+              </div>
+              <div class="col-2">
+                <label for="fimConferencia">Fim Conferência</label>
+                <input
+                  id="fimConferencia"
+                  type="text"
+                  class="form-control"
+                  formControlName="fimConferencia"
+                />
+              </div>
+              <div class="col-2">
+                <label for="cpfCliente">Cpf Cliente</label>
+                <input
+                  id="cpfCliente"
+                  type="text"
+                  appCpfMask
+                  maxlength="14"
+                  class="form-control"
+                  formControlName="cpfCliente"
+                />
+              </div>
+              <div class="col-2">
+                <label for="nomeCliente">Nome Cliente</label>
+                <input
+                  id="nomeCliente"
+                  type="text"
+                  class="form-control"
+                  formControlName="nomeCliente"
+                />
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-2">
+                <label for="retiradaAmostra">Retirada Amostra</label>
+                <select
+                  id="retiradaAmostra"
+                  class="form-select"
+                  formControlName="retiradaAmostra"
+                >
+                  <option value="0">SIM</option>
+                  <option value="1">Não</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="cpfConferente">Cpf Conferente</label>
+                <input
+                  id="cpfConferente"
+                  type="text"
+                  appCpfMask
+                  maxlength="14"
+                  class="form-control"
+                  formControlName="cpfConferente"
+                />
+              </div>
+              <div class="col-2">
+                <label for="nomeConferente">Nome Conferente</label>
+                <input
+                  id="nomeConferente"
+                  type="text"
+                  class="form-control"
+                  formControlName="nomeConferente"
+                />
+              </div>
+              <div class="col-2">
+                <label for="qtdDocumento">Qtd. Documento</label>
+                <input
+                  id="qtdDocumento"
+                  type="text"
+                  class="form-control"
+                  formControlName="qtdDocumento"
+                />
+              </div>
+              <div class="col-2">
+                <label for="nomeCliente">Nome Cliente</label>
+                <input
+                  id="nomeCliente"
+                  type="text"
+                  class="form-control"
+                  formControlName="nomeCliente"
+                />
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-2">
+                <label for="tipoConferencia">Quantidade Divergente?</label>
+                <select
+                  id="quantidadeDivergente"
+                  class="form-select"
+                  formControlName="quantidadeDivergente"
+                >
+                  <option value="0">Selecione</option>
+                  <option value="1">SIM</option>
+                  <option value="2">NÃO</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="qtdVolumesDivergentes"
+                  >Qtd. de Volumes Divergentes</label
+                >
+                <input
+                  id="qtdVolumesDivergentes"
+                  type="text"
+                  class="form-control"
+                  formControlName="qtdVolumesDivergentes"
+                />
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button
+                  class="btn btn-primary w-100 position-relative"
+                  (click)="abrirModalRepresentantes()"
+                >
+                  Cad. de Representantes
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill"
+                  >
+                    {{ representantes.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button
+                  class="btn btn-primary w-100 position-relative"
+                  (click)="abrirModalAjudantes()"
+                >
+                  Cadastro de Ajudantes
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill"
+                  >
+                    {{ ajudantes.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button
+                  class="btn btn-primary w-100 position-relative"
+                  (click)="abrirModalOperadores()"
+                >
+                  Cadastro de Operadores
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill"
+                  >
+                    {{ operadores.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button
+                  class="btn btn-primary w-100 position-relative"
+                  (click)="abrirModalDocumentos()"
+                >
+                  Cad. de Documentos
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill"
+                  >
+                    {{ documentos.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button
+                  type="submit"
+                  #btnServicosExecutados
+                  class="btn btn-servicos-executados mt-3"
+                >
+                  SERVIÇOS EXECUTADOS
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-2">
+              <label for="divergenciaQualificacao"
+                >Divergencia de Qualificação</label
+              >
+              <select
+                id="divergenciaQualificacao"
+                class="form-select"
+                formControlName="divergenciaQualificacao"
+              >
+                <option value="0">Selecione</option>
+                <option value="1">SIM</option>
+                <option value="2">NÃO</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <label for="movimentacao">Movimentação</label>
+              <select
+                id="movimentacao"
+                class="form-select"
+                formControlName="movimentacao"
+              >
+                <option value="0">Selecione</option>
+                <option value="1">MECÂNICA</option>
+                <option value="2">MANUAL</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <label for="desunitizacao">Desunitização</label>
+              <select
+                id="desunitizacao"
+                class="form-select"
+                formControlName="desunitizacao"
+              >
+                <option value="0">Selecione</option>
+                <option value="1">SIM</option>
+                <option value="2">NÃO</option>
+                <option value="3">PARCIAL</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12">
+              <app-lacres-form
+                [tiposLacres]="tipolacres"
+                [lacresConferencia]="lacresConferencia"
+              ></app-lacres-form>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-6">
+              <label for="divergenciaQualificacao"
+                >Observação sobre as Divergências</label
+              >
+              <textarea
+                class="form-control"
+                id="observacaoDivergencias"
+                rows="5"
+              ></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <app-action-footer
+        (saveEvent)="updatePhysicalConference()"
+        (startEvent)="openModal(advancedFilterModal)"
+        (cleanupEvent)="limparConferenciaAtual()"
+        (avariasEvent)="abrirModalAvarias()"
+      ></app-action-footer>
     </div>
+  </div>
 </div>
 
 <!-- Template da modal -->
 <ng-template #advancedFilterModal let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title">Filtro Avançado</h5>
-        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-        <form>
-            <div class="row">
-                <div class="col-3">
-                    <label for="pesquisa" class="form-label">Pesquisa</label>
-                    <input id="pesquisa" type="text" class="form-control">
-                </div>
-                <div class="col-3">
-                    <label for="conteiner" class="form-label">Conteiner</label>
-                    <select class="form-select" id="conteiner" [(ngModel)]="selectedContainer" name="conteiner">
-                        <option value="0">Selecione</option>
-                        <option *ngFor="let container of containers" [value]="container.autonum">
-                            {{ container.display }}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-3">
-                    <label for="nvocc" class="form-label">Lote</label>
-                    <select class="form-select" id="nvocc" [(ngModel)]="selectedLote" name="nvocc">
-                        <option value="0">Selecione</option>
-                        <option *ngFor="let lote of lotes" [value]="lote.autonum">
-                            {{ lote.display }}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-3">
-                    <label for="numero" class="form-label">Numero</label>
-                    <input id="numero" type="text" class="form-control" [(ngModel)]="selectedNumero" name="numero">
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Fechar</button>
-        <button type="button" class="btn btn-primary" (click)="filterConferences()">Aplicar Filtro</button>
-    </div>
+  <div class="modal-header">
+    <h5 class="modal-title">Filtro Avançado</h5>
+    <button
+      type="button"
+      class="btn-close"
+      (click)="closeModal()"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col-3">
+          <label for="pesquisa" class="form-label">Pesquisa</label>
+          <input id="pesquisa" type="text" class="form-control" />
+        </div>
+        <div class="col-3">
+          <label for="conteiner" class="form-label">Conteiner</label>
+          <select
+            class="form-select"
+            id="conteiner"
+            [(ngModel)]="selectedContainer"
+            name="conteiner"
+          >
+            <option value="0">Selecione</option>
+            <option
+              *ngFor="let container of containers"
+              [value]="container.autonum"
+            >
+              {{ container.display }}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="nvocc" class="form-label">Lote</label>
+          <select
+            class="form-select"
+            id="nvocc"
+            [(ngModel)]="selectedLote"
+            name="nvocc"
+          >
+            <option value="0">Selecione</option>
+            <option *ngFor="let lote of lotes" [value]="lote.autonum">
+              {{ lote.display }}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="numero" class="form-label">Numero</label>
+          <input
+            id="numero"
+            type="text"
+            class="form-control"
+            [(ngModel)]="selectedNumero"
+            name="numero"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">
+      Fechar
+    </button>
+    <button type="button" class="btn btn-primary" (click)="filterConferences()">
+      Aplicar Filtro
+    </button>
+  </div>
 </ng-template>

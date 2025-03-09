@@ -9,6 +9,7 @@ import { ActionFooterComponent } from "./action-footer/action-footer.component";
 import { CpfMaskDirective } from "src/app/shared/directives/cpf-mask.directive";
 import { GenericFormComponent } from "./generic-form/generic-form.component";
 import { DocumentosComponent } from "./documentos/documentos.component";
+import { SharedModule } from "src/app/shared/shared.module";
 
 @NgModule({
   declarations: [PhysicalConferenceComponent,

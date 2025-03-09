@@ -1,0 +1,48 @@
+.draggable {
+    cursor: grab;
+    user-select: none;
+  }
+  
+  .droppable {
+    min-height: 150px;
+    background: #f8f9fa;
+    border: 2px dashed #ccc;
+    padding: 10px;
+  }
+  
+  .badge {
+    cursor: grab;
+    user-select: none;
+  }
+  
+  .badge:hover {
+    opacity: 0.8;
+  }
+  
+  .draggable {
+    cursor: grab;
+  }
+  
+  .dropzone-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dropzone {
+    height: 100px; /* Altura fixa */
+    overflow-y: auto; /* Ativa a rolagem quando necessário */
+    //background-color: #f8f9fa;
+    //border: 2px dashed #fc4040;
+    //border-radius: 5px;
+    padding: 10px;
+  }
+
+  .dropzone-selecionados {
+    height: 150px; /* Altura fixa */
+    overflow-y: auto; /* Ativa a rolagem quando necessário */
+    background-color: #f8f9fa;
+    border: 2px dashed #40fcb1;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  
