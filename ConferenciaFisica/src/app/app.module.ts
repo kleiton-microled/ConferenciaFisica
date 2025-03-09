@@ -9,21 +9,31 @@ import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { FakeBackendProvider } from './core/helpers/fake-backend';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
 import { LayoutModule } from './layout/layout.module';
+import { NgbDatepickerPtDirective } from './shared/directives/ngb-datepicker-pt.directive';
+import { NgbDateParserFormatter, NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
+import { CustomDatepickerI18n, I18n } from './shared/directives/ngb-datepicker-i18n';
+import { CustomDatepickerFormatter } from './shared/directives/custom-datepicker-formatter';
 
-@NgModule({ declarations: [
-        AppComponent
+@NgModule({
+    declarations: [
+        AppComponent,
+        NgbDatepickerPtDirective
+
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         JoyrideModule.forRoot(),
         SweetAlert2Module.forRoot(),
         AppRoutingModule,
         LayoutModule], providers: [
-        Title,
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        { provide: 'BASE_API_URL', useValue: 'https://api.conferencia-fisica.com.br/api/Service' },
-        // provider used to create fake backend
-        FakeBackendProvider,
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
+            Title,
+            { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+            { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+            { provide: 'BASE_API_URL', useValue: 'https://api.conferencia-fisica.com.br/api/Service' },
+            { provide: NgbDatepickerI18n, useClass: CustomDatepickerI18n }, I18n,
+            { provide: NgbDateParserFormatter, useClass: CustomDatepickerFormatter },
+            // provider used to create fake backend
+            FakeBackendProvider,
+            provideHttpClient(withInterceptorsFromDi()),
+        ]
+})
 export class AppModule { }

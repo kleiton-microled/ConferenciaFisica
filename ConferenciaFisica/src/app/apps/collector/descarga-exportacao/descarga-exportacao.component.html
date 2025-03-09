@@ -1,1 +1,112 @@
-<p>descarga-exportacao works!</p>
+<app-page-title [breadcrumbItems]="pageTitle" title=""></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Descarga Exportação</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <!-- Row 1 -->
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="registro">Registro</label>
+                            <input id="registro" type="text" class="form-control" formControlName="registro">
+                        </div>
+                        <div class="col-3 position-relative">
+                            <label for="inicio">Início</label>
+                            <div class="input-group">
+                                <input id="inicio" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
+                                    #d1="ngbDatepicker" appNgbDatepickerPt formControlName="inicio">
+                                <button class="btn btn-outline-secondary" (click)="d1.toggle()" type="button">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" *ngIf="form.controls['inicio'].value"
+                                    (click)="limparData('inicio')" type="button">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <ng-template #footerTemplate>
+                                <div class="d-flex justify-content-end p-2">
+                                    <button class="btn btn-sm btn-danger" (click)="limparData('inicio')">Limpar
+                                        Data</button>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <div class="col-3 position-relative">
+                            <label for="termino">Término</label>
+                            <div class="input-group">
+                                <input id="termino" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
+                                    #d2="ngbDatepicker" appNgbDatepickerPt formControlName="termino">
+                                <button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" *ngIf="form.controls['termino'].value"
+                                    (click)="limparData('termino')" type="button">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <ng-template #footerTemplate>
+                                <div class="d-flex justify-content-end p-2">
+                                    <button class="btn btn-sm btn-danger" (click)="limparData('termino')">Limpar
+                                        Data</button>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="col-3">
+                            <label for="talie">Talie</label>
+                            <input id="talie" type="text" class="form-control" formControlName="talie">
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="placa">Placa</label>
+                            <input id="placa" type="text" class="form-control" formControlName="placa">
+                        </div>
+                        <div class="col-3">
+                            <label for="reserva">Reserva</label>
+                            <input id="reserva" type="text" class="form-control" formControlName="reserva">
+                        </div>
+                        <div class="col-3">
+                            <label for="cliente">Cliente</label>
+                            <input id="cliente" type="text" class="form-control" formControlName="cliente">
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="conferente">Conferente</label>
+                            <input id="conferente" type="text" class="form-control" formControlName="conferente">
+                        </div>
+                        <div class="col-4">
+                            <label for="equipe">Equipe</label>
+                            <select id="equipe" class="form-select" formControlName="equipe">
+                                <option *ngFor="let equipe of equipes" [value]="equipe">{{ equipe }}</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label for="operacao">Operação</label>
+                            <select id="operacao" class="form-select" formControlName="operacao">
+                                <option *ngFor="let operacao of operacoes" [value]="operacao">{{ operacao }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="row">
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-primary me-2" (click)="buscar()">Buscar</button>
+                            <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
