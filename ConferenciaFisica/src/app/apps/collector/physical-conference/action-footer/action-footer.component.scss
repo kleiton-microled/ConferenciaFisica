@@ -123,4 +123,15 @@
     transform: scale(0.95);
   }
   
+  .disabled-btn {
+    background-color: #d6d6d6 !important;
+    color: #808080 !important;
+    border: none;
+    cursor: not-allowed;
+  
+    i {
+      color: #808080 !important;
+    }
+  }
+  
   

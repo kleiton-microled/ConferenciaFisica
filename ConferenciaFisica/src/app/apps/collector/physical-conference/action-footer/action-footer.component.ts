@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-action-footer',
@@ -7,45 +7,63 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class ActionFooterComponent {
 
+  // Recebe um objeto do pai para controlar quais botões ficam habilitados
+  @Input() buttonsState: { [key: string]: boolean } = {};
+
   @Output() startEvent = new EventEmitter<void>();
   @Output() saveEvent = new EventEmitter<void>();
   @Output() cleanupEvent = new EventEmitter<void>();
   @Output() avariasEvent = new EventEmitter<void>();
 
-
   iniciar(): void {
-    console.log('Início acionado');
-    this.startEvent.emit();
+    if (this.buttonsState['start']) {
+      console.log('Início acionado');
+      this.startEvent.emit();
+    }
   }
 
   terminar(): void {
-    console.log('Término acionado');
+    if (this.buttonsState['stop']) {
+      console.log('Término acionado');
+    }
   }
 
   avarias(): void {
-    console.log('Avarias acionado');
-    this.avariasEvent.emit();
+    if (this.buttonsState['alert']) {
+      console.log('Avarias acionado');
+      this.avariasEvent.emit();
+    }
   }
 
   limpar(): void {
-    console.log('Limpar acionado');
-    this.cleanupEvent.emit();
+    if (this.buttonsState['clear']) {
+      console.log('Limpar acionado');
+      this.cleanupEvent.emit();
+    }
   }
 
   sair(): void {
-    console.log('Sair acionado');
+    if (this.buttonsState['exit']) {
+      console.log('Sair acionado');
+    }
   }
 
   gravar(): void {
-    console.log('Gravar acionado');
-    this.saveEvent.emit();
+    if (this.buttonsState['save']) {
+      console.log('Gravar acionado');
+      this.saveEvent.emit();
+    }
   }
 
   excluir(): void {
-    console.log('Excluir acionado');
+    if (this.buttonsState['delete']) {
+      console.log('Excluir acionado');
+    }
   }
 
   fotosContainer(): void {
-    console.log('Fotos Container acionado');
+    if (this.buttonsState['photo']) {
+      console.log('Fotos Container acionado');
+    }
   }
 }

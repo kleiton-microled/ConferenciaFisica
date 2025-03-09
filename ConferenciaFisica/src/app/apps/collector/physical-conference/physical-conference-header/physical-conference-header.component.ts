@@ -47,6 +47,16 @@ export class PhysicalConferenceHeaderComponent {
   lacresConferencia: LacresModel[] = [];
 
   conferences: PhysicalConferenceModel[] = [];
+  footerButtonsState = {
+    start: true,
+    stop: false,   // Botão de término desativado
+    alert: false,
+    clear: false,  // Botão de limpar desativado
+    exit: true,
+    save: false,
+    delete: false, // Excluir desativado
+    photo: true
+  };
 
   //SUBS
   private conferenceSubscription!: Subscription;
@@ -353,6 +363,7 @@ export class PhysicalConferenceHeaderComponent {
     this.documentos = [];
     this.operadores = [];
     this.ajudantes = [];
+    this.avariasConferencia = null;
   }
 
   applyFilter(): void {
