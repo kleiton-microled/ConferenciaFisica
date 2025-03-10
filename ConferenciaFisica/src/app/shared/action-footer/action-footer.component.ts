@@ -7,73 +7,79 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ActionFooterComponent {
 
-  // Recebe um objeto do pai para controlar quais botões ficam habilitados
-  @Input() buttonsState: { [key: string]: boolean } = {};
-
-  // @Input() btnInicioEnable: boolean = false;
-  // @Input() btnTerminoEnable: boolean = false;
-  // @Input() btnAvariasEnable: boolean = false;
-  // @Input() btnLimparEnable: boolean = false;
-  // @Input() btnSairEnable: boolean = false;
-  // @Input() btnGravarEnable: boolean = false;
-  // @Input() btnExcluirEnable: boolean = false;
-  // @Input() btnFotosEnable: boolean = false;
-
+  // Agora o objeto de estado inclui também uma propriedade para controlar a visibilidade dos botões
+  @Input() buttonsState: { [key: string]: { enabled: boolean, visible: boolean } } = {};
 
   @Output() startEvent = new EventEmitter<void>();
   @Output() saveEvent = new EventEmitter<void>();
   @Output() cleanupEvent = new EventEmitter<void>();
   @Output() avariasEvent = new EventEmitter<void>();
+  @Output() marcanteEvent = new EventEmitter<void>();
+  @Output() observacaoEvent = new EventEmitter<void>();
 
   iniciar(): void {
-    if (this.buttonsState['start']) {
+    if (this.buttonsState['start']?.enabled) {
       console.log('Início acionado');
       this.startEvent.emit();
     }
   }
 
   terminar(): void {
-    if (this.buttonsState['stop']) {
+    if (this.buttonsState['stop']?.enabled) {
       console.log('Término acionado');
     }
   }
 
   avarias(): void {
-    if (this.buttonsState['alert']) {
+    if (this.buttonsState['alert']?.enabled) {
       console.log('Avarias acionado');
       this.avariasEvent.emit();
     }
   }
 
   limpar(): void {
-    if (this.buttonsState['clear']) {
+    if (this.buttonsState['clear']?.enabled) {
       console.log('Limpar acionado');
       this.cleanupEvent.emit();
     }
   }
 
   sair(): void {
-    if (this.buttonsState['exit']) {
+    if (this.buttonsState['exit']?.enabled) {
       console.log('Sair acionado');
     }
   }
 
   gravar(): void {
-    if (this.buttonsState['save']) {
+    if (this.buttonsState['save']?.enabled) {
       console.log('Gravar acionado');
       this.saveEvent.emit();
     }
   }
 
   excluir(): void {
-    if (this.buttonsState['delete']) {
+    if (this.buttonsState['delete']?.enabled) {
       console.log('Excluir acionado');
     }
   }
 
   fotosContainer(): void {
-    if (this.buttonsState['photo']) {
+    if (this.buttonsState['photo']?.enabled) {
       console.log('Fotos Container acionado');
+    }
+  }
+
+  marcante(): void {
+    if (this.buttonsState['marcante']?.enabled) {
+      console.log('Marcante acionado');
+      this.marcanteEvent.emit();
+    }
+  }
+
+  observacao(): void {
+    if (this.buttonsState['observacao']?.enabled) {
+      console.log('Observação acionado');
+      this.observacaoEvent.emit();
     }
   }
 }

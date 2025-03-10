@@ -8,7 +8,6 @@ import {
 } from "../physical-conference.service";
 import { NotificationService } from "src/app/shared/services/notification.service";
 import { ServiceResult } from "src/app/shared/models/serviceresult.model";
-import { CONTEINERS } from "../mock/data";
 import { PhysicalConferenceStorageService } from "../physical-conference-storage.service";
 import { PhysicalConferenceModel } from "../models/physical-conference.model";
 import {
@@ -47,26 +46,37 @@ export class PhysicalConferenceHeaderComponent {
   lacresConferencia: LacresModel[] = [];
 
   conferences: PhysicalConferenceModel[] = [];
-  footerButtonsState: Record<string, boolean> = {
-    start: true,
-    stop: false,
-    alert: false,
-    clear: false,
-    exit: true,
-    save: false,
-    delete: false,
-    photo: true
-  };
+  footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
+    start: { enabled: true, visible: true },
+    stop: { enabled: false, visible: true },
+    alert: { enabled: false, visible: true },
+    clear: { enabled: false, visible: true },
+    exit: { enabled: true, visible: true },
+    save: { enabled: false, visible: true },
+    delete: { enabled: false, visible: true },
+    photo: { enabled: true, visible: true },
+    marcante: { enabled: false, visible: false },
+    observacao: { enabled: false, visible: false}
+};
 
-  atualizarBotoes(botoes: { nome: string; state: boolean }[]): void {
-    const novoEstado = { ...this.footerButtonsState };
-    botoes.forEach(botao => {
-      if (botao.nome in novoEstado) {
-        novoEstado[botao.nome] = botao.state;
+
+atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+  const novoEstado = { ...this.footerButtonsState };
+
+  botoes.forEach(botao => {
+      if (novoEstado[botao.nome]) {
+          if (botao.enabled !== undefined) {
+              novoEstado[botao.nome].enabled = botao.enabled;
+          }
+          if (botao.visible !== undefined) {
+              novoEstado[botao.nome].visible = botao.visible;
+          }
       }
-    });
-    this.footerButtonsState = novoEstado;
-  }
+  });
+
+  this.footerButtonsState = novoEstado;
+}
+
 
   //Botoes Modais Enabled
   isDisableBtnModal: boolean = true;
@@ -382,11 +392,13 @@ export class PhysicalConferenceHeaderComponent {
     this.avariasConferencia = null;
     this.isDisableBtnModal = true;
     this.atualizarBotoes([
-      { nome: 'stop', state: false },
-      { nome: 'alert', state: false },
-      { nome: 'start', state: true },
-      { nome: 'clear', state: false },
-      { nome: 'delete', state: false }
+      { nome: 'stop', enabled: false , visible:true},
+      { nome: 'alert', enabled: false , visible:true},
+      { nome: 'start', enabled: true , visible:true},
+      { nome: 'clear', enabled: false , visible:true},
+      { nome: 'delete', enabled: false , visible:true},
+      { nome: 'marcante', enabled: false, visible:false },
+      { nome: 'observacao', enabled: false, visible:false },
     ]);
   }
 
@@ -466,13 +478,15 @@ export class PhysicalConferenceHeaderComponent {
           } else {
             let infoResponse = "Conferência encontrada, abrindo para edição?";
             this.atualizarBotoes([
-              { nome: 'stop', state: true },
-              { nome: 'alert', state: true },
-              { nome: 'start', state: false },
-              { nome: 'clear', state: true },
-              { nome: 'exit', state: true },
-              { nome: 'delete', state: true },
-              { nome: 'save', state: true }
+              { nome: 'stop', enabled: true, visible:true },
+              { nome: 'alert', enabled: true, visible: true },
+              { nome: 'start', enabled: false , visible: true},
+              { nome: 'clear', enabled: true , visible: true},
+              { nome: 'exit', enabled: true , visible: true},
+              { nome: 'delete', enabled: true , visible: true},
+              { nome: 'save', enabled: true , visible: true},
+              { nome: 'observacao', enabled: false , visible: false},
+              { nome: 'marcante', enabled: false , visible: false}
             ]);
 
             this.isDisableBtnModal = false;

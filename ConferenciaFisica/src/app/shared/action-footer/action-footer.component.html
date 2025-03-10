@@ -1,0 +1,81 @@
+<div class="footer-container">
+  <button *ngIf="buttonsState['start'].visible"
+          class="win10-tile start" 
+          (click)="iniciar()" 
+          [disabled]="!buttonsState['start'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['start'].enabled}">
+    <i class="fas fa-play"></i> Início
+  </button>
+
+  <button *ngIf="buttonsState['stop'].visible"
+          class="win10-tile stop" 
+          (click)="terminar()" 
+          [disabled]="!buttonsState['stop'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['stop'].enabled}">
+    <i class="fas fa-stop"></i> Término
+  </button>
+
+  <button *ngIf="buttonsState['alert'].visible"
+          class="win10-tile alert" 
+          (click)="avarias()" 
+          [disabled]="!buttonsState['alert'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['alert'].enabled}">
+    <i class="fas fa-exclamation-triangle"></i> Avarias
+  </button>
+
+  <button *ngIf="buttonsState['clear'].visible"
+          class="win10-tile clear" 
+          (click)="limpar()" 
+          [disabled]="!buttonsState['clear'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['clear'].enabled}">
+    <i class="fas fa-eraser"></i> Limpar
+  </button>
+
+  <button *ngIf="buttonsState['save'].visible"
+          class="win10-tile save" 
+          (click)="gravar()" 
+          [disabled]="!buttonsState['save'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['save'].enabled}">
+    <i class="fas fa-save"></i> Gravar
+  </button>
+
+  <button *ngIf="buttonsState['delete'].visible"
+          class="win10-tile delete" 
+          (click)="excluir()" 
+          [disabled]="!buttonsState['delete'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['delete'].enabled}">
+    <i class="fas fa-trash-alt"></i> Excluir
+  </button>
+
+  <button *ngIf="buttonsState['photo'].visible"
+          class="win10-tile photo" 
+          (click)="fotosContainer()" 
+          [disabled]="!buttonsState['photo'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['photo'].enabled}">
+    <i class="fas fa-camera"></i> Fotos
+  </button>
+
+  <button *ngIf="buttonsState['marcante'].visible"
+          class="win10-tile marcante" 
+          (click)="marcante()" 
+          [disabled]="!buttonsState['marcante'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['marcante'].enabled}">
+    <i class="fas fa-flag"></i> Marcante
+  </button>
+
+  <button *ngIf="buttonsState['observacao'].visible"
+          class="win10-tile observacao" 
+          (click)="observacao()" 
+          [disabled]="!buttonsState['observacao'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['observacao'].enabled}">
+    <i class="fas fa-comment"></i> Observação
+  </button>
+
+  <button *ngIf="buttonsState['exit'].visible"
+          class="win10-tile exit" 
+          (click)="sair()" 
+          [disabled]="!buttonsState['exit'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['exit'].enabled}">
+    <i class="fas fa-sign-out-alt"></i> Sair
+  </button>
+</div>

@@ -85,18 +85,21 @@
                             <input id="conferente" type="text" class="form-control" formControlName="conferente">
                         </div>
                         <div class="col-4">
-                            <label for="equipe">Equipe</label>
-                            <select id="equipe" class="form-select" formControlName="equipe">
-                                <option *ngFor="let equipe of equipes" [value]="equipe">{{ equipe }}</option>
-                            </select>
+                            <app-microled-select label="Selecione a Equipe" [items]="listEquipes"
+                                [control]="equipeControl" (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
                         </div>
                         <div class="col-4">
-                            <label for="operacao">Operação</label>
-                            <select id="operacao" class="form-select" formControlName="operacao">
-                                <option *ngFor="let operacao of operacoes" [value]="operacao">{{ operacao }}</option>
-                            </select>
+                            <app-microled-select label="Selecione a Operação" [items]="listOperacoes"
+                                [control]="operacaoControl" (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
                         </div>
                     </div>
+                    <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
+                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="false"
+                        [isSearchable]="false" (search)="''" [isSortable]="false" tableClasses="table-centered"
+                        theadClasses="table-light">
+                    </app-advanced-table>
 
                     <!-- Botões -->
                     <div class="row">
@@ -107,6 +110,78 @@
                     </div>
                 </form>
             </div>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="''" (startEvent)="''"
+                (cleanupEvent)="''" (avariasEvent)="abrirModalAvarias()" (observacaoEvent)="abrirModal(observacaoModal)"
+                (marcanteEvent)="abrirModalMarcante(marcanteModal)"></app-action-footer>
         </div>
     </div>
 </div>
+
+<!-- Template da Modal Observacao -->
+<ng-template #observacaoModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Adicionar Observação</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="observacaoForm">
+            <div class="mb-3">
+                <label for="observacao" class="form-label">Observação:</label>
+                <textarea id="observacao" class="form-control" rows="8" formControlName="observacao"></textarea>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarObservacao(); modal.close()">Salvar</button>
+    </div>
+</ng-template>
+
+<!-- Template da Modal Marcante-->
+<ng-template #marcanteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Adicionar Marcante</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+  
+    <div class="modal-body">
+      <form [formGroup]="marcanteForm">
+        <div class="row">
+          <!-- Marcante -->
+          <div class="col-3">
+            <label for="marcante" class="form-label">Marcante:</label>
+            <input type="text" id="marcante" class="form-control" formControlName="marcante">
+          </div>
+  
+          <!-- Quantidade -->
+          <div class="col-3">
+            <label for="quantidade" class="form-label">Quantidade:</label>
+            <input type="number" id="quantidade" class="form-control" formControlName="quantidade">
+          </div>
+  
+          <!-- Armazém -->
+          <div class="col-3">
+            <label for="armazem" class="form-label">Armazém:</label>
+            <select id="armazem" class="form-select" formControlName="armazem">
+              <option value="">Selecione</option>
+              <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.nome }}</option>
+            </select>
+          </div>
+  
+          <!-- Local -->
+          <div class="col-3">
+            <label for="local" class="form-label">Local:</label>
+            <input type="text" id="local" class="form-control" formControlName="local">
+          </div>
+        </div>
+      </form>
+    </div>
+  
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+      <button type="button" class="btn btn-primary" (click)="salvarMarcante(); modal.close()">Salvar</button>
+    </div>
+  </ng-template>
+  

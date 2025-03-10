@@ -13,6 +13,7 @@ import { NgbDatepickerPtDirective } from './shared/directives/ngb-datepicker-pt.
 import { NgbDateParserFormatter, NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
 import { CustomDatepickerI18n, I18n } from './shared/directives/ngb-datepicker-i18n';
 import { CustomDatepickerFormatter } from './shared/directives/custom-datepicker-formatter';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,9 @@ import { CustomDatepickerFormatter } from './shared/directives/custom-datepicker
         NgbDatepickerPtDirective
 
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
         JoyrideModule.forRoot(),
         SweetAlert2Module.forRoot(),
         AppRoutingModule,
