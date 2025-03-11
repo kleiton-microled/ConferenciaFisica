@@ -7,6 +7,10 @@ import { DescargaExportacaoItens } from './models/descarga-exportacao-itens.mode
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AvariasModalComponent } from 'src/app/shared/avarias/avarias-modal.component';
 import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
+import { DescargaExportacaoService } from './descarga-exportacao.service';
+import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
+import { DescargaExportacao } from './models/descarga-exportacao.model';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -72,7 +76,11 @@ export class DescargaExportacaoComponent implements OnInit {
   { id: 1, notaFiscal: '9988788-0', item: 9987, embalagem: 'VOLUME', quantidadeNf: 1, quantidadeDescarregada: 1 }
   ];
 
-  constructor(private fb: FormBuilder, private sanitizer: DomSanitizer, private modalService: NgbModal) {
+  constructor(private fb: FormBuilder, 
+    private service: DescargaExportacaoService, 
+    private notificatioService: NotificationService,
+    private sanitizer: DomSanitizer, 
+    private modalService: NgbModal) {
     this.form = this.fb.group({
       registro: new FormControl('', Validators.required),
       inicio: new FormControl(null, Validators.required),
@@ -209,42 +217,54 @@ export class DescargaExportacaoComponent implements OnInit {
   /**
      * Modal Avarias
      */
-    abrirModalAvarias() {
-      const modalRef = this.modalService.open(AvariasModalComponent, {
-        size: "xl",
-        backdrop: "static",
-        centered: false,
-      });
-  
-      modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
-  
-      modalRef.componentInstance.embalagens = [];
-  
-      
-        modalRef.componentInstance.avariaConferencia = null;
-      
-  
-      //modalRef.componentInstance.conteiner = this.form.controls['numeroConteiner'].value;
-      //modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
-  
-      // modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
-      //   this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
-      //     if (ret.status) {
-      //       this.notificationService.showSuccess(ret);
-  
-      //     } else {
-      //       this.notificationService.showAlert(ret);
-      //     }
-      //   });
-      // });
-  
-      modalRef.result
-        .then((dados) => {
-          if (dados) {
-            console.log("Avarias salvas:", dados);
-          }
-        })
-        .catch(() => { });
-    }
+  abrirModalAvarias() {
+    const modalRef = this.modalService.open(AvariasModalComponent, {
+      size: "xl",
+      backdrop: "static",
+      centered: false,
+    });
+
+    modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
+
+    modalRef.componentInstance.embalagens = [];
+
+
+    modalRef.componentInstance.avariaConferencia = null;
+
+
+    //modalRef.componentInstance.conteiner = this.form.controls['numeroConteiner'].value;
+    //modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
+
+    // modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
+    //   this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
+    //     if (ret.status) {
+    //       this.notificationService.showSuccess(ret);
+
+    //     } else {
+    //       this.notificationService.showAlert(ret);
+    //     }
+    //   });
+    // });
+
+    modalRef.result
+      .then((dados) => {
+        if (dados) {
+          console.log("Avarias salvas:", dados);
+        }
+      })
+      .catch(() => { });
+  }
+
+  //#region SERVICE
+  buscarRegistro(registro: number) {
+    this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
+      if(ret.status){
+        console.log(ret.result);
+      }else{
+        this.notificatioService.showAlert(ret);
+      }
+    });
+  }
+  //#endregion SERVICE
 
 }

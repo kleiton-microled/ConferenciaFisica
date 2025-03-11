@@ -1,12 +1,16 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { NotificationService } from "src/app/shared/services/notification.service";
+import { DescargaExportacao } from "./models/descarga-exportacao.model";
+import { BaseService } from "src/app/Http/base-service";
+import { DESCARGA_EXPORTACAO_URL } from "src/app/Http/Config/config";
 
 @Injectable({
     providedIn: 'root'
 })
-export class DescargaExportacaoService {
-    constructor(private http: HttpClient, private notificationService: NotificationService) { }
+export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
 
-    
+    constructor(http: HttpClient) {
+        super(http, DESCARGA_EXPORTACAO_URL);
+    }
+
 }

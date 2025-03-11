@@ -16,5 +16,13 @@ export const TOOLS: ToolsModel[] = [
       "Conferência física",
     version: 1,
     link: "apps/collector/physical-conference",
+  },
+  {
+    id: 3,
+    title: "Pré Registro",
+    description:
+      "Modulo de pré registro",
+    version: 1,
+    link: "apps/collector/physical-conference",
   }
 ];

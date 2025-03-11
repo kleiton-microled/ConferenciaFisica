@@ -1,0 +1,6 @@
+{
+    "apiBaseUrl": "https://",
+    "authServiceUrl": "https://auth.meusistema.com",
+    "paymentServiceUrl": "https://payments.meusistema.com"
+  }
+  

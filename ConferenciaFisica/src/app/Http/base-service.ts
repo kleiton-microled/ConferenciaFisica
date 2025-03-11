@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { OperationResult, Result } from './models/operation-result.model';
 import { GetAllRequest } from './models/Input/get-all-request.model';
 import { GetAllResponse } from './models/Output/get-all-response.model';
+import { ServiceResult } from '../shared/models/serviceresult.model';
 
 @Injectable({
     providedIn: 'root'
@@ -25,8 +26,8 @@ export class BaseService<T> {
     }
 
     // GET: Buscar por ID
-    findById(id: number | string): Observable<Result<T>> {
-        return this.http.get<Result<T>>(`${this.baseUrl}/${id}`);
+    findById(id: number | string): Observable<ServiceResult<T>> {
+        return this.http.get<ServiceResult<T>>(`${this.baseUrl}/${id}`);
     }
 
     findByFilter(filter: Record<string, any>): Observable<Result<T[]>> {

@@ -7,7 +7,7 @@ export const TOOLS_URL = 'https://api.conferencia-fisica.com.br/api/Bootstrap';
 export const ORDERS_URL = 'https://api.conferencia-fisica.com.br/api/orders';
 export const AUTH_URL = 'https://api.conferencia-fisica.com.br/api/auth';
 
-export const CONTEINER_URL = 'https://localhost:5000/api/Conferencia/conteineres';
+export const DESCARGA_EXPORTACAO_URL = 'https://localhost:5000/api/descarga-exportacao';
 
 export const MODULE_URLS = {
   customers: CUSTOMER_URL,
@@ -16,5 +16,5 @@ export const MODULE_URLS = {
   tools: TOOLS_URL,
   orders: ORDERS_URL,
   auth: AUTH_URL,
-  conteiner: CONTEINER_URL
+  conteiner: DESCARGA_EXPORTACAO_URL
 };
