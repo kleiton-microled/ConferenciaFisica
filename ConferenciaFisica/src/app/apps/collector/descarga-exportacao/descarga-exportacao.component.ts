@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { DescargaExportacaoItens } from './models/descarga-exportacao-itens.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AvariasModalComponent } from 'src/app/shared/avarias/avarias-modal.component';
 import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
 import { DescargaExportacaoService } from './descarga-exportacao.service';
@@ -12,14 +12,20 @@ import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { DescargaExportacao } from './models/descarga-exportacao.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
+import { Subscription } from 'rxjs';
+import { TalieItem } from '../models/talie-item.model';
 
 @Component({
   selector: 'app-descarga-exportacao',
   templateUrl: './descarga-exportacao.component.html',
   styleUrls: ['./descarga-exportacao.component.scss']
 })
-export class DescargaExportacaoComponent implements OnInit {
+export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   pageTitle: BreadcrumbItem[] = [];
+
+  private subscription!: Subscription;
+  descargaAtual!: DescargaExportacao | null;
+
   form: FormGroup;
   observacaoForm: FormGroup;
 
@@ -41,49 +47,29 @@ export class DescargaExportacaoComponent implements OnInit {
   tiposAvarias: TiposAvarias[] = [];
 
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
-    start: { enabled: true, visible: true },
+    start: { enabled: false, visible: false },
     stop: { enabled: false, visible: true },
-    alert: { enabled: true, visible: true },
+    alert: { enabled: false, visible: true },
     clear: { enabled: false, visible: true },
     exit: { enabled: true, visible: true },
     save: { enabled: false, visible: true },
     delete: { enabled: false, visible: true },
-    photo: { enabled: true, visible: true },
-    marcante: { enabled: true, visible: true },
-    observacao: { enabled: true, visible: true }
+    photo: { enabled: false, visible: true },
+    marcante: { enabled: false, visible: true },
+    observacao: { enabled: false, visible: true }
   };
-
-
-  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
-    const novoEstado = { ...this.footerButtonsState };
-
-    botoes.forEach(botao => {
-      if (novoEstado[botao.nome]) {
-        if (botao.enabled !== undefined) {
-          novoEstado[botao.nome].enabled = botao.enabled;
-        }
-        if (botao.visible !== undefined) {
-          novoEstado[botao.nome].visible = botao.visible;
-        }
-      }
-    });
-
-    this.footerButtonsState = novoEstado;
-  }
 
   columns: Column[] = [];
   @ViewChild("advancedTable") advancedTable: any;
-  itensList: DescargaExportacaoItens[] = [{ id: 1, notaFiscal: '9988788-0', item: 9987, embalagem: 'VOLUME', quantidadeNf: 1, quantidadeDescarregada: 1 },
-  { id: 1, notaFiscal: '9988788-0', item: 9987, embalagem: 'VOLUME', quantidadeNf: 1, quantidadeDescarregada: 1 }
-  ];
+  itensList: TalieItem[] = [];
 
-  constructor(private fb: FormBuilder, 
-    private service: DescargaExportacaoService, 
+  constructor(private fb: FormBuilder,
+    private service: DescargaExportacaoService,
     private notificatioService: NotificationService,
-    private sanitizer: DomSanitizer, 
+    private sanitizer: DomSanitizer,
     private modalService: NgbModal) {
     this.form = this.fb.group({
-      registro: new FormControl('', Validators.required),
+      id: new FormControl('', Validators.required),
       inicio: new FormControl(null, Validators.required),
       termino: new FormControl(null, Validators.required),
       talie: new FormControl('', Validators.required),
@@ -109,16 +95,60 @@ export class DescargaExportacaoComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.service.iniciarDescarga();
+
+    /**
+     * Atualiza o form com o resultada da API
+     */
+    this.subscription = this.service.getCurrentDescarga().subscribe(descarga => {
+      if (descarga) {
+        this.descargaAtual = descarga;
+        this.itensList = descarga.talie?.talieItem ?? [];
+        this.form.patchValue({
+          ...this.descargaAtual,
+          talie: this.descargaAtual.talie?.id,
+          inicio: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.inicio ?? null),
+          termino: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.inicio ?? null),
+        });
+
+      }
+    });
+
+    /**
+     * Atualiza a descargaatual em tempo real
+     */
+    this.form.valueChanges.subscribe((values) => {
+      if (!this.descargaAtual) return;
+
+      Object.assign(this.descargaAtual, values);
+      console.log('DescargaAtualizada: ', this.descargaAtual);
+    });
+
+
     this.initAdvancedTableData();
   }
 
-  buscar(): void {
+
+  // Atualiza os dados no Subject sempre que houver alterações no form
+  atualizarDescarga(): void {
     if (this.form.valid) {
-      console.log('Buscando dados...', this.form.value);
-    } else {
-      console.log('Formulário inválido');
+      const dadosAtualizados: DescargaExportacao = {
+        ...this.descargaAtual,
+        ...this.form.value,
+        inicio: this.convertNgbDateStructToString(this.form.value.inicio),
+        termino: this.convertNgbDateStructToString(this.form.value.termino),
+      };
+
+      this.service.updateDescarga(dadosAtualizados);
     }
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 
   limpar(): void {
     this.form.reset();
@@ -140,32 +170,35 @@ export class DescargaExportacaoComponent implements OnInit {
     return this.form.get('operacao') as FormControl;
   }
 
+  /**
+   * Inicia a tabela de itens
+   */
   initAdvancedTableData(): void {
     this.columns = [
       {
         name: "notafiscal",
         label: "NF",
-        formatter: (service: DescargaExportacaoItens) => service.notaFiscal
+        formatter: (item: TalieItem) => item.notaFiscal
       },
       {
         name: "item",
         label: "Item",
-        formatter: (service: DescargaExportacaoItens) => service.item,
+        formatter: (item: TalieItem) => item.id,
       },
       {
         name: "embalagem",
         label: "Embalagem",
-        formatter: (service: DescargaExportacaoItens) => service.embalagem,
+        formatter: (item: TalieItem) => item.embalagem,
       },
       {
         name: "quantidadeNf",
         label: "Quantidade NF",
-        formatter: (service: DescargaExportacaoItens) => service.quantidadeNf,
+        formatter: (item: TalieItem) => item.quantidadeNf,
       },
       {
         name: "quantidadeDescarregada",
         label: "Quantidade Descarga",
-        formatter: (service: DescargaExportacaoItens) => service.quantidadeDescarregada,
+        formatter: (item: TalieItem) => item.quantidadeDescarga,
       },
       {
         name: "Action",
@@ -256,30 +289,81 @@ export class DescargaExportacaoComponent implements OnInit {
       .catch(() => { });
   }
 
-  //#region SERVICE
-  buscarRegistro(registro: number) {
-    this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
-      if(ret.status){
-        console.log(ret.result);
-      }else{
-        this.notificatioService.showAlert(ret);
-      }
-    });
-  }
-  //#endregion SERVICE
-
-  //#region MODAIS
+  /**
+   * Abre a modal de fotos
+   */
   abrirModalFotos() {
     const modalRef = this.modalService.open(MicroledPhotosComponent, {
       size: 'xl',
       backdrop: 'static',
       centered: false
     });
-  
+
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
   }
+
+  //#region METODOS SERVICE
+  /**
+   * Executa a busca pelo numero do registro
+   * @param registro 
+   */
+  buscarRegistro(registro: number) {
+    this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
+      if (ret.status) {
+        this.service.updateDescarga(ret.result);
+        this.atualizarBotoes([
+          { nome: 'stop', enabled: true , visible:true},
+          { nome: 'save', enabled: true , visible:true},
+          { nome: 'alert', enabled: true , visible:true},
+          { nome: 'clear', enabled: true , visible:true},
+          { nome: 'delete', enabled: true , visible:true},
+          { nome: 'marcante', enabled: true, visible:true },
+          { nome: 'observacao', enabled: true, visible:true },
+          { nome: 'photo', enabled: true, visible:true },
+        ]);
+      } else {
+        this.notificatioService.showAlert(ret);
+      }
+    });
+  }
+
+  //#endregion SERVICE
+
+  //#region HELPERS
+  // 🔄 Converte a string da API para NgbDateStruct
+  private convertDateToNgbDateStruct(dateString: string | null): NgbDateStruct | null {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
+  }
+
+  // 🔄 Converte o NgbDateStruct de volta para string ISO antes de enviar para API
+  private convertNgbDateStructToString(date: NgbDateStruct | null): string | null {
+    if (!date) return null;
+    return `${date.year}-${date.month.toString().padStart(2, '0')}-${date.day.toString().padStart(2, '0')}T00:00:00`;
+  }
+
+  /**
+   * Atualiza o estado dos botoes do action footer
+   * @param botoes 
+   */
+  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
+
+    botoes.forEach(botao => {
+      if (novoEstado[botao.nome]) {
+        if (botao.enabled !== undefined) {
+          novoEstado[botao.nome].enabled = botao.enabled;
+        }
+        if (botao.visible !== undefined) {
+          novoEstado[botao.nome].visible = botao.visible;
+        }
+      }
+    });
+
+    this.footerButtonsState = novoEstado;
+  }
   
   //#endregion
-
 }
