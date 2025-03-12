@@ -17,6 +17,7 @@ export class ActionFooterComponent {
   @Output() marcanteEvent = new EventEmitter<void>();
   @Output() observacaoEvent = new EventEmitter<void>();
   @Output() photoEvent = new EventEmitter<void>();
+  @Output() exitEvent = new EventEmitter<void>();
 
   iniciar(): void {
     if (this.buttonsState['start']?.enabled) {
@@ -48,6 +49,7 @@ export class ActionFooterComponent {
   sair(): void {
     if (this.buttonsState['exit']?.enabled) {
       console.log('Sair acionado');
+      this.exitEvent.emit();
     }
   }
 
