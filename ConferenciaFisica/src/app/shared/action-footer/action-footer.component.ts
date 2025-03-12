@@ -16,6 +16,7 @@ export class ActionFooterComponent {
   @Output() avariasEvent = new EventEmitter<void>();
   @Output() marcanteEvent = new EventEmitter<void>();
   @Output() observacaoEvent = new EventEmitter<void>();
+  @Output() photoEvent = new EventEmitter<void>();
 
   iniciar(): void {
     if (this.buttonsState['start']?.enabled) {
@@ -66,6 +67,7 @@ export class ActionFooterComponent {
   fotosContainer(): void {
     if (this.buttonsState['photo']?.enabled) {
       console.log('Fotos Container acionado');
+      this.photoEvent.emit();
     }
   }
 

@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <h4 class="modal-title">📸 Capturar Foto</h4>
+</div>
+
+<div class="modal-body camera-modal-container">
+    <video #videoElement autoplay></video>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-success" (click)="capturarFoto()">📸 Capturar</button>
+    <button class="btn btn-danger" (click)="fecharCamera()">❌ Fechar</button>
+</div>
+
+<!-- Canvas oculto para processar a imagem -->
+<canvas #canvasElement hidden></canvas>

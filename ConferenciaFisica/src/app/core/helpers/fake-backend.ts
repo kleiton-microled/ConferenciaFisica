@@ -12,8 +12,8 @@ function getUsers(): User[] {
     // array in session storage for registered users
     let users: User[] = JSON.parse(sessionStorage.getItem('users')!) || [
         {
-            id: 1, username: 'admin', email: 'microled@microled.com.br', password: 'band', firstName: 'Microled', lastName: 'Sistemas',
-            avatar: 'assets/images/users/user-1.jpg', location: 'Indaiatuba, BRA', title: 'Admin'
+            id: 1, username: 'microled', email: 'microled', password: 'vidigal', firstName: 'Microled', lastName: 'Sistemas',
+            avatar: '', location: 'São Paulo, BRA', title: 'Microled'
         }
     ];
     return users;

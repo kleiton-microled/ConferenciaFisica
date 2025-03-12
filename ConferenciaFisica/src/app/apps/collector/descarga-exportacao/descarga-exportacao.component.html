@@ -110,9 +110,14 @@
                     </div>
                 </form>
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="''" (startEvent)="''"
-                (cleanupEvent)="''" (avariasEvent)="abrirModalAvarias()" (observacaoEvent)="abrirModal(observacaoModal)"
-                (marcanteEvent)="abrirModalMarcante(marcanteModal)"></app-action-footer>
+            <app-action-footer [buttonsState]="footerButtonsState" 
+                               (saveEvent)="''" 
+                               (startEvent)="''"
+                               (cleanupEvent)="''"
+                               (avariasEvent)="abrirModalAvarias()" 
+                               (observacaoEvent)="abrirModal(observacaoModal)"
+                               (marcanteEvent)="abrirModalMarcante(marcanteModal)"
+                               (photoEvent)="abrirModalFotos()"></app-action-footer>
         </div>
     </div>
 </div>

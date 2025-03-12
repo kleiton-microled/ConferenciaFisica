@@ -11,6 +11,7 @@ import { DescargaExportacaoService } from './descarga-exportacao.service';
 import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { DescargaExportacao } from './models/descarga-exportacao.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -266,5 +267,19 @@ export class DescargaExportacaoComponent implements OnInit {
     });
   }
   //#endregion SERVICE
+
+  //#region MODAIS
+  abrirModalFotos() {
+    const modalRef = this.modalService.open(MicroledPhotosComponent, {
+      size: 'xl',
+      backdrop: 'static',
+      centered: false
+    });
+  
+    modalRef.componentInstance.urlPath = 'uploads/fotos';
+    modalRef.componentInstance.conteiner = 'CONT-1234';
+  }
+  
+  //#endregion
 
 }
