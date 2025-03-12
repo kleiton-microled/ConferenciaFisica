@@ -3,6 +3,7 @@
 # Compiled output
 
 yarn.lock
+.yarn-integrity
 
 /dist
 /tmp
