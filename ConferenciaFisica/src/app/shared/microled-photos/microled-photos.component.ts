@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CameraModalComponent } from './camera-modal/camera-modal.component';
 
 interface Foto {
@@ -20,8 +20,12 @@ export class MicroledPhotosComponent implements OnInit {
   @Input() conteiner: string = ''; 
   fotos: Foto[] = [];
   fotosForm: FormGroup;
-  private nextId = 1; // Gerador de ID para fotos
+  fotoEditando!: Foto | null;
 
+  private modalRef!: NgbModalRef;
+
+  private nextId = 1; // Gerador de ID para fotos
+  @ViewChild('editPhotoModal') editPhotoModal!: any;
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -61,4 +65,31 @@ export class MicroledPhotosComponent implements OnInit {
   fecharModal(): void {
     this.activeModal.dismiss();
   }
+
+  abrirModalEdicao(foto: Foto) {
+    this.fotoEditando = foto;
+    this.fotosForm.patchValue({
+      descricao: foto.descricao,
+      observacao: foto.observacao
+    });
+    this.modalRef = this.modalService.open(this.editPhotoModal, { size: 'md', backdrop: 'static' });
+  }
+
+  salvarEdicao() {
+    if (this.fotoEditando) {
+      this.fotoEditando.descricao = this.fotosForm.value.descricao;
+      this.fotoEditando.observacao = this.fotosForm.value.observacao;
+    }
+    this.fecharModalEdicao();
+  }
+
+  fecharModalEdicao() {
+    console.log('tentou fechar');
+    console.log(this.modalRef);
+    if (this.modalRef) {
+      console.log(this.modalRef);
+      this.modalRef.close(); // 🔥 Fecha apenas a modal de edição
+    }
+  }
+  
 }
