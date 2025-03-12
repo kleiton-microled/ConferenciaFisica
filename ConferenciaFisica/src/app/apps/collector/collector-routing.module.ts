@@ -3,6 +3,7 @@ import { CollectorComponent } from "./collector.component";
 import { NgModule } from "@angular/core";
 import { PhysicalConferenceComponent } from "./physical-conference/physical-conference.component";
 import { DescargaExportacaoComponent } from "./descarga-exportacao/descarga-exportacao.component";
+import { PreRegistroComponent } from "./pre-registro/pre-registro.component";
 
 const routes: Routes = [{
   path: '',
@@ -15,6 +16,10 @@ const routes: Routes = [{
 {
   path: 'descarga-exportacao',
   component: DescargaExportacaoComponent
+},
+{
+  path: 'pre-registro',
+  component: PreRegistroComponent
 }];
 
 @NgModule({

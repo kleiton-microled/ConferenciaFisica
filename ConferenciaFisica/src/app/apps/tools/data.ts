@@ -23,6 +23,6 @@ export const TOOLS: ToolsModel[] = [
     description:
       "Modulo de pré registro",
     version: 1,
-    link: "apps/collector/physical-conference",
+    link: "apps/collector/pre-registro",
   }
 ];
