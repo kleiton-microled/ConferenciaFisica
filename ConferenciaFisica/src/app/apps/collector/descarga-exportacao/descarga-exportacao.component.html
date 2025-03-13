@@ -111,10 +111,10 @@
                 </form>
             </div>
             <app-action-footer [buttonsState]="footerButtonsState" 
-                               (saveEvent)="''" 
+                               (saveEvent)="gravarDescarga()" 
                                (startEvent)="''"
                                (cleanupEvent)="''"
-                               (avariasEvent)="abrirModalAvarias()" 
+                               (avariasEvent)="getModalAvaria()" 
                                (observacaoEvent)="abrirModal(observacaoModal)"
                                (marcanteEvent)="abrirModalMarcante(marcanteModal)"
                                (photoEvent)="abrirModalFotos()"></app-action-footer>

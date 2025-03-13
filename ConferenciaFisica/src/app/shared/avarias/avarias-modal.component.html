@@ -7,37 +7,50 @@
 <div class="modal-body">
   <form [formGroup]="avariasForm">
     <div class="row">
-      <!-- Quantidade Avariada -->
-      <div class="col-3">
-        <label for="quantidadeAvariada">Quantidade Avariada</label>
-        <input id="quantidadeAvariada" type="text" class="form-control" formControlName="quantidadeAvariada" />
+      <div class="col-3" *ngIf="avariasForm.controls['quantidadeAvariada']">
+        <label>Quantidade Avariada</label>
+        <input type="text" class="form-control" formControlName="quantidadeAvariada" />
       </div>
 
       <!-- Peso Avariado -->
-      <div class="col-3">
-        <label for="pesoAvariado">Peso Avariado</label>
-        <input id="pesoAvariado" type="text" class="form-control" formControlName="pesoAvariado" />
+      <div class="col-3" *ngIf="avariasForm.controls['pesoAvariado']">
+        <label>Peso Avariado</label>
+        <input type="text" class="form-control" formControlName="pesoAvariado" />
       </div>
 
-      <!-- Embalagem -->
-      <div class="col-3">
-        <label for="embalagem">Embalagem</label>
-        <select id="embalagem" class="form-select" formControlName="embalagem">
+      <div class="col-3" *ngIf="avariasForm.controls['local']">
+        <label>Local</label>
+        <select class="form-select" formControlName="local">
+          <option *ngFor="let local of listLocal" [value]="local.id">
+            {{ local.descricao }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-3" *ngIf="avariasForm.controls['idEmbalagem']">
+        <label>Embalagem</label>
+        <select class="form-select" formControlName="idEmbalagem">
           <option *ngFor="let embalagem of embalagens" [value]="embalagem.id">
             {{ embalagem.descricao }}
           </option>
         </select>
       </div>
 
-      <!-- Contêiner -->
-      <div class="col-3">
-        <label for="conteiner">Contêiner</label>
-        <input id="conteiner" type="text" class="form-control" formControlName="conteiner" />
-        <!-- <select id="conteiner" class="form-control" formControlName="conteiner">
-          <option *ngFor="let conteiner of conteiners" [value]="conteiner.id">
-            {{ conteiner.numero }}
-          </option>
-        </select> -->
+
+      <div class="col-3" *ngIf="avariasForm.controls['conteiner']">
+        <label>Contêiner</label>
+        <input type="text" class="form-control" formControlName="conteiner" />
+      </div>
+
+      <!-- <div class="col-3" *ngIf="avariasForm.controls['providencia']">
+        <label>Providência</label>
+        <input type="text" class="form-control" formControlName="providencia" />
+      </div> -->
+      <div class="col-2 mt-3 form-check" *ngIf="avariasForm.controls['divergencia']">
+        <input class="form-check-input" type="checkbox" id="divergencia" formControlName="divergencia">
+        <label class="form-check-label" for="divergencia">
+          Divergência
+        </label>
       </div>
     </div>
 
@@ -69,9 +82,9 @@
 
     <!-- Observação -->
     <div class="row mt-4">
-      <div class="col-6">
-        <label for="observacao">Observação</label>
-        <textarea id="observacao" class="form-control" formControlName="observacao"></textarea>
+      <div class="col-6" *ngIf="avariasForm.controls['observacao']">
+        <label>Observação</label>
+        <textarea class="form-control" formControlName="observacao"></textarea>
       </div>
     </div>
   </form>
