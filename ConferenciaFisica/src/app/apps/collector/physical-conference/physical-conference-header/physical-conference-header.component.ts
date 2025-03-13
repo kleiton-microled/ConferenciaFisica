@@ -56,26 +56,26 @@ export class PhysicalConferenceHeaderComponent {
     delete: { enabled: false, visible: true },
     photo: { enabled: true, visible: true },
     marcante: { enabled: false, visible: false },
-    observacao: { enabled: false, visible: false}
-};
+    observacao: { enabled: false, visible: false }
+  };
 
 
-atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
-  const novoEstado = { ...this.footerButtonsState };
+  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
 
-  botoes.forEach(botao => {
+    botoes.forEach(botao => {
       if (novoEstado[botao.nome]) {
-          if (botao.enabled !== undefined) {
-              novoEstado[botao.nome].enabled = botao.enabled;
-          }
-          if (botao.visible !== undefined) {
-              novoEstado[botao.nome].visible = botao.visible;
-          }
+        if (botao.enabled !== undefined) {
+          novoEstado[botao.nome].enabled = botao.enabled;
+        }
+        if (botao.visible !== undefined) {
+          novoEstado[botao.nome].visible = botao.visible;
+        }
       }
-  });
+    });
 
-  this.footerButtonsState = novoEstado;
-}
+    this.footerButtonsState = novoEstado;
+  }
 
 
   //Botoes Modais Enabled
@@ -98,7 +98,7 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
   documentos: DocumentosConferencia[] = [];
   tiposAvarias: TiposAvarias[] = [];
   tiposEmbalagens: TiposEmbalagens[] = [];
-  avariasConferencia!: AvariaConferencia | null;
+  avariasConferencia!: AvariaConferencia;
 
   filtro: string = "";
   constructor(
@@ -389,16 +389,16 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
     this.documentos = [];
     this.operadores = [];
     this.ajudantes = [];
-    this.avariasConferencia = null;
+    this.avariasConferencia = new AvariaConferencia();
     this.isDisableBtnModal = true;
     this.atualizarBotoes([
-      { nome: 'stop', enabled: false , visible:true},
-      { nome: 'alert', enabled: false , visible:true},
-      { nome: 'start', enabled: true , visible:true},
-      { nome: 'clear', enabled: false , visible:true},
-      { nome: 'delete', enabled: false , visible:true},
-      { nome: 'marcante', enabled: false, visible:false },
-      { nome: 'observacao', enabled: false, visible:false },
+      { nome: 'stop', enabled: false, visible: true },
+      { nome: 'alert', enabled: false, visible: true },
+      { nome: 'start', enabled: true, visible: true },
+      { nome: 'clear', enabled: false, visible: true },
+      { nome: 'delete', enabled: false, visible: true },
+      { nome: 'marcante', enabled: false, visible: false },
+      { nome: 'observacao', enabled: false, visible: false },
     ]);
   }
 
@@ -478,15 +478,15 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
           } else {
             let infoResponse = "Conferência encontrada, abrindo para edição?";
             this.atualizarBotoes([
-              { nome: 'stop', enabled: true, visible:true },
+              { nome: 'stop', enabled: true, visible: true },
               { nome: 'alert', enabled: true, visible: true },
-              { nome: 'start', enabled: false , visible: true},
-              { nome: 'clear', enabled: true , visible: true},
-              { nome: 'exit', enabled: true , visible: true},
-              { nome: 'delete', enabled: true , visible: true},
-              { nome: 'save', enabled: true , visible: true},
-              { nome: 'observacao', enabled: false , visible: false},
-              { nome: 'marcante', enabled: false , visible: false}
+              { nome: 'start', enabled: false, visible: true },
+              { nome: 'clear', enabled: true, visible: true },
+              { nome: 'exit', enabled: true, visible: true },
+              { nome: 'delete', enabled: true, visible: true },
+              { nome: 'save', enabled: true, visible: true },
+              { nome: 'observacao', enabled: false, visible: false },
+              { nome: 'marcante', enabled: false, visible: false }
             ]);
 
             this.isDisableBtnModal = false;
@@ -545,7 +545,7 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
   }
   //#endregion
 
-  //#region FILTRO AVANCADO
+  //#region OPEN MODAL
   /**
    * Abre a modal do filtro
    * @param content
@@ -561,7 +561,7 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
   closeModal() {
     this.modalService.dismissAll();
   }
-  //#endregion
+
 
   //#region Cadastro de Representantes, Operadores e Ajudantes
   abrirModalAjudantes() {
@@ -721,35 +721,40 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
   /**
    * Modal Avarias
    */
-  abrirModalAvarias() {
+  getModalAvaria() {
+    this.abrirModalAvarias<AvariaConferencia>(this.avariasConferencia);
+  }
+
+  abrirModalAvarias<T extends Record<string, any>>(avariaModel: T) {
     const modalRef = this.modalService.open(AvariasModalComponent, {
       size: "xl",
       backdrop: "static",
       centered: false,
     });
 
-    modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
+    // Passa a model genérica para a modal
+    modalRef.componentInstance.avariaModel = avariaModel;
 
+    // Passa os tipos de avarias e embalagens
+    modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
     modalRef.componentInstance.embalagens = this.tiposEmbalagens;
 
-    if (this.avariasConferencia) {
-      modalRef.componentInstance.avariaConferencia = this.avariasConferencia;
-    }
-
-    modalRef.componentInstance.conteiner = this.form.controls['numeroConteiner'].value;
+    // Passa informações adicionais
+    modalRef.componentInstance.conteiner = this.form.controls["numeroConteiner"].value;
     modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
 
+    // ✅ Ouvindo o evento de salvamento da modal
     modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
       this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
-
         } else {
           this.notificationService.showAlert(ret);
         }
       });
     });
 
+    // ✅ Tratando o fechamento da modal
     modalRef.result
       .then((dados) => {
         if (dados) {
@@ -759,6 +764,8 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
       .catch(() => { });
   }
 
+
+  //#endregion
   /**
    * Reload avarias da conferencia
    * @param id 
@@ -766,7 +773,8 @@ atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]
   reloadAvariaConferencia(id: number) {
     this.conferenceService.getAvariaConferencia(id).subscribe((response: ServiceResult<AvariaConferencia>) => {
       if (response.status) {
-        this.avariasConferencia = response.result;
+        if (response.result)
+          this.avariasConferencia = response.result;
       }
     });
   }

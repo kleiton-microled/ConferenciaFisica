@@ -14,6 +14,8 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
 import { Subscription } from 'rxjs';
 import { TalieItem } from '../models/talie-item.model';
+import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
+import { AvariaDescarga } from './models/avaria-descarga.model';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -24,7 +26,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   pageTitle: BreadcrumbItem[] = [];
 
   private subscription!: Subscription;
-  descargaAtual!: DescargaExportacao | null;
+  descargaAtual!: DescargaExportacao;
 
   form: FormGroup;
   observacaoForm: FormGroup;
@@ -45,6 +47,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   listOperacoes = [{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
 
   tiposAvarias: TiposAvarias[] = [];
+  avariaDescarga!: AvariaDescarga;
 
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
     start: { enabled: false, visible: false },
@@ -65,17 +68,18 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder,
     private service: DescargaExportacaoService,
-    private notificatioService: NotificationService,
+    private conferenceService: PhysicalConferenceService,
+    private notificationService: NotificationService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal) {
     this.form = this.fb.group({
-      id: new FormControl('', Validators.required),
-      inicio: new FormControl(null, Validators.required),
-      termino: new FormControl(null, Validators.required),
-      talie: new FormControl('', Validators.required),
-      placa: new FormControl('', Validators.required),
-      reserva: new FormControl('', Validators.required),
-      cliente: new FormControl('', Validators.required),
+      id: new FormControl({ value: '', disabled: false }),
+      inicio: new FormControl({ value: '', disabled: true }),
+      termino: new FormControl({ value: '', disabled: true }),
+      talie: new FormControl({ value: '', disabled: true }),
+      placa: new FormControl({ value: '', disabled: true },),
+      reserva: new FormControl({ value: '', disabled: true },),
+      cliente: new FormControl({ value: '', disabled: true },),
       conferente: new FormControl('', Validators.required),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
@@ -251,35 +255,42 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   /**
      * Modal Avarias
      */
-  abrirModalAvarias() {
+  getModalAvaria() {
+    this.avariaDescarga = new AvariaDescarga();
+    console.log(this.avariaDescarga);
+    this.abrirModalAvarias<AvariaDescarga>(this.avariaDescarga);
+  }
+
+  abrirModalAvarias<T extends Record<string, any>>(avariaModel: T) {
     const modalRef = this.modalService.open(AvariasModalComponent, {
       size: "xl",
       backdrop: "static",
       centered: false,
     });
 
+    // Passa a model genérica para a modal
+    modalRef.componentInstance.avariaModel = avariaModel;
+
+    // Passa os tipos de avarias e embalagens
     modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
-
-    modalRef.componentInstance.embalagens = [];
-
-
-    modalRef.componentInstance.avariaConferencia = null;
+    modalRef.componentInstance.listLocal = [{ id: 1, codigo: 1, descricao: 'Fumigação' },
+    { id: 2, codigo: 2, descricao: 'Identificação' }];
 
 
-    //modalRef.componentInstance.conteiner = this.form.controls['numeroConteiner'].value;
-    //modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
+    // ✅ Ouvindo o evento de salvamento da modal
+    modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaDescarga) => {
+      avaria.talieId = this.descargaAtual.talie?.id ?? 0;
+      
+      this.service.saveAvaria(avaria).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
 
-    // modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
-    //   this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
-    //     if (ret.status) {
-    //       this.notificationService.showSuccess(ret);
-
-    //     } else {
-    //       this.notificationService.showAlert(ret);
-    //     }
-    //   });
-    // });
-
+    // ✅ Tratando o fechamento da modal
     modalRef.result
       .then((dados) => {
         if (dados) {
@@ -313,17 +324,36 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
         this.atualizarBotoes([
-          { nome: 'stop', enabled: true , visible:true},
-          { nome: 'save', enabled: true , visible:true},
-          { nome: 'alert', enabled: true , visible:true},
-          { nome: 'clear', enabled: true , visible:true},
-          { nome: 'delete', enabled: true , visible:true},
-          { nome: 'marcante', enabled: true, visible:true },
-          { nome: 'observacao', enabled: true, visible:true },
-          { nome: 'photo', enabled: true, visible:true },
+          { nome: 'stop', enabled: true, visible: true },
+          { nome: 'save', enabled: true, visible: true },
+          { nome: 'alert', enabled: true, visible: true },
+          { nome: 'clear', enabled: true, visible: true },
+          { nome: 'delete', enabled: true, visible: true },
+          { nome: 'marcante', enabled: true, visible: true },
+          { nome: 'observacao', enabled: true, visible: true },
+          { nome: 'photo', enabled: true, visible: true },
         ]);
+
+        this.conferenceService
+          .getTiposAvarias()
+          .subscribe((ret: ServiceResult<TiposAvarias[]>) => {
+            if (ret.status) {
+              this.tiposAvarias = ret.result ?? [];
+            }
+          });
       } else {
-        this.notificatioService.showAlert(ret);
+        this.notificationService.showAlert(ret);
+      }
+    });
+  }
+
+  gravarDescarga() {
+    this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
+      if (ret.status) {
+        this.notificationService.showSuccess(ret);
+        this.buscarRegistro(this.descargaAtual?.registro ?? 0);
+      } else {
+        this.notificationService.showAlert(ret);
       }
     });
   }
@@ -364,6 +394,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     this.footerButtonsState = novoEstado;
   }
-  
+
   //#endregion
 }

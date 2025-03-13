@@ -6,4 +6,8 @@ export class DescargaExportacao {
     placa!: string;
     reserva!: string;
     cliente!: string;
+
+    constructor(init?: Partial<DescargaExportacao>) {
+        Object.assign(this, init);
+    }
 }
