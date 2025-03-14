@@ -8,6 +8,7 @@ import { Talie } from "../models/talie.model";
 import { AvariaDescarga } from "./models/avaria-descarga.model";
 import { ServiceResult } from "src/app/shared/models/serviceresult.model";
 import { NotificationService } from "src/app/shared/services/notification.service";
+import { TalieItem } from "../models/talie-item.model";
 
 @Injectable({
     providedIn: 'root'
@@ -97,5 +98,49 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
             finalize(() => this.notificationService.hideLoading())
         );
     }
+
+    /**
+     * Cadastra ou atualiza o talie item na base
+     * @param data 
+     * @returns bool
+     */
+    saveTalieItem(data: TalieItem, registro: number): Observable<ServiceResult<boolean>> {
+        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/salvar-talie-item?registro=${registro}`, data).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Exclui um item do talie
+     * @param id 
+     * @returns 
+     */
+    deleteTalieItem(id: number): Observable<ServiceResult<boolean>> {
+        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/excluir-talie-item?id=${id}`,).pipe(
+          map(response => {
+            if (!response.status) {
+              this.notificationService.showError(response);
+              throw new Error(response.error || 'Erro desconhecido');
+            }
+            return response;
+          }),
+          catchError((error: HttpErrorResponse) => {
+            this.notificationService.showError(error);
+            return throwError(() => error);
+          }),
+          finalize(() => this.notificationService.hideLoading())
+        );
+      }
 
 }

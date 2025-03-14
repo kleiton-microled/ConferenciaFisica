@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 import { TalieItem } from '../models/talie-item.model';
 import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
 import { AvariaDescarga } from './models/avaria-descarga.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -64,6 +65,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   columns: Column[] = [];
   @ViewChild("advancedTable") advancedTable: any;
+  editItemForm: FormGroup;
+  itemSelecionado!: TalieItem;
+
+  @ViewChild('editItemModal') editItemModal!: TemplateRef<any>;
   itensList: TalieItem[] = [];
 
   constructor(private fb: FormBuilder,
@@ -83,6 +88,32 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       conferente: new FormControl('', Validators.required),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
+    });
+
+    this.editItemForm = this.fb.group({
+      notaFiscal: ['', Validators.required],
+      quantidadeDescarga: ['', Validators.required],
+      codigoEmbalagem: ['', Validators.required],
+      embalagem: ['', Validators.required],
+      comprimento: [''],
+      largura: [''],
+      altura: [''],
+      madeira: [false],
+      fragil: [false],
+      numerada: [false],
+      carimbo: [false],
+      peso: [''],
+      imo: [''],
+      imo2: [''],
+      imo3: [''],
+      imo4: [''],
+      uno: [''],
+      uno2: [''],
+      uno3: [''],
+      uno4: [''],
+      fumigacao: [''],
+      remonte: [false],
+      observacao: ['']
     });
 
     this.observacaoForm = this.fb.group({
@@ -132,6 +163,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.initAdvancedTableData();
   }
 
+  ngAfterViewInit(): void {
+    document.addEventListener('click', (event: any) => this.handleActionClick(event));
+  }
 
   // Atualiza os dados no Subject sempre que houver alterações no form
   atualizarDescarga(): void {
@@ -153,9 +187,36 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     }
   }
 
+  limpar() {
+    Swal.fire({
+      title: "Limpar Descarga!!!",
+      text: "Deseja limpar a descarga atual?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "SIM",
+      cancelButtonText: "NÃO",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.Reset();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
+  }
 
-  limpar(): void {
+  Reset() {
     this.form.reset();
+    this.service.deletarDescarga();
+    this.itensList = [];
+    this.atualizarBotoes([
+      { nome: 'stop', enabled: false, visible: true },
+      { nome: 'alert', enabled: false, visible: true },
+      { nome: 'clear', enabled: false, visible: true },
+      { nome: 'delete', enabled: false, visible: true },
+      { nome: 'marcante', enabled: false, visible: true },
+      { nome: 'observacao', enabled: false, visible: true },
+      { nome: 'save', enabled: false, visible: true },
+      { nome: 'photo', enabled: false, visible: true }
+    ]);
   }
 
   limparData(campo: string) {
@@ -224,13 +285,20 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
   }
 
-  serviceActionFormatter(order: any): any {
-    return this.sanitizer.bypassSecurityTrustHtml(
-      `<a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-eye"></i></a>
-               <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-               <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-delete"></i></a>`
-    );
+  serviceActionFormatter(item: TalieItem): any {
+    return this.sanitizer.bypassSecurityTrustHtml(`
+      <a href="javascript:void(0);" class="action-icon view-btn" data-id="${item.id}">
+        <i class="mdi mdi-eye"></i>
+      </a>
+      <a href="javascript:void(0);" class="action-icon edit-btn" data-id="${item.id}">
+        <i class="mdi mdi-square-edit-outline"></i>
+      </a>
+      <a href="javascript:void(0);" class="action-icon delete-btn" data-id="${item.id}">
+        <i class="mdi mdi-delete"></i>
+      </a>
+    `);
   }
+
 
   abrirModal(content: any) {
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
@@ -252,6 +320,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     // }
   }
 
+  //#region MODAIS
   /**
      * Modal Avarias
      */
@@ -261,6 +330,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.abrirModalAvarias<AvariaDescarga>(this.avariaDescarga);
   }
 
+  /**
+   * Faz a abertura da modal de itens recebendo a Modal que será utilizada
+   * @param avariaModel 
+   */
   abrirModalAvarias<T extends Record<string, any>>(avariaModel: T) {
     const modalRef = this.modalService.open(AvariasModalComponent, {
       size: "xl",
@@ -280,7 +353,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     // ✅ Ouvindo o evento de salvamento da modal
     modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaDescarga) => {
       avaria.talieId = this.descargaAtual.talie?.id ?? 0;
-      
+
       this.service.saveAvaria(avaria).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
@@ -314,6 +387,40 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.conteiner = 'CONT-1234';
   }
 
+  /**
+   * Abre a modal para edicao de itens 
+   * @param item 
+   */
+  handleActionClick(event: any): void {
+    const target = event.target.closest('.action-icon');
+    if (!target) return;
+
+    const id = target.getAttribute('data-id');
+    if (!id) return;
+
+    if (target.classList.contains('edit-btn')) {
+      this.abrirModalEditarItem(id);
+    } else if (target.classList.contains('delete-btn')) {
+      this.deletarItem(id);
+    } else if (target.classList.contains('view-btn')) {
+      //this.visualizarItem(id);
+    }
+  }
+
+  abrirModalEditarItem(id: any): void {
+    const item = this.descargaAtual.talie?.talieItem.find(i => i.id == id);
+    if (!item) return;
+
+    this.itemSelecionado = item;
+    this.editItemForm.patchValue(item);
+
+    this.editItemForm.valueChanges.subscribe(updatedValues => {
+      Object.assign(this.itemSelecionado, updatedValues);
+    });
+
+    this.modalService.open(this.editItemModal, { size: 'xl', backdrop: 'static', centered: false });
+  }
+  //#endregion MODAIS
   //#region METODOS SERVICE
   /**
    * Executa a busca pelo numero do registro
@@ -347,6 +454,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Executa o metodo de gravacao da descarga
+   */
   gravarDescarga() {
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
@@ -358,6 +468,35 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Salvar alteracoes no item do talie
+   * @param modal 
+   */
+  salvarAlteracoes(modal: any): void {
+    if (this.editItemForm.valid) {
+      this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          //this.buscarRegistro(this.descargaAtual.registro);
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+      //modal.close();
+    }
+  }
+
+  deletarItem(id: number): void {
+    console.log('Item deletado:', id);
+    this.service.deleteTalieItem(id).subscribe((ret: ServiceResult<boolean>) => {
+      if (ret.status) {
+        this.buscarRegistro(this.descargaAtual.registro);
+        this.notificationService.showSuccess(ret);
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+  }
   //#endregion SERVICE
 
   //#region HELPERS
