@@ -104,20 +104,17 @@
                     <!-- Botões -->
                     <div class="row">
                         <div class="col text-end">
-                            <button type="button" class="btn btn-primary me-2" (click)="buscarRegistro(101010)">Buscar</button>
+                            <button type="button" class="btn btn-primary me-2"
+                                (click)="buscarRegistro(101010)">Buscar</button>
                             <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button>
                         </div>
                     </div>
                 </form>
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" 
-                               (saveEvent)="gravarDescarga()" 
-                               (startEvent)="''"
-                               (cleanupEvent)="''"
-                               (avariasEvent)="getModalAvaria()" 
-                               (observacaoEvent)="abrirModal(observacaoModal)"
-                               (marcanteEvent)="abrirModalMarcante(marcanteModal)"
-                               (photoEvent)="abrirModalFotos()"></app-action-footer>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="gravarDescarga()" (startEvent)="''"
+                (cleanupEvent)="limpar()" (avariasEvent)="getModalAvaria()" (observacaoEvent)="abrirModal(observacaoModal)"
+                (marcanteEvent)="abrirModalMarcante(marcanteModal)"
+                (photoEvent)="abrirModalFotos()"></app-action-footer>
         </div>
     </div>
 </div>
@@ -147,46 +144,172 @@
 <!-- Template da Modal Marcante-->
 <ng-template #marcanteModal let-modal>
     <div class="modal-header">
-      <h5 class="modal-title">Adicionar Marcante</h5>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+        <h5 class="modal-title">Adicionar Marcante</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
     </div>
-  
+
     <div class="modal-body">
-      <form [formGroup]="marcanteForm">
-        <div class="row">
-          <!-- Marcante -->
-          <div class="col-3">
-            <label for="marcante" class="form-label">Marcante:</label>
-            <input type="text" id="marcante" class="form-control" formControlName="marcante">
-          </div>
-  
-          <!-- Quantidade -->
-          <div class="col-3">
-            <label for="quantidade" class="form-label">Quantidade:</label>
-            <input type="number" id="quantidade" class="form-control" formControlName="quantidade">
-          </div>
-  
-          <!-- Armazém -->
-          <div class="col-3">
-            <label for="armazem" class="form-label">Armazém:</label>
-            <select id="armazem" class="form-select" formControlName="armazem">
-              <option value="">Selecione</option>
-              <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.nome }}</option>
-            </select>
-          </div>
-  
-          <!-- Local -->
-          <div class="col-3">
-            <label for="local" class="form-label">Local:</label>
-            <input type="text" id="local" class="form-control" formControlName="local">
-          </div>
-        </div>
-      </form>
+        <form [formGroup]="marcanteForm">
+            <div class="row">
+                <!-- Marcante -->
+                <div class="col-3">
+                    <label for="marcante" class="form-label">Marcante:</label>
+                    <input type="text" id="marcante" class="form-control" formControlName="marcante">
+                </div>
+
+                <!-- Quantidade -->
+                <div class="col-3">
+                    <label for="quantidade" class="form-label">Quantidade:</label>
+                    <input type="number" id="quantidade" class="form-control" formControlName="quantidade">
+                </div>
+
+                <!-- Armazém -->
+                <div class="col-3">
+                    <label for="armazem" class="form-label">Armazém:</label>
+                    <select id="armazem" class="form-select" formControlName="armazem">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.nome }}</option>
+                    </select>
+                </div>
+
+                <!-- Local -->
+                <div class="col-3">
+                    <label for="local" class="form-label">Local:</label>
+                    <input type="text" id="local" class="form-control" formControlName="local">
+                </div>
+            </div>
+        </form>
     </div>
-  
+
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-      <button type="button" class="btn btn-primary" (click)="salvarMarcante(); modal.close()">Salvar</button>
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarMarcante(); modal.close()">Salvar</button>
     </div>
-  </ng-template>
-  
+</ng-template>
+
+<!-- Modal de Edição de Item -->
+<ng-template #editItemModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Editar Item</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="editItemForm">
+            <div class="row">
+                <div class="col-3">
+                    <label>Nota Fiscal</label>
+                    <input type="text" class="form-control" formControlName="notaFiscal">
+                </div>
+                <div class="col-3">
+                    <label>Quantidade</label>
+                    <input type="text" class="form-control" formControlName="quantidadeDescarga">
+                </div>
+                <div class="col-3">
+                    <label>Cod. Embalagem</label>
+                    <input type="text" class="form-control" formControlName="codigoEmbalagem">
+                </div>
+                <div class="col-3">
+                    <label>Desc. Embalagem</label>
+                    <input type="text" class="form-control" formControlName="embalagem">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-2">
+                    <label>Comprimento</label>
+                    <input type="text" class="form-control" formControlName="comprimento">
+                </div>
+                <div class="col-2">
+                    <label>Largura</label>
+                    <input type="text" class="form-control" formControlName="largura">
+                </div>
+                <div class="col-2">
+                    <label>Altura</label>
+                    <input type="text" class="form-control" formControlName="altura">
+                </div>
+                <div class="col-1 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="madeira">
+                    <label class="form-check-label">Madeira</label>
+                </div>
+                <div class="col-1 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="fragil">
+                    <label class="form-check-label">Frágil</label>
+                </div>
+                <div class="col-1 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="numerada">
+                    <label class="form-check-label">Numerada</label>
+                </div>
+                <div class="col-1 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="carimbo">
+                    <label class="form-check-label">Carimbo</label>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label>Peso</label>
+                    <input type="text" class="form-control" formControlName="peso">
+                </div>
+                <div class="col-3">
+                    <label>IMO</label>
+                    <input type="text" class="form-control" formControlName="imo">
+                </div>
+                <div class="col-2">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="imo2">
+                </div>
+                <div class="col-2">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="imo3">
+                </div>
+                <div class="col-2">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="imo4">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label>UNO</label>
+                    <input type="text" class="form-control" formControlName="uno">
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="uno2">
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="uno3">
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="uno4">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label>Fumigação</label>
+                    <input type="text" class="form-control" formControlName="fumigacao">
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="remonte">
+                    <label class="form-check-label">Remonte</label>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-6">
+                    <label>Observação</label>
+                    <textarea class="form-control" rows="5" formControlName="observacao"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button class="btn btn-primary" (click)="salvarAlteracoes(modal)">Salvar Alterações</button>
+    </div>
+</ng-template>

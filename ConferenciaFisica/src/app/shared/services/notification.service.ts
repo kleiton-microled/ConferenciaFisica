@@ -79,4 +79,14 @@ export class NotificationService {
       Swal.close();
     }
   }
+
+  showMessage(message: string, title: string = 'Sucesso') {
+    this.hideLoading(); // Garante que o loading seja fechado antes
+    Swal.fire({
+      title,
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
 }
