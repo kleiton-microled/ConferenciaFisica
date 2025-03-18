@@ -15,7 +15,8 @@ interface Foto {
 })
 export class MicroledPhotosComponent implements OnInit {
   
-  @Input() conteiner: string = ''; 
+  tiposFoto: string[] = ['Selfie', 'Documento', 'Outro'];
+    @Input() conteiner: string = ''; 
   fotos: Foto[] = [];
   fotosForm: FormGroup;
   private nextId = 1; // Gerador de ID para fotos
@@ -35,13 +36,16 @@ export class MicroledPhotosComponent implements OnInit {
 
   abrirCamera() {
     const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
-
-    modalRef.componentInstance.fotoCapturada.subscribe((fotoBase64: string) => {
-      this.adicionarFoto(fotoBase64);
+  
+    // Passando os tipos de foto para o modal
+    modalRef.componentInstance.items = [{id: 1, name:'Tipo1'}]; // Exemplo de tipos de foto
+  
+    modalRef.componentInstance.fotoCapturada.subscribe((foto: { imagemBase64: string, tipo: string }) => {
+      this.adicionarFoto(foto.imagemBase64, foto.tipo); // Ajuste para receber o tipo também
     });
   }
-
-  adicionarFoto(fotoBase64: string) {
+  adicionarFoto(fotoBase64: string, tipo : string) { 
+    console.log(tipo)
     const novaFoto: Foto = {
       id: this.nextId++,
       imagemBase64: fotoBase64

@@ -28,7 +28,7 @@ export interface ConferenceLotes {
   providedIn: 'root'
 })
 export class PhysicalConferenceService {
-  private apiUrl = 'http://api-conferenciafisicadev.deicmar.srv/api';
+  private apiUrl = 'https://localhost:5000/api';
   //private apiUrl = 'https://localhost:5000/api';
 
   constructor(private http: HttpClient, private notificationService: NotificationService) { }

@@ -41,7 +41,8 @@ export class MicroledPhotosComponent implements OnInit {
 
   abrirCamera() {
     const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
-
+    modalRef.componentInstance.items = [{id: 1, name:'Tipo1'}];
+    
     modalRef.componentInstance.fotoCapturada.subscribe((fotoBase64: string) => {
       this.adicionarFoto(fotoBase64);
     });
