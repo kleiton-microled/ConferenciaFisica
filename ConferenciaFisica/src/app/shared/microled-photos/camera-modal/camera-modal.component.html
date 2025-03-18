@@ -1,13 +1,5 @@
 <div class="modal-header">
     <h4 class="modal-title">📸 Capturar Foto</h4>
-    <div>
-        <select class="form-control" [ngClass]="{'is-invalid': !tipoSelecionado}"
-            (change)="onTipoSelecionado($any($event.target).value)">
-            <option value disabled selected>Selecione o tipo de foto</option>
-            <option *ngFor="let item of types" [value]="item.name">{{ item.name }}</option>
-        </select>
-        <div *ngIf="!tipoSelecionado" class="invalid-feedback">Por favor, selecione um tipo de foto.</div>
-     </div>
 </div>
 
 <div class="modal-body camera-modal-container">
@@ -15,7 +7,19 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-success" (click)="capturarFoto()" [disabled]="!tipoSelecionado">📸 Capturar</button>
+    <div>
+        <select class="form-control" [ngClass]="{'is-invalid': !tipoSelecionado}"
+            (change)="onTipoSelecionado($any($event.target).value)">
+            <option value disabled selected>Selecione o tipo de foto</option>
+            <option *ngFor="let item of types" [value]="item.name">{{ item.name }}</option>
+        </select>
+    </div>
+    <button class="btn" 
+            [ngClass]="{'btn-secondary': !tipoSelecionado, 'btn-success': tipoSelecionado}"
+            [disabled]="!tipoSelecionado"
+            (click)="capturarFoto()">
+        📸 Capturar
+    </button>
     <button class="btn btn-danger" (click)="fecharCamera()">❌ Fechar</button>
 </div>
 
