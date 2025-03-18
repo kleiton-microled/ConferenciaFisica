@@ -18,6 +18,7 @@ export class ActionFooterComponent {
   @Output() observacaoEvent = new EventEmitter<void>();
   @Output() photoEvent = new EventEmitter<void>();
   @Output() exitEvent = new EventEmitter<void>();
+  @Output() finalizarEvent = new EventEmitter<void>();
 
   iniciar(): void {
     if (this.buttonsState['start']?.enabled) {
@@ -29,6 +30,7 @@ export class ActionFooterComponent {
   terminar(): void {
     if (this.buttonsState['stop']?.enabled) {
       console.log('Término acionado');
+      this.finalizarEvent.emit();
     }
   }
 

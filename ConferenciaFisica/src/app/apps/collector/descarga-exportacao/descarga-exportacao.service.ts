@@ -9,6 +9,8 @@ import { AvariaDescarga } from "./models/avaria-descarga.model";
 import { ServiceResult } from "src/app/shared/models/serviceresult.model";
 import { NotificationService } from "src/app/shared/services/notification.service";
 import { TalieItem } from "../models/talie-item.model";
+import { Armazen } from "../models/armazens.model";
+import { Marcante } from "../models/marcante.model";
 
 @Injectable({
     providedIn: 'root'
@@ -126,21 +128,156 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @param id 
      * @returns 
      */
-    deleteTalieItem(id: number): Observable<ServiceResult<boolean>> {
-        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/excluir-talie-item?id=${id}`,).pipe(
-          map(response => {
-            if (!response.status) {
-              this.notificationService.showError(response);
-              throw new Error(response.error || 'Erro desconhecido');
-            }
-            return response;
-          }),
-          catchError((error: HttpErrorResponse) => {
-            this.notificationService.showError(error);
-            return throwError(() => error);
-          }),
-          finalize(() => this.notificationService.hideLoading())
+    deleteTalieItem(id: number, registro: number): Observable<ServiceResult<boolean>> {
+        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/excluir-talie-item/${registro}?talieItemId=${id}`,).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
         );
-      }
+    }
+
+    /**
+     * Salva a observacao do Talie
+     * @param observacao 
+     * @param talieId 
+     * @returns 
+     */
+    saveObservacao(observacao: string, talieId: number): Observable<ServiceResult<boolean>> {
+        const url = `${DESCARGA_EXPORTACAO_URL}/gravar-observacao?observacao=${encodeURIComponent(observacao)}&talieId=${talieId}`;
+
+        return this.http.post<ServiceResult<boolean>>(url, null).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Lista os armazens do patio
+     * @param patio 
+     * @returns 
+     */
+    getArmazens(patio: number = 1): Observable<ServiceResult<Armazen[]>> {
+        return this.http.get<ServiceResult<Armazen[]>>(`${DESCARGA_EXPORTACAO_URL}/carregar-armazens?patio=${patio}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Associa um marcante ao talie e talie item
+     * @param data 
+     * @returns 
+     */
+    saveMarcante(data: Marcante): Observable<ServiceResult<boolean>> {
+        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/gravar-marcante`, data).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Carrega os marcantes associados ao talie item
+     * @param talieItemId 
+     * @returns 
+     */
+    getMarcanteTaliItem(talieItemId: number): Observable<ServiceResult<Marcante[]>> {
+        return this.http.get<ServiceResult<Marcante[]>>(`${DESCARGA_EXPORTACAO_URL}/carregar-marcantes-talie-item?talieItemId=${talieItemId}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Retira a associacao do Marcante dentro do talie item
+     * @param id 
+     * @returns bool
+     */
+    deleteMarcanteTalieItem(id: number): Observable<ServiceResult<boolean>> {
+        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/excluir-marcante-talie-item/?id=${id}`,).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Finalizar processo de descarga
+     * @param data 
+     * @returns 
+     */
+    getFinalizarProcesso(talieId: number, crossdock: boolean): Observable<ServiceResult<boolean>> {
+        return this.http.get<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/finalizar-processo?id=${talieId}&crossdock=${crossdock}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
 
 }

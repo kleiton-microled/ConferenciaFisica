@@ -96,8 +96,8 @@
                         </div>
                     </div>
                     <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
-                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="false"
-                        [isSearchable]="false" (search)="''" [isSortable]="false" tableClasses="table-centered"
+                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="true"
+                        [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false" tableClasses="table-centered"
                         theadClasses="table-light">
                     </app-advanced-table>
 
@@ -105,15 +105,22 @@
                     <div class="row">
                         <div class="col text-end">
                             <button type="button" class="btn btn-primary me-2"
-                                (click)="buscarRegistro(101010)">Buscar</button>
+                                (click)="buscarRegistro()">Buscar</button>
                             <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button>
                         </div>
                     </div>
                 </form>
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="gravarDescarga()" (startEvent)="''"
-                (cleanupEvent)="limpar()" (avariasEvent)="getModalAvaria()" (observacaoEvent)="abrirModal(observacaoModal)"
-                (marcanteEvent)="abrirModalMarcante(marcanteModal)"
+            <app-action-footer 
+                [buttonsState]="footerButtonsState" 
+                (saveEvent)="gravarDescarga()" 
+                (startEvent)="''"
+                (cleanupEvent)="limpar()" 
+                (avariasEvent)="getModalAvaria()" 
+                (observacaoEvent)="abrirModal(observacaoModal)"
+                (marcanteEvent)="abrirModalMarcante(marcanteModal)"  
+                (exitEvent)="sair()"
+                (finalizarEvent)="finalizarProcessoDescarga()"
                 (photoEvent)="abrirModalFotos()"></app-action-footer>
         </div>
     </div>
@@ -168,7 +175,7 @@
                     <label for="armazem" class="form-label">Armazém:</label>
                     <select id="armazem" class="form-select" formControlName="armazem">
                         <option value="">Selecione</option>
-                        <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.nome }}</option>
+                        <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.descricao }}</option>
                     </select>
                 </div>
 
@@ -179,13 +186,46 @@
                 </div>
             </div>
         </form>
+
+        <!-- Tabela de Marcantes -->
+        <div class="mt-4">
+            <h5 class="mb-3">Lista de Marcantes</h5>
+            <table class="table table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Número Marcante</th>
+                        <th>Quantidade</th>
+                        <th>Armazém</th>
+                        <th>Local</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let marcante of listaMarcantes; let i = index">
+                        <td>{{ marcante.numero }}</td>
+                        <td>{{ marcante.quantidade }}</td>
+                        <td>{{ getArmazemDescricao(marcante.armazem) }}</td>
+                        <td>{{ marcante.local }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" (click)="deletarMarcanteTalieItem(marcante.id)">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="listaMarcantes.length === 0">
+                        <td colspan="5" class="text-center text-muted">Nenhum marcante adicionado</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-        <button type="button" class="btn btn-primary" (click)="salvarMarcante(); modal.close()">Salvar</button>
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss">Fechar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarMarcante()">Salvar</button>
     </div>
 </ng-template>
+
 
 <!-- Modal de Edição de Item -->
 <ng-template #editItemModal let-modal>

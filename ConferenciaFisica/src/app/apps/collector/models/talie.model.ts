@@ -4,8 +4,9 @@ export class Talie{
     id!: number;
     inicio!: string;
     termino!: string;
-    conferente!: string;
+    conferente: string = "Microled";
     equipe!: number;
     operacao!: number;
+    observacao!: string;
     talieItem!: TalieItem[]
 }

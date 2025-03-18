@@ -5,7 +5,8 @@
         <div class="col-12 col-sm-6">
             <div class="text-center text-sm-start">
                 <label class="form-label me-1">Show
-                    <select class="form-select form-select-sm  w-auto ms-1 me-1 d-inline" name="pageSize" id="event-category" required [(ngModel)]="service.pageSize" (ngModelChange)="paginate()">
+                    <select class="form-select form-select-sm  w-auto ms-1 me-1 d-inline" name="pageSize"
+                        id="event-category" required [(ngModel)]="service.pageSize" (ngModelChange)="paginate()">
                         @for (option of pageSizeOptions; track $index) {
                         <option [value]="option">{{option}}</option>
                         }
@@ -16,7 +17,8 @@
         <div class="col-12" [class.col-sm-6]="pageSizeOptions.length">
             <div class="d-flex align-items-center justify-content-center justify-content-sm-end">
                 <label class="d-inline">Search:
-                    <input type="text" name="searchTerm" class="form-control form-control-sm d-inline w-auto ms-1" aria-controls="advanced-table" [(ngModel)]="service.searchTerm" (ngModelChange)="searchData()">
+                    <input type="text" name="searchTerm" class="form-control form-control-sm d-inline w-auto ms-1"
+                        aria-controls="advanced-table" [(ngModel)]="service.searchTerm" (ngModelChange)="searchData()">
                 </label>
             </div>
         </div><!-- end col-->
@@ -32,7 +34,8 @@
                 @if(hasRowSelection){
                 <th class="row_select" style="width: 20px;">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" [checked]="selectAll" [indeterminate]="checkIntermediate()" (change)="selectAllRow($event)">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate"
+                            [checked]="selectAll" [indeterminate]="checkIntermediate()" (change)="selectAllRow($event)">
                     </div>
                 </th>
                 }
@@ -42,7 +45,8 @@
                     <th class="text-capitalize" [style.width.px]="column.width">
                         {{column.label}}</th>
                     }@else{
-                    <th class="text-capitalize sortable pe-3 pe-lg-auto" [style.width.px]="column.width" [sortable]="column.name" (sort)="onSort($event)">
+                    <th class="text-capitalize sortable pe-3 pe-lg-auto" [style.width.px]="column.width"
+                        [sortable]="column.name" (sort)="onSort($event)">
                         {{column.label}}</th>
                     }
                 </ng-container>
@@ -53,7 +57,8 @@
                 @if(hasRowSelection){
                 <th class="row_select" style="width: 20px;">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" [checked]="selectAll" [indeterminate]="checkIntermediate()" (change)="selectAllRow($event)">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate"
+                            [checked]="selectAll" [indeterminate]="checkIntermediate()" (change)="selectAllRow($event)">
                     </div>
                 </th>
                 }
@@ -65,12 +70,15 @@
             }
         </thead>
         <tbody>
-            @for (record of tableData | slice: (service.page-1) * service.pageSize : service.page * service.pageSize;; track $index) {
-            <tr [class.selected]="isSelected[+((service.page-1) * service.pageSize)]">
+            @for (record of tableData | slice: (service.page-1) * service.pageSize : service.page * service.pageSize;;
+            track $index) {
+            <tr [class.selected]="isSelected[+((service.page-1) * service.pageSize)]" (click)="selectRow(record)">
                 @if(hasRowSelection){
                 <td>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" [checked]="isSelected[$index+((service.page-1) * service.pageSize)]" value="" id="flexCheckIndeterminate" (change)="selectRow($index+((service.page-1) * service.pageSize))">
+                        <input class="form-check-input" type="checkbox"
+                            [checked]="isSelected[$index+((service.page-1) * service.pageSize)]"
+                            (change)="selectRow(record)">
                     </div>
                 </td>
                 }
@@ -89,7 +97,9 @@
             Showing {{service.startIndex }} to
             {{service.endIndex}} of {{service.totalRecords}} entries
         </div>
-        <ngb-pagination class="pagination-rounded custom-pagination" [collectionSize]="service.totalRecords" [(page)]="service.page" [maxSize]="3" [rotate]="true" [pageSize]="service.pageSize" (pageChange)="paginate()">
+        <ngb-pagination class="pagination-rounded custom-pagination" [collectionSize]="service.totalRecords"
+            [(page)]="service.page" [maxSize]="3" [rotate]="true" [pageSize]="service.pageSize"
+            (pageChange)="paginate()">
         </ngb-pagination>
     </div>
     }

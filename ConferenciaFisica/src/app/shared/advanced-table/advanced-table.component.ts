@@ -36,6 +36,8 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
   selectAll: boolean = false;
   isSelected: boolean[] = [];
 
+  @Output() rowSelected = new EventEmitter<any>(); // Emissor de evento
+
 
   @Output() search = new EventEmitter<string>();
   @Output() sort = new EventEmitter<SortEvent>();
@@ -45,7 +47,7 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
   @ViewChildren(NgbSortableHeaderDirective) headers!: QueryList<NgbSortableHeaderDirective>;
   @ViewChildren('advancedTable') advancedTable!: any;
 
-  constructor (public service: AdvancedTableServices, private sanitizer: DomSanitizer, private componentFactoryResolver: ComponentFactoryResolver) {
+  constructor(public service: AdvancedTableServices, private sanitizer: DomSanitizer, private componentFactoryResolver: ComponentFactoryResolver) {
   }
 
   ngAfterViewChecked(): void {
@@ -153,10 +155,19 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
    * selects row
    * @param index row index
    */
-  selectRow(index: number): void {
-    this.isSelected[index] = !this.isSelected[index];
-    this.selectAll = (this.isSelected.filter(x => x === true).length === this.tableData.length);
+  // selectRow(index: number): void {
+  //   this.isSelected[index] = !this.isSelected[index];
+  //   this.selectAll = (this.isSelected.filter(x => x === true).length === this.tableData.length);
+  // }
+
+  /**
+  * Captura a linha selecionada e emite o evento para o componente pai
+  * @param record Objeto da linha selecionada
+  */
+  selectRow(record: any): void {
+    this.rowSelected.emit(record); // Emite a linha para o componente pai
   }
+
 
 
 
