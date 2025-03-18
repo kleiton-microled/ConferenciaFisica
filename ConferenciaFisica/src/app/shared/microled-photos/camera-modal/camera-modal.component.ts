@@ -1,6 +1,6 @@
-// camera-modal.component.ts
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FotoCapturada } from './foto-capturada.model';
 
 @Component({
   selector: 'app-camera-modal',
@@ -9,8 +9,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class CameraModalComponent implements OnInit, OnDestroy  {
 
-  @Input() items: { id: number | string, name: string }[] = []; 
-  @Output() fotoCapturada = new EventEmitter<{ imagemBase64: string, tipo: string }>(); // Emite a foto e o tipo
+  @Input() types: { id: number | string, name: string }[] = []; 
+  @Output() fotoCapturada = new EventEmitter<FotoCapturada>();
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('canvasElement') canvasElement!: ElementRef;
 
@@ -20,7 +20,7 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
   constructor(public activeModal: NgbActiveModal, private renderer: Renderer2) {}
 
   ngOnInit(): void {
-    console.log(this.items)
+    console.log(this.types)
     
     this.abrirCamera();
   }
@@ -47,8 +47,8 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Converte a imagem para base64 e emite junto com o tipo selecionado
       const fotoBase64 = canvas.toDataURL('image/png');
+      console.log({ imagemBase64: fotoBase64, tipo: this.tipoSelecionado })
       this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: this.tipoSelecionado });
     }
 
@@ -63,11 +63,13 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
     this.activeModal.dismiss();
   }
 
-  onTipoSelecionado(event: Event): void {
-    const target = event.target as HTMLSelectElement; // Faz o cast para HTMLSelectElement
-    if (target) {
-        this.tipoSelecionado = target.value; // Atualiza o tipo selecionado
+  onTipoSelecionado(value: string): void {// Faz o cast para HTMLSelectElement
+    console.log(value);
+    if (value) {
+        this.tipoSelecionado = value; // Atualiza o tipo selecionado
     }
+
+    console.log( this.tipoSelecionado);
 }
 
 
