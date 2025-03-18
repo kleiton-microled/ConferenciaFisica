@@ -11,7 +11,7 @@ import { DescargaExportacaoService } from './descarga-exportacao.service';
 import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { DescargaExportacao } from './models/descarga-exportacao.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
+import { Foto, MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
 import { Subscription } from 'rxjs';
 import { TalieItem } from '../models/talie-item.model';
 import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
@@ -368,6 +368,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
     modalRef.componentInstance.photosTypes = [{id: 1, name:'Tipo1'}];
+
+    modalRef.componentInstance.salvarFotosEmitter.subscribe((resultado: Foto[]) => {
+          console.log(resultado);
+        });
   }
 
   /**

@@ -1,14 +1,14 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CameraModalComponent } from './camera-modal/camera-modal.component';
 import { EnumValue } from '../models/enumValue.model';
 import { FotoCapturada } from './camera-modal/foto-capturada.model';
 
-interface Foto {
+export interface Foto {
   id: number;
-  descricao:string;
-  observacao:string;
+  descricao: string;
+  observacao: string;
   type: string;
   imagemBase64: string;
 }
@@ -19,9 +19,10 @@ interface Foto {
   styleUrls: ['./microled-photos.component.scss']
 })
 export class MicroledPhotosComponent implements OnInit {
-  
-  @Input() conteiner: string = ''; 
-  @Input() photosTypes: EnumValue[] = []; 
+
+  @Input() conteiner: string = '';
+  @Input() photosTypes: EnumValue[] = [];
+  @Output() salvarFotosEmitter = new EventEmitter< Foto[]>();
   fotos: Foto[] = [];
   fotosForm: FormGroup;
   fotoEditando!: Foto | null;
@@ -41,12 +42,12 @@ export class MicroledPhotosComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   abrirCamera() {
     const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
     modalRef.componentInstance.types = this.photosTypes;
-    
+
     modalRef.componentInstance.fotoCapturada.subscribe((resultado: FotoCapturada) => {
       console.log(resultado);
       this.adicionarFoto(resultado);
@@ -54,16 +55,14 @@ export class MicroledPhotosComponent implements OnInit {
   }
 
   adicionarFoto(resultado: FotoCapturada) {
-    console.log('tipo do novo arquivo' + resultado);
     const novaFoto: Foto = {
       id: this.nextId++,
-      descricao:"",
-      observacao:"",
+      descricao: "",
+      observacao: "",
       type: resultado.tipo,
       imagemBase64: resultado.imagemBase64
     };
-    
-    console.log(novaFoto);
+
     this.fotos.push(novaFoto);
   }
 
@@ -92,13 +91,15 @@ export class MicroledPhotosComponent implements OnInit {
     this.fecharModalEdicao();
   }
 
+  salvarFotos() : void {
+    this.salvarFotosEmitter.emit(this.fotos);
+  }
+
   fecharModalEdicao() {
-    console.log('tentou fechar');
-    console.log(this.modalRef);
     if (this.modalRef) {
       console.log(this.modalRef);
       this.modalRef.close(); // 🔥 Fecha apenas a modal de edição
     }
   }
-  
+
 }
