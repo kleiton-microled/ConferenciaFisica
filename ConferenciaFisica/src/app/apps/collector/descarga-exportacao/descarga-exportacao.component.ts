@@ -17,6 +17,9 @@ import { TalieItem } from '../models/talie-item.model';
 import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
 import { AvariaDescarga } from './models/avaria-descarga.model';
 import Swal from 'sweetalert2';
+import { Armazen } from '../models/armazens.model';
+import { Marcante } from '../models/marcante.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -33,13 +36,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   observacaoForm: FormGroup;
 
   marcanteForm: FormGroup;
+  marcante = new Marcante();
+  listaMarcantes: Marcante[] = [];
 
   // Simulação de dados para o select de armazéns
-  armazens = [
-    { id: 1, nome: 'Armazém 1' },
-    { id: 2, nome: 'Armazém 2' },
-    { id: 3, nome: 'Armazém 3' }
-  ];
+  armazens: Armazen[] = [];
 
   listEquipes = [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
   { id: 2, name: 'EQUIPE TARDE (15h-23h' },
@@ -71,7 +72,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   @ViewChild('editItemModal') editItemModal!: TemplateRef<any>;
   itensList: TalieItem[] = [];
 
-  constructor(private fb: FormBuilder,
+  constructor(private router: Router,
+    private fb: FormBuilder,
     private service: DescargaExportacaoService,
     private conferenceService: PhysicalConferenceService,
     private notificationService: NotificationService,
@@ -80,12 +82,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       id: new FormControl({ value: '', disabled: false }),
       inicio: new FormControl({ value: '', disabled: true }),
-      termino: new FormControl({ value: '', disabled: true }),
+      termino: new FormControl({ value: '', disabled: false }),
       talie: new FormControl({ value: '', disabled: true }),
       placa: new FormControl({ value: '', disabled: true },),
       reserva: new FormControl({ value: '', disabled: true },),
       cliente: new FormControl({ value: '', disabled: true },),
-      conferente: new FormControl('', Validators.required),
+      conferente: new FormControl({ value: 'Microled', disabled: true }),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
     });
@@ -143,7 +145,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           ...this.descargaAtual,
           talie: this.descargaAtual.talie?.id,
           inicio: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.inicio ?? null),
-          termino: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.inicio ?? null),
+          termino: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.termino ?? null),
         });
 
       }
@@ -153,12 +155,37 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      * Atualiza a descargaatual em tempo real
      */
     this.form.valueChanges.subscribe((values) => {
+      console.log(values, this.descargaAtual);
+    
       if (!this.descargaAtual) return;
-
+    
+      // Atualiza normalmente os valores
       Object.assign(this.descargaAtual, values);
-      console.log('DescargaAtualizada: ', this.descargaAtual);
+    
+      // Atualiza especificamente o "termino" dentro do objeto talie
+      if (this.descargaAtual.talie) {
+        this.descargaAtual.talie.termino = values.termino;//;
+      }
+
+      console.log(this.descargaAtual, 'Values Termino', values.termino);
+    });
+    
+    // this.form.valueChanges.subscribe((values) => {
+    //   console.log(values, this.descargaAtual);
+
+    //   if (!this.descargaAtual) return;
+    //   Object.assign(this.descargaAtual, values);
+    // });
+
+    this.marcanteForm.valueChanges.subscribe((values) => {
+      if (!this.marcante) return;
+
+      Object.assign(this.marcante, values);
     });
 
+    // this.form.controls['termino'].valueChanges.subscribe(value => {
+    //   this.validarDataTermino(value);
+    // });
 
     this.initAdvancedTableData();
   }
@@ -185,46 +212,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-  }
-
-  limpar() {
-    Swal.fire({
-      title: "Limpar Descarga!!!",
-      text: "Deseja limpar a descarga atual?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "SIM",
-      cancelButtonText: "NÃO",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.Reset();
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-      }
-    });
-  }
-
-  Reset() {
-    this.form.reset();
-    this.service.deletarDescarga();
-    this.itensList = [];
-    this.atualizarBotoes([
-      { nome: 'stop', enabled: false, visible: true },
-      { nome: 'alert', enabled: false, visible: true },
-      { nome: 'clear', enabled: false, visible: true },
-      { nome: 'delete', enabled: false, visible: true },
-      { nome: 'marcante', enabled: false, visible: true },
-      { nome: 'observacao', enabled: false, visible: true },
-      { nome: 'save', enabled: false, visible: true },
-      { nome: 'photo', enabled: false, visible: true }
-    ]);
-  }
-
-  limparData(campo: string) {
-    this.form.controls[campo].setValue(null);
-  }
-
-  onSelectChange(value: any) {
-    console.log('Selecionado:', value);
   }
 
   get equipeControl(): FormControl {
@@ -274,6 +261,17 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     ];
   }
 
+  onRowSelected(item: any): void {
+
+    this.itemSelecionado = item;
+    this.buscarArmazens();
+    this.buscarMarcantesTalieItem(item.id);
+    this.atualizarBotoes([
+      { nome: 'marcante', enabled: true, visible: true }
+    ]);
+  }
+
+
   handleTableLoad(event: any): void {
     document.querySelectorAll(".service").forEach((e) => {
       e.addEventListener("click", () => {
@@ -287,18 +285,14 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   serviceActionFormatter(item: TalieItem): any {
     return this.sanitizer.bypassSecurityTrustHtml(`
-      <a href="javascript:void(0);" class="action-icon view-btn" data-id="${item.id}">
-        <i class="mdi mdi-eye"></i>
-      </a>
       <a href="javascript:void(0);" class="action-icon edit-btn" data-id="${item.id}">
         <i class="mdi mdi-square-edit-outline"></i>
       </a>
-      <a href="javascript:void(0);" class="action-icon delete-btn" data-id="${item.id}">
+      <a href="javascript:void(0);" class="action-icon delete-btn" data-id="${item.id}"}">
         <i class="mdi mdi-delete"></i>
       </a>
     `);
   }
-
 
   abrirModal(content: any) {
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
@@ -306,18 +300,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   abrirModalMarcante(content: any) {
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
-  }
-
-  salvarMarcante() {
-    if (this.marcanteForm.valid) {
-      console.log("Marcante salvo:", this.marcanteForm.value);
-    }
-  }
-
-  salvarObservacao() {
-    // if (this.observacaoForm.valid) {
-    //   console.log("Observação salva:", this.observacaoForm.value.observacao);
-    // }
   }
 
   //#region MODAIS
@@ -426,7 +408,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Executa a busca pelo numero do registro
    * @param registro 
    */
-  buscarRegistro(registro: number) {
+  buscarRegistro() {
+    let registro = this.form.controls['id'].value;
     this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
@@ -435,11 +418,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           { nome: 'save', enabled: true, visible: true },
           { nome: 'alert', enabled: true, visible: true },
           { nome: 'clear', enabled: true, visible: true },
-          { nome: 'delete', enabled: true, visible: true },
-          { nome: 'marcante', enabled: true, visible: true },
+          { nome: 'delete', enabled: false, visible: true },
           { nome: 'observacao', enabled: true, visible: true },
           { nome: 'photo', enabled: true, visible: true },
         ]);
+
+        this.observacaoForm.controls['observacao'].setValue(this.descargaAtual.talie?.observacao);
 
         this.conferenceService
           .getTiposAvarias()
@@ -448,6 +432,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
               this.tiposAvarias = ret.result ?? [];
             }
           });
+
+        this.buscarArmazens();
       } else {
         this.notificationService.showAlert(ret);
       }
@@ -461,7 +447,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
-        this.buscarRegistro(this.descargaAtual?.registro ?? 0);
+        this.buscarRegistro();
       } else {
         this.notificationService.showAlert(ret);
       }
@@ -475,8 +461,28 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   salvarAlteracoes(modal: any): void {
     if (this.editItemForm.valid) {
       this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status && ret.result) {
+          this.buscarRegistro();
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+      modal.close();
+    }
+  }
+
+  /**
+   * Salvar Observacao
+   */
+  salvarObservacao(): void {
+    if (this.observacaoForm.valid) {
+      let observacao = this.observacaoForm.value.observacao;
+      let talieId = this.descargaAtual.talie?.id ?? 0;
+
+      this.service.saveObservacao(observacao, talieId).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
-          //this.buscarRegistro(this.descargaAtual.registro);
+
           this.notificationService.showSuccess(ret);
         } else {
           this.notificationService.showAlert(ret);
@@ -486,17 +492,122 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     }
   }
 
-  deletarItem(id: number): void {
-    console.log('Item deletado:', id);
-    this.service.deleteTalieItem(id).subscribe((ret: ServiceResult<boolean>) => {
+  salvarMarcante() {
+    if (this.marcanteForm.valid) {
+
+      this.marcante.registro = this.descargaAtual.registro;
+      this.marcante.talieId = this.descargaAtual.talie?.id ?? 0;
+      this.marcante.talieItemId = this.itemSelecionado.id;
+
+      this.service.saveMarcante(this.marcante).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status && ret.result) {
+          this.buscarMarcantesTalieItem(this.descargaAtual.talie?.id ?? 0);
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    }
+  }
+
+  getArmazemDescricao(id: number): string {
+    const armazem = this.armazens.find(a => a.id === id);
+    return armazem ? armazem.descricao : 'Desconhecido';
+  }
+
+  /**
+   * Lista os armazens
+   */
+  buscarArmazens() {
+    this.service.getArmazens(2).subscribe((ret: ServiceResult<Armazen[]>) => {
       if (ret.status) {
-        this.buscarRegistro(this.descargaAtual.registro);
-        this.notificationService.showSuccess(ret);
+        this.armazens = ret.result ?? [];
       } else {
         this.notificationService.showAlert(ret);
       }
     });
   }
+  /**
+   * Exclui o talie Item
+   * @param id 
+   */
+  deletarItem(id: number): void {
+    Swal.fire({
+      title: 'Excluir Registro!!!',
+      text: "Tem certeza que deseja excluir o registro? Ação não poderá ser desfeita!!!",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'SIM',
+      cancelButtonText: 'NÃO',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.deleteTalieItem(id, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
+          if (ret.status && ret.result) {
+            this.buscarRegistro();
+            this.notificationService.showSuccess(ret);
+          } else {
+            this.notificationService.showAlert(ret);
+          }
+        });
+      }
+    })
+  }
+  /**
+   * Excluir marcante do talie item
+   * @param id 
+   */
+  deletarMarcanteTalieItem(id: number): void {
+    Swal.fire({
+      title: 'Excluir Registro!!!',
+      text: "Tem certeza que deseja excluir o registro? Ação não poderá ser desfeita!!!",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'SIM',
+      cancelButtonText: 'NÃO',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.deleteMarcanteTalieItem(id).subscribe((ret: ServiceResult<boolean>) => {
+          if (ret.status && ret.result) {
+            this.notificationService.showSuccess(ret);
+            this.buscarMarcantesTalieItem(this.descargaAtual.talie?.id ?? 0);
+          } else {
+            this.notificationService.showAlert(ret);
+          }
+        });
+      }
+    })
+  }
+
+  /**
+   * Carrega os marcantes do talie item
+   */
+  buscarMarcantesTalieItem(id: number) {
+    this.service.getMarcanteTaliItem(id).subscribe((ret: ServiceResult<Marcante[]>) => {
+      if (ret.status) {
+        this.listaMarcantes = ret.result ?? [];
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+  }
+
+  /**
+   * Chama o servico de finaliziar processo
+   */
+  finalizarProcessoDescarga() {
+    if (this.descargaAtual.talie?.id) {
+      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, false).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+          this.buscarRegistro();
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    }
+  }
+
+
   //#endregion SERVICE
 
   //#region HELPERS
@@ -532,6 +643,84 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     this.footerButtonsState = novoEstado;
+  }
+
+  /**
+   * Limpeza do formulario
+   */
+  limpar() {
+    Swal.fire({
+      title: "Limpar Descarga!!!",
+      text: "Deseja limpar a descarga atual?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "SIM",
+      cancelButtonText: "NÃO",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.Reset();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
+  }
+
+  Reset() {
+    this.form.reset();
+    this.service.deletarDescarga();
+    this.form.controls['conferente'].setValue('Microled');
+    this.itensList = [];
+    this.atualizarBotoes([
+      { nome: 'stop', enabled: false, visible: true },
+      { nome: 'alert', enabled: false, visible: true },
+      { nome: 'clear', enabled: false, visible: true },
+      { nome: 'delete', enabled: false, visible: true },
+      { nome: 'marcante', enabled: false, visible: true },
+      { nome: 'observacao', enabled: false, visible: true },
+      { nome: 'save', enabled: false, visible: true },
+      { nome: 'photo', enabled: false, visible: true }
+    ]);
+  }
+
+  limparData(campo: string) {
+    this.form.controls[campo].setValue(null);
+  }
+
+  onSelectChange(value: any) {
+    console.log('Selecionado:', value);
+  }
+
+  validarDataTermino(value: any): void {
+    let isValid = false;
+    if (!value)
+      isValid = false;
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Remove a hora para comparar apenas a data
+
+    const dataSelecionada = new Date(value.year, value.month - 1, value.day);
+
+    if (dataSelecionada < hoje) {
+      isValid = false;
+      this.form.controls['termino'].setValue(null); // Reseta o campo se for inválido
+    } else {
+      isValid = true;
+    }
+
+    // ✅ Chama o método desejado se a data for válida
+    this.liberarBtnFinalizar(isValid);
+  }
+
+  liberarBtnFinalizar(value: boolean): void {
+    if (value) {
+      this.atualizarBotoes([{ nome: 'stop', enabled: true, visible: true }]);
+    } else {
+      this.atualizarBotoes([{ nome: 'stop', enabled: false, visible: true }]);
+    }
+
+  }
+
+  sair() {
+    this.router.navigate(['/apps/tools']);
   }
 
   //#endregion
