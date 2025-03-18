@@ -24,5 +24,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de pré registro",
     version: 1,
     link: "apps/collector/pre-registro",
+  },
+  {
+    id: 4,
+    title: "Movimentação de carga solta",
+    description:
+      "Modulo de movimentação carga solta",
+    version: 1,
+    link: "apps/collector/movimentaca-carga-solta",
   }
 ];

@@ -4,6 +4,7 @@ import { NgModule } from "@angular/core";
 import { PhysicalConferenceComponent } from "./physical-conference/physical-conference.component";
 import { DescargaExportacaoComponent } from "./descarga-exportacao/descarga-exportacao.component";
 import { PreRegistroComponent } from "./pre-registro/pre-registro.component";
+import { MovimentacaoCargaSoltaComponent } from "./movimentacao-carga-solta/movimentacao-carga-solta.component";
 
 const routes: Routes = [{
   path: '',
@@ -20,6 +21,10 @@ const routes: Routes = [{
 {
   path: 'pre-registro',
   component: PreRegistroComponent
+},
+{
+  path: 'movimentaca-carga-solta',
+  component: MovimentacaoCargaSoltaComponent
 }];
 
 @NgModule({
