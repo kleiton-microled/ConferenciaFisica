@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MicroledSelectComponent } from './microled-select/microled-select.component';
 import { ActionFooterComponent } from './action-footer/action-footer.component';
 import { MicroledPhotosComponent } from './microled-photos/microled-photos.component';
+import { CameraModalComponent } from './microled-photos/camera-modal/camera-modal.component';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { MicroledPhotosComponent } from './microled-photos/microled-photos.compo
     AvariasModalComponent,
     MicroledSelectComponent,
     ActionFooterComponent,
+    CameraModalComponent,
     MicroledPhotosComponent],
   imports: [
     CommonModule,

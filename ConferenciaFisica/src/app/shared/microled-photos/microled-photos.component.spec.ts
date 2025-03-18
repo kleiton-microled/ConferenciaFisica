@@ -14,6 +14,15 @@ interface Foto {
   styleUrls: ['./microled-photos.component.scss']
 })
 export class MicroledPhotosComponent implements OnInit {
+abrirModalEdicao(_t19: any) {
+throw new Error('Method not implemented.');
+}
+salvarEdicao() {
+throw new Error('Method not implemented.');
+}
+fecharModalEdicao() {
+throw new Error('Method not implemented.');
+}
   
   tiposFoto: string[] = ['Selfie', 'Documento', 'Outro'];
     @Input() conteiner: string = ''; 

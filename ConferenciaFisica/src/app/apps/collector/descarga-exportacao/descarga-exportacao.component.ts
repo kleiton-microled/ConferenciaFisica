@@ -367,6 +367,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
+    modalRef.componentInstance.photosTypes = [{id: 1, name:'Tipo1'}];
   }
 
   /**

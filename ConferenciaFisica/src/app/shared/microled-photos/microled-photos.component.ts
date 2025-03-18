@@ -2,11 +2,14 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CameraModalComponent } from './camera-modal/camera-modal.component';
+import { EnumValue } from '../models/enumValue.model';
+import { FotoCapturada } from './camera-modal/foto-capturada.model';
 
 interface Foto {
   id: number;
   descricao:string;
   observacao:string;
+  type: string;
   imagemBase64: string;
 }
 
@@ -18,6 +21,7 @@ interface Foto {
 export class MicroledPhotosComponent implements OnInit {
   
   @Input() conteiner: string = ''; 
+  @Input() photosTypes: EnumValue[] = []; 
   fotos: Foto[] = [];
   fotosForm: FormGroup;
   fotoEditando!: Foto | null;
@@ -41,21 +45,25 @@ export class MicroledPhotosComponent implements OnInit {
 
   abrirCamera() {
     const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
-    modalRef.componentInstance.items = [{id: 1, name:'Tipo1'}];
+    modalRef.componentInstance.types = this.photosTypes;
     
-    modalRef.componentInstance.fotoCapturada.subscribe((fotoBase64: string) => {
-      this.adicionarFoto(fotoBase64);
+    modalRef.componentInstance.fotoCapturada.subscribe((resultado: FotoCapturada) => {
+      console.log(resultado);
+      this.adicionarFoto(resultado);
     });
   }
 
-  adicionarFoto(fotoBase64: string) {
+  adicionarFoto(resultado: FotoCapturada) {
+    console.log('tipo do novo arquivo' + resultado);
     const novaFoto: Foto = {
       id: this.nextId++,
       descricao:"",
       observacao:"",
-      imagemBase64: fotoBase64
+      type: resultado.tipo,
+      imagemBase64: resultado.imagemBase64
     };
     
+    console.log(novaFoto);
     this.fotos.push(novaFoto);
   }
 
