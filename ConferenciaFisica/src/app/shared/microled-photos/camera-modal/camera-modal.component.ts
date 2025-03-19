@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FotoCapturada } from './foto-capturada.model';
+import { EnumValue } from '../../models/enumValue.model';
 
 @Component({
   selector: 'app-camera-modal',
@@ -9,18 +10,18 @@ import { FotoCapturada } from './foto-capturada.model';
 })
 export class CameraModalComponent implements OnInit, OnDestroy  {
 
-  @Input() types: { id: number | string, name: string }[] = []; 
+  @Input() types: EnumValue[] = []; 
   @Output() fotoCapturada = new EventEmitter<FotoCapturada>();
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('canvasElement') canvasElement!: ElementRef;
 
   private stream: MediaStream | null = null;
-  tipoSelecionado: string = '';
+  tipoSelecionado: number = 0;
 
   constructor(public activeModal: NgbActiveModal, private renderer: Renderer2) {}
 
   ngOnInit(): void {
-    console.log(this.types)
+    console.log(this.types + 'eee')
     
     this.abrirCamera();
   }
@@ -63,7 +64,7 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
     this.activeModal.dismiss();
   }
 
-  onTipoSelecionado(value: string): void {// Faz o cast para HTMLSelectElement
+  onTipoSelecionado(value: number): void {// Faz o cast para HTMLSelectElement
     console.log(value);
     if (value) {
         this.tipoSelecionado = value; // Atualiza o tipo selecionado

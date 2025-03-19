@@ -11,6 +11,7 @@ import { NotificationService } from "src/app/shared/services/notification.servic
 import { TalieItem } from "../models/talie-item.model";
 import { Armazen } from "../models/armazens.model";
 import { Marcante } from "../models/marcante.model";
+import { EnumValue } from "src/app/shared/models/enumValue.model";
 
 @Injectable({
     providedIn: 'root'
@@ -279,6 +280,24 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
             finalize(() => this.notificationService.hideLoading())
         );
     }
+
+    getListarTiposProcessos(): Observable<ServiceResult<EnumValue[]>> {
+        return this.http.get<ServiceResult<EnumValue[]>>(`${DESCARGA_EXPORTACAO_URL}/tipos-processos`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
 
     saveFotos(data: Marcante): Observable<ServiceResult<boolean>> {
         return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/salvar-fotos`, data).pipe(
