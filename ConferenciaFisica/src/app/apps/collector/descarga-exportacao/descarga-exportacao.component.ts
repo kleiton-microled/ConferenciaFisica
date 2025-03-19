@@ -20,6 +20,7 @@ import Swal from 'sweetalert2';
 import { Armazen } from '../models/armazens.model';
 import { Marcante } from '../models/marcante.model';
 import { Router } from '@angular/router';
+import { EnumValue } from 'src/app/shared/models/enumValue.model';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -359,6 +360,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Abre a modal de fotos
    */
   abrirModalFotos() {
+
+
+    let tiposProcessos = this.service.getListarTiposProcessos();
     const modalRef = this.modalService.open(MicroledPhotosComponent, {
       size: 'xl',
       backdrop: 'static',
@@ -367,7 +371,15 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
-    modalRef.componentInstance.photosTypes = [{id: 1, name:'Tipo1'}];
+    this.service.getListarTiposProcessos().subscribe((ret: ServiceResult<EnumValue[]>) => {
+      if (ret.status) {
+        console.log(ret)
+        modalRef.componentInstance.photosTypes = ret.result;
+      } else {
+        
+      }
+    });
+   // modalRef.componentInstance.photosTypes = [{id: 1, name:'Tipo1'}];
 
     modalRef.componentInstance.salvarFotosEmitter.subscribe((resultado: Foto[]) => {
           console.log(resultado);

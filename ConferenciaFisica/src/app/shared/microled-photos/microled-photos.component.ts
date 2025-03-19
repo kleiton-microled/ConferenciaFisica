@@ -4,12 +4,13 @@ import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstra
 import { CameraModalComponent } from './camera-modal/camera-modal.component';
 import { EnumValue } from '../models/enumValue.model';
 import { FotoCapturada } from './camera-modal/foto-capturada.model';
+import { co } from '@fullcalendar/core/internal-common';
 
 export interface Foto {
   id: number;
   descricao: string;
   observacao: string;
-  type: string;
+  type: number;
   imagemBase64: string;
 }
 
@@ -47,6 +48,7 @@ export class MicroledPhotosComponent implements OnInit {
   abrirCamera() {
     const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
     modalRef.componentInstance.types = this.photosTypes;
+    console.log(modalRef.componentInstance.types);
 
     modalRef.componentInstance.fotoCapturada.subscribe((resultado: FotoCapturada) => {
       console.log(resultado);
