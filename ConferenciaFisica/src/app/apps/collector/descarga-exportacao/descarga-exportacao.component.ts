@@ -360,9 +360,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Abre a modal de fotos
    */
   abrirModalFotos() {
-
-
-    let tiposProcessos = this.service.getListarTiposProcessos();
     const modalRef = this.modalService.open(MicroledPhotosComponent, {
       size: 'xl',
       backdrop: 'static',
@@ -373,16 +370,20 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.conteiner = 'CONT-1234';
     this.service.getListarTiposProcessos().subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {
-        console.log(ret)
         modalRef.componentInstance.photosTypes = ret.result;
-      } else {
-        
-      }
+      } else {}
     });
-   // modalRef.componentInstance.photosTypes = [{id: 1, name:'Tipo1'}];
 
-    modalRef.componentInstance.salvarFotosEmitter.subscribe((resultado: Foto[]) => {
+    modalRef.componentInstance.salvarFotoEmitter.subscribe((resultado: Foto) => {
           console.log(resultado);
+          resultado.talieId = this.descargaAtual.talie?.id ?? 0;
+          this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+            if (ret.status) {
+              this.notificationService.showSuccess(ret);
+            } else {
+              this.notificationService.showAlert(ret);
+            }
+          });
         });
   }
 

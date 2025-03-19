@@ -1,5 +1,5 @@
 export interface EnumValue {
-    Id: number;
+    id: number;
     codigo: number;
     descricao: string;
   }

@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FotoCapturada } from './foto-capturada.model';
 import { EnumValue } from '../../models/enumValue.model';
+import { co } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-camera-modal',
@@ -49,8 +50,9 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const fotoBase64 = canvas.toDataURL('image/png');
-      console.log({ imagemBase64: fotoBase64, tipo: this.tipoSelecionado })
-      this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: this.tipoSelecionado });
+      let d = this.types.find(x => x.codigo == this.tipoSelecionado);
+      
+      this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: d?.id?? 0, tipoDescription: d?.descricao ?? '' });
     }
 
     this.fecharCamera();
@@ -64,13 +66,12 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
     this.activeModal.dismiss();
   }
 
-  onTipoSelecionado(value: number): void {// Faz o cast para HTMLSelectElement
-    console.log(value);
-    if (value) {
-        this.tipoSelecionado = value; // Atualiza o tipo selecionado
-    }
+  onTipoSelecionado(value: number): void {
 
-    console.log( this.tipoSelecionado);
+    if (value) {
+      console.log(value);
+        this.tipoSelecionado = value; 
+    }
 }
 
 

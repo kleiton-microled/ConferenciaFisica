@@ -7,10 +7,12 @@ import { FotoCapturada } from './camera-modal/foto-capturada.model';
 import { co } from '@fullcalendar/core/internal-common';
 
 export interface Foto {
+  talieId: number | null;
   id: number;
   descricao: string;
   observacao: string;
   type: number;
+  typeDescription: string;
   imagemBase64: string;
 }
 
@@ -23,7 +25,7 @@ export class MicroledPhotosComponent implements OnInit {
 
   @Input() conteiner: string = '';
   @Input() photosTypes: EnumValue[] = [];
-  @Output() salvarFotosEmitter = new EventEmitter< Foto[]>();
+  @Output() salvarFotoEmitter = new EventEmitter<Foto>();
   fotos: Foto[] = [];
   fotosForm: FormGroup;
   fotoEditando!: Foto | null;
@@ -48,10 +50,8 @@ export class MicroledPhotosComponent implements OnInit {
   abrirCamera() {
     const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
     modalRef.componentInstance.types = this.photosTypes;
-    console.log(modalRef.componentInstance.types);
 
     modalRef.componentInstance.fotoCapturada.subscribe((resultado: FotoCapturada) => {
-      console.log(resultado);
       this.adicionarFoto(resultado);
     });
   }
@@ -62,10 +62,14 @@ export class MicroledPhotosComponent implements OnInit {
       descricao: "",
       observacao: "",
       type: resultado.tipo,
-      imagemBase64: resultado.imagemBase64
+      typeDescription: resultado.tipoDescription,
+      imagemBase64: resultado.imagemBase64,
+      talieId: null
     };
-
+    console.log(novaFoto + 'enviado');
     this.fotos.push(novaFoto);
+    
+    this.salvarFotoEmitter.emit(novaFoto);
   }
 
   excluirFoto(id: number) {
@@ -94,7 +98,7 @@ export class MicroledPhotosComponent implements OnInit {
   }
 
   salvarFotos() : void {
-    this.salvarFotosEmitter.emit(this.fotos);
+    // this.salvarFotosEmitter.emit(this.fotos);
   }
 
   fecharModalEdicao() {

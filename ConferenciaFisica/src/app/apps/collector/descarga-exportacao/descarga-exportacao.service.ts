@@ -12,6 +12,7 @@ import { TalieItem } from "../models/talie-item.model";
 import { Armazen } from "../models/armazens.model";
 import { Marcante } from "../models/marcante.model";
 import { EnumValue } from "src/app/shared/models/enumValue.model";
+import { Foto } from "src/app/shared/microled-photos/microled-photos.component";
 
 @Injectable({
     providedIn: 'root'
@@ -297,6 +298,24 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
             finalize(() => this.notificationService.hideLoading())
         );
     }
+
+    postProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
+        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/processo`, data).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
 
 
     saveFotos(data: Marcante): Observable<ServiceResult<boolean>> {
