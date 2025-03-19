@@ -30,7 +30,7 @@
         <tbody>
             <tr *ngFor="let foto of fotos">
                 <td><img [src]="foto.imagemBase64" width="50" height="50"></td>
-                <td>{{foto.type}}</td>
+                <td>{{foto.typeDescription}}</td>
                 <td>{{foto.descricao}}</td>
                 <td>{{foto.observacao}}</td>
                 <td>
@@ -53,7 +53,6 @@
         <i class="fas fa-camera"></i> Tirar Foto
     </button>
     <div>
-        <button class="btn btn-primary" (click)="salvarFotos()">Salvar</button>
         <button class="btn btn-secondary" (click)="fecharModal()">Fechar</button>
     </div>
 </div>
