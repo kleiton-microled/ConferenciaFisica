@@ -14,6 +14,7 @@ interface Foto {
   styleUrls: ['./microled-photos.component.scss']
 })
 export class MicroledPhotosComponent implements OnInit {
+urlBasePhotos: any;
 abrirModalEdicao(_t19: any) {
 throw new Error('Method not implemented.');
 }

@@ -21,6 +21,7 @@ import { Armazen } from '../models/armazens.model';
 import { Marcante } from '../models/marcante.model';
 import { Router } from '@angular/router';
 import { EnumValue } from 'src/app/shared/models/enumValue.model';
+import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -157,12 +158,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      */
     this.form.valueChanges.subscribe((values) => {
       console.log(values, this.descargaAtual);
-    
+
       if (!this.descargaAtual) return;
-    
+
       // Atualiza normalmente os valores
       Object.assign(this.descargaAtual, values);
-    
+
       // Atualiza especificamente o "termino" dentro do objeto talie
       if (this.descargaAtual.talie) {
         this.descargaAtual.talie.termino = values.termino;//;
@@ -170,7 +171,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
       console.log(this.descargaAtual, 'Values Termino', values.termino);
     });
-    
+
     // this.form.valueChanges.subscribe((values) => {
     //   console.log(values, this.descargaAtual);
 
@@ -368,23 +369,44 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
+    modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
     this.service.getListarTiposProcessos().subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {
         modalRef.componentInstance.photosTypes = ret.result;
-      } else {}
+      } else { }
+    });
+
+    this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+      console.log(ret.result)
+      if (ret.status) {
+        modalRef.componentInstance.fotos = ret.result;
+      } else { }
     });
 
     modalRef.componentInstance.salvarFotoEmitter.subscribe((resultado: Foto) => {
-          console.log(resultado);
-          resultado.talieId = this.descargaAtual.talie?.id ?? 0;
-          this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
-            if (ret.status) {
-              this.notificationService.showSuccess(ret);
-            } else {
-              this.notificationService.showAlert(ret);
-            }
-          });
-        });
+
+      resultado.talieId = this.descargaAtual.talie?.id ?? 0;
+      this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
+
+    modalRef.componentInstance.salvarAlteracaoFotoEmitter.subscribe((resultado: Foto) => {
+
+      this.service.putProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
+
+
   }
 
   /**

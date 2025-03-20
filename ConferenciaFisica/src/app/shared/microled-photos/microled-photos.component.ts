@@ -1,10 +1,9 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CameraModalComponent } from './camera-modal/camera-modal.component';
 import { EnumValue } from '../models/enumValue.model';
 import { FotoCapturada } from './camera-modal/foto-capturada.model';
-import { co } from '@fullcalendar/core/internal-common';
 
 export interface Foto {
   talieId: number | null;
@@ -14,6 +13,7 @@ export interface Foto {
   type: number;
   typeDescription: string;
   imagemBase64: string;
+  imagemPath: string | null;
 }
 
 @Component({
@@ -26,7 +26,9 @@ export class MicroledPhotosComponent implements OnInit {
   @Input() conteiner: string = '';
   @Input() photosTypes: EnumValue[] = [];
   @Output() salvarFotoEmitter = new EventEmitter<Foto>();
+  @Output() salvarAlteracaoFotoEmitter = new EventEmitter<Foto>();
   fotos: Foto[] = [];
+  urlBasePhotos: string ='';
   fotosForm: FormGroup;
   fotoEditando!: Foto | null;
 
@@ -64,9 +66,10 @@ export class MicroledPhotosComponent implements OnInit {
       type: resultado.tipo,
       typeDescription: resultado.tipoDescription,
       imagemBase64: resultado.imagemBase64,
-      talieId: null
+      talieId: null,
+      imagemPath: null
     };
-    console.log(novaFoto + 'enviado');
+    
     this.fotos.push(novaFoto);
     
     this.salvarFotoEmitter.emit(novaFoto);
@@ -93,6 +96,8 @@ export class MicroledPhotosComponent implements OnInit {
     if (this.fotoEditando) {
       this.fotoEditando.descricao = this.fotosForm.value.descricao;
       this.fotoEditando.observacao = this.fotosForm.value.observacao;
+
+      this.salvarAlteracaoFotoEmitter.emit(this.fotoEditando);
     }
     this.fecharModalEdicao();
   }
