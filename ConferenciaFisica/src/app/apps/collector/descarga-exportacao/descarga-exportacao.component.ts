@@ -116,7 +116,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       uno3: [''],
       uno4: [''],
       fumigacao: [''],
-      remonte: [false],
+      remonte: [''],
       observacao: ['']
     });
 
@@ -465,13 +465,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
         this.atualizarBotoes([
-          { nome: 'stop', enabled: true, visible: true },
-          { nome: 'save', enabled: true, visible: true },
-          { nome: 'alert', enabled: true, visible: true },
+          { nome: 'stop', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'save', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'alert', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
           { nome: 'clear', enabled: true, visible: true },
           { nome: 'delete', enabled: false, visible: true },
-          { nome: 'observacao', enabled: true, visible: true },
-          { nome: 'photo', enabled: true, visible: true },
+          { nome: 'observacao', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'photo', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
         ]);
 
         this.observacaoForm.controls['observacao'].setValue(this.descargaAtual.talie?.observacao);
