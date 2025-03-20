@@ -13,6 +13,7 @@ import { Armazen } from "../models/armazens.model";
 import { Marcante } from "../models/marcante.model";
 import { EnumValue } from "src/app/shared/models/enumValue.model";
 import { Foto } from "src/app/shared/microled-photos/microled-photos.component";
+import { ConfigService } from "src/app/shared/services/config.service";
 
 @Injectable({
     providedIn: 'root'
@@ -21,8 +22,8 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
 
     private descargaSubject = new BehaviorSubject<DescargaExportacao | null>(null);
 
-    constructor(http: HttpClient, private notificationService: NotificationService) {
-        super(http, DESCARGA_EXPORTACAO_URL);
+    constructor(http: HttpClient, private configService: ConfigService, private notificationService: NotificationService) {
+        super(http, configService.getConfig('DESCARGA_EXPORTACAO_URL'));
     }
 
     // Obtém o estado atual da DescargaExportacao

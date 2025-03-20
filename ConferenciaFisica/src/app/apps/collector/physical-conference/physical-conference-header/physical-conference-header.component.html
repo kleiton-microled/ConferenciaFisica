@@ -6,9 +6,9 @@
           <div class="col-lg-12 d-flex align-items-center">
             <h4 style="font-weight: 100">Conferência Física de Mercadorias</h4>
             <!-- Botão para abrir a modal -->
-            <button class="btn btn-link p-0 ms-3 custom-btn" (click)="openModal(advancedFilterModal)">
+            <!-- <button class="btn btn-link p-0 ms-3 custom-btn" (click)="openModal(advancedFilterModal)">
               <strong><i class="fas fa-filter"></i> Filtrar</strong>
-            </button>
+            </button> -->
           </div>
         </div>
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-3">
@@ -226,10 +226,10 @@
   <div class="modal-body">
     <form>
       <div class="row">
-        <div class="col-3">
+        <!-- <div class="col-3">
           <label for="pesquisa" class="form-label">Pesquisa</label>
           <input id="pesquisa" type="text" class="form-control" />
-        </div>
+        </div> -->
         <div class="col-3">
           <label for="conteiner" class="form-label">Conteiner</label>
           <select class="form-select" id="conteiner" [(ngModel)]="selectedContainer" name="conteiner">
@@ -248,10 +248,10 @@
             </option>
           </select>
         </div>
-        <div class="col-3">
+        <!-- <div class="col-3">
           <label for="numero" class="form-label">Numero</label>
           <input id="numero" type="text" class="form-control" [(ngModel)]="selectedNumero" name="numero" />
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
