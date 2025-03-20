@@ -60,8 +60,10 @@ export class MicroledPhotosComponent implements OnInit {
   }
 
   adicionarFoto(resultado: FotoCapturada) {
+    let ultimaFoto = this.fotos.length > 0 ? this.fotos[this.fotos.length - 1]: null;
+    let id = ultimaFoto?.id ?? this.nextId++;
     const novaFoto: Foto = {
-      id: this.nextId++,
+      id:id,
       descricao: "",
       observacao: "",
       type: resultado.tipo,

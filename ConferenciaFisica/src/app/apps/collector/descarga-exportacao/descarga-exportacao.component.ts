@@ -393,6 +393,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           this.notificationService.showAlert(ret);
         }
       });
+
+      this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+        
+        if (ret.status) {
+          modalRef.componentInstance.fotos = ret.result;
+        } else { }
+      });
     });
 
     modalRef.componentInstance.salvarAlteracaoFotoEmitter.subscribe((resultado: Foto) => {
@@ -403,6 +410,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         } else {
           this.notificationService.showAlert(ret);
         }
+      });
+
+      this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+        
+        if (ret.status) {
+          modalRef.componentInstance.fotos = ret.result;
+        } else { }
       });
     });
 
