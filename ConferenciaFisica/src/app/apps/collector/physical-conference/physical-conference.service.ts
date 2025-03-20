@@ -13,6 +13,7 @@ import { DocumentosConferencia } from './models/documentos-conferencia.model';
 import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
 import { AvariaConferencia } from './models/avaria.model';
 import { TiposEmbalagens } from './models/tipos-embalagens.model';
+import { ConfigService } from 'src/app/shared/services/config.service';
 
 export interface ConferenceContainer {
   display: string;
@@ -28,10 +29,13 @@ export interface ConferenceLotes {
   providedIn: 'root'
 })
 export class PhysicalConferenceService {
-  private apiUrl = 'https://localhost:5000/api';
-  //private apiUrl = 'https://localhost:5000/api';
+  //private apiUrl = 'https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api';
+  private apiUrl = "";//AppUrls.CONFERENCIA_FISICA;
 
-  constructor(private http: HttpClient, private notificationService: NotificationService) { }
+  constructor(private http: HttpClient, private configService: ConfigService,
+    private notificationService: NotificationService) {
+      this.apiUrl = this.configService.getConfig('CONFERENCIA_FISICA_URL');
+  }
 
   /**
    * 🔥 Método que retorna os dados mockados de containers
@@ -349,7 +353,7 @@ export class PhysicalConferenceService {
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        this.notificationService.showError(error); 
+        this.notificationService.showError(error);
         return throwError(() => error);
       }),
       finalize(() => this.notificationService.hideLoading())
@@ -487,7 +491,7 @@ export class PhysicalConferenceService {
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        this.notificationService.showError(error); 
+        this.notificationService.showError(error);
         return throwError(() => error);
       }),
       finalize(() => this.notificationService.hideLoading())
@@ -511,7 +515,7 @@ export class PhysicalConferenceService {
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        this.notificationService.showError(error); 
+        this.notificationService.showError(error);
         return throwError(() => error);
       }),
       finalize(() => this.notificationService.hideLoading())

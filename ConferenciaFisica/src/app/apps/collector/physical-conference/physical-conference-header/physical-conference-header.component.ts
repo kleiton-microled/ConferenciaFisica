@@ -54,7 +54,7 @@ export class PhysicalConferenceHeaderComponent {
     exit: { enabled: true, visible: true },
     save: { enabled: false, visible: true },
     delete: { enabled: false, visible: true },
-    photo: { enabled: true, visible: true },
+    photo: { enabled: false, visible: true },
     marcante: { enabled: false, visible: false },
     observacao: { enabled: false, visible: false }
   };
@@ -399,6 +399,7 @@ export class PhysicalConferenceHeaderComponent {
       { nome: 'delete', enabled: false, visible: true },
       { nome: 'marcante', enabled: false, visible: false },
       { nome: 'observacao', enabled: false, visible: false },
+      { nome: 'photo', enabled: false, visible: true }
     ]);
   }
 
