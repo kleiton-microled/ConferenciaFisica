@@ -350,6 +350,23 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
+    deleteProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
+        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/processo/${data.id}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
     saveFotos(data: Marcante): Observable<ServiceResult<boolean>> {
         return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/salvar-fotos`, data).pipe(
             map(response => {

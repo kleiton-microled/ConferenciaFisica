@@ -27,6 +27,7 @@ export class MicroledPhotosComponent implements OnInit {
   @Input() photosTypes: EnumValue[] = [];
   @Output() salvarFotoEmitter = new EventEmitter<Foto>();
   @Output() salvarAlteracaoFotoEmitter = new EventEmitter<Foto>();
+  @Output() excluirFotoEmitter = new EventEmitter<Foto>();
   fotos: Foto[] = [];
   urlBasePhotos: string ='';
   fotosForm: FormGroup;
@@ -76,7 +77,12 @@ export class MicroledPhotosComponent implements OnInit {
   }
 
   excluirFoto(id: number) {
-    this.fotos = this.fotos.filter(foto => foto.id !== id);
+    let foto = this.fotos.find(foto => foto.id === id);
+    if (foto) {
+      this.excluirFotoEmitter.emit(foto);
+      this.fotos = this.fotos.filter(foto => foto.id !== id);
+    }
+   
   }
 
   fecharModal(): void {

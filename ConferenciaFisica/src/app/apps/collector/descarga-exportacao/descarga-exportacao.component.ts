@@ -406,6 +406,17 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       });
     });
 
+    modalRef.componentInstance.excluirFotoEmitter.subscribe((resultado: Foto) => {
+
+      this.service.deleteProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
+
 
   }
 
