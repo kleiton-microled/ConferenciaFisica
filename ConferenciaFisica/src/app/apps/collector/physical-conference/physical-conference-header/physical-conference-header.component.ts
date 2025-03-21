@@ -102,6 +102,19 @@ export class PhysicalConferenceHeaderComponent {
   tiposEmbalagens: TiposEmbalagens[] = [];
   avariasConferencia!: AvariaConferencia | null;
 
+  servicoForm = this.fb.group({
+    quantidade: [null],
+    servico: ['']
+  });
+
+  listaServicos = [
+    { id: 1, nome: 'Embalagem' },
+    { id: 2, nome: 'Transporte' },
+    { id: 3, nome: 'Paletização' }
+  ];
+
+  servicosAdicionados: { id: number; nome: string; quantidade: number }[] = [];
+
   filtro: string = "";
   constructor(
     private fb: FormBuilder,
@@ -180,7 +193,7 @@ export class PhysicalConferenceHeaderComponent {
       quantidade: [{ value: "", disabled: true }],
       tipoConferencia: [{ value: "", disabled: false }],
       inicioConferencia: [{ value: "", disabled: false }],
-      fimConferencia: [{ value: "", disabled: false }],
+      termino: [{ value: "", disabled: false }],
       cpfCliente: [{ value: "", disabled: false }],
       nomeCliente: [{ value: "", disabled: false }],
       retiradaAmostra: [{ value: "", disabled: false }],
@@ -217,7 +230,7 @@ export class PhysicalConferenceHeaderComponent {
         quantidade: conference?.quantidade,
         tipoConferencia: conference?.tipo,
         inicioConferencia: conference?.inicio,
-        fimConferencia: conference?.fim,
+        termino: conference?.termino,
         cpfCliente: conference?.cpfCliente,
         nomeCliente: conference?.nomeCliente,
         retiradaAmostra: conference?.retiradaAmostra,
@@ -731,6 +744,11 @@ export class PhysicalConferenceHeaderComponent {
       .catch(() => { });
   }
 
+  //TODO
+  adicionarServico(): void {
+    console.log('TODO');
+  }
+
 
   //#endregion
   /**
@@ -879,6 +897,9 @@ export class PhysicalConferenceHeaderComponent {
       });
   }
 
+  /**
+   * Chama o service que finaliza a conferencia
+   */
   finalizarConferencia() {
     this.conferenceService.getFinalizarConferencia(this.conference.id).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
@@ -886,6 +907,7 @@ export class PhysicalConferenceHeaderComponent {
         this.conferenceService.getConferencePorId(this.conference.id).subscribe((ret: ServiceResult<PhysicalConferenceModel>) => {
           if (ret.status && ret.result) {
             this.conferenceService.updateConference(ret.result);
+            this.atualizarFormulario(ret.result);
           }
         });
       }
