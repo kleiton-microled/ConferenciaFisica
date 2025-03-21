@@ -210,9 +210,12 @@
           </div>
         </form>
       </div>
-      <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="updatePhysicalConference()"
-        (startEvent)="openModal(advancedFilterModal)" (cleanupEvent)="limparConferenciaAtual()"
-        (avariasEvent)="getModalAvaria()"></app-action-footer>
+      <app-action-footer [buttonsState]="footerButtonsState" 
+                         (saveEvent)="updatePhysicalConference()"
+                         (startEvent)="openModal(advancedFilterModal)" 
+                         (cleanupEvent)="limparConferenciaAtual()"
+                         (avariasEvent)="getModalAvaria()"
+                         (exitEvent)="sair()"></app-action-footer>
     </div>
   </div>
 </div>
