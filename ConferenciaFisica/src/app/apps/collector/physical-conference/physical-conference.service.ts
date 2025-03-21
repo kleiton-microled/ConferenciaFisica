@@ -183,6 +183,33 @@ export class PhysicalConferenceService {
   }
 
   /**
+   * Busca a conferencia pelo ID
+   * @param id 
+   * @returns 
+   */
+  getConferencePorId(id: number): Observable<ServiceResult<PhysicalConferenceModel>> {
+    this.notificationService.showLoading();
+
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/buscar-por-id?id=${id}`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        } else {
+          const novaConferencia = response.result;
+          this.conferenceSubject.next(novaConferencia);
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
+  /**
    * Inicia a conferencia fisica do conteiner
    * @param conference 
    * @returns 
@@ -569,8 +596,35 @@ export class PhysicalConferenceService {
     );
   }
 
+  /**
+   * realiza um update na avaria
+   * @param data 
+   * @returns 
+   */
   saveAvariaConferencia(data: AvariaConferencia): Observable<ServiceResult<boolean>> {
     return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/avarias/cadastrar-avaria`, data).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showError(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading())
+    );
+  }
+
+  /**
+   * Finaliza a conferencia setando uma data de termino
+   * @param idConferencia 
+   * @returns 
+   */
+  getFinalizarConferencia(idConferencia: number): Observable<ServiceResult<boolean>> {
+    return this.http.get<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/finalizar-conferencia?idConferencia=${idConferencia}`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
