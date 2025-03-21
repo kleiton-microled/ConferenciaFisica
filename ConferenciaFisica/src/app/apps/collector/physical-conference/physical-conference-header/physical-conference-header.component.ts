@@ -471,6 +471,7 @@ export class PhysicalConferenceHeaderComponent {
               { nome: 'delete', enabled: false, visible: true },
               { nome: 'save', enabled: true, visible: true },
               { nome: 'observacao', enabled: false, visible: false },
+              { nome: 'photo', enabled: true, visible: true },
               { nome: 'marcante', enabled: false, visible: false }
             ]);
 
