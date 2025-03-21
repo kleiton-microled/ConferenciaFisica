@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, catchError, finalize, map, Observable, of, throwError } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
@@ -14,6 +14,7 @@ import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
 import { AvariaConferencia } from './models/avaria.model';
 import { TiposEmbalagens } from './models/tipos-embalagens.model';
 import { ConfigService } from 'src/app/shared/services/config.service';
+import { LotesAgendamentoModel } from './models/lotes.model';
 
 export interface ConferenceContainer {
   display: string;
@@ -34,35 +35,47 @@ export class PhysicalConferenceService {
 
   constructor(private http: HttpClient, private configService: ConfigService,
     private notificationService: NotificationService) {
-      this.apiUrl = this.configService.getConfig('CONFERENCIA_FISICA_URL');
+    this.apiUrl = this.configService.getConfig('CONFERENCIA_FISICA_URL');
+  }
+
+  private conferenceSubject = new BehaviorSubject<PhysicalConferenceModel>(new PhysicalConferenceModel());
+
+
+  /**
+   * SUBSCRIPTION REGION
+   */
+  /**
+ * Obtem a conferencia atual iniciada
+ */
+  getCurrentConference(): Observable<PhysicalConferenceModel> {
+    return this.conferenceSubject.asObservable();
   }
 
   /**
-   * 🔥 Método que retorna os dados mockados de containers
+   * Atualiza a conferencia atual
    */
-  getMockContainers(): Observable<ServiceResult<ConferenceContainer[]>> {
-    console.warn('🚨 Sem conexão com a API, utilizando dados mockados.');
-    return of({
-      status: true,
-      mensagens: ['Dados mockados carregados com sucesso.'],
-      error: null,
-      result: CONTEINERS
-    } as ServiceResult<ConferenceContainer[]>);
+  // updateConference(conference: PhysicalConferenceModel): void {
+  //   this.conferenceSubject.next(conference);
+  // }
+
+  updateConference(conferencePartial: Partial<PhysicalConferenceModel>): void {
+    const current = this.conferenceSubject.getValue();
+
+    if (current) {
+      const updated = Object.assign(new PhysicalConferenceModel(), current, conferencePartial);
+      this.conferenceSubject.next(updated);
+    } else {
+      this.conferenceSubject.next(new PhysicalConferenceModel(conferencePartial));
+    }
   }
 
   /**
-   * 🔥 Método que retorna os dados mockados de containers
+   * Inicia uma nova conferencia com valores padrões
    */
-  getMockLotes(): Observable<ServiceResult<ConferenceLotes[]>> {
-    console.warn('🚨 Sem conexão com a API, utilizando dados mockados.');
-    return of({
-      status: true,
-      mensagens: ['Dados mockados carregados com sucesso.'],
-      error: null,
-      result: LOTES
-    } as ServiceResult<ConferenceLotes[]>);
+  iniciarConferencia(): void {
+    const novaConferencia = new PhysicalConferenceModel();
+    this.conferenceSubject.next(novaConferencia);
   }
-
   /**
    * Busca os contêineres agendados para conferência.
    * @param filtro (opcional) Filtro de busca
@@ -72,6 +85,29 @@ export class PhysicalConferenceService {
     this.notificationService.showLoading(); // Mostra loading
 
     return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/conteineres`).pipe(
+      map(response => {
+        if (!response.status) {
+          this.notificationService.showAlert(response);
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.notificationService.showError(error); // Exibe erro no SweetAlert
+        return throwError(() => error);
+      }),
+      finalize(() => this.notificationService.hideLoading()) // Fecha loading corretamente
+    );
+  }
+
+  /**
+   * Tras uma lista de lotes agendados
+   * @returns LotesAgendamentoModel[]
+   */
+  getLotes(): Observable<ServiceResult<LotesAgendamentoModel[]>> {
+    this.notificationService.showLoading(); // Mostra loading
+
+    return this.http.get<ServiceResult<LotesAgendamentoModel[]>>(`${this.apiUrl}/conferencia/lotes`).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showAlert(response);
@@ -117,19 +153,32 @@ export class PhysicalConferenceService {
    */
   getConference(filter: { conteiner?: string; lote?: string; numero?: string }): Observable<ServiceResult<PhysicalConferenceModel>> {
     this.notificationService.showLoading();
-    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/buscar?cntr=${filter.conteiner}`).pipe(
+
+    // Construção dinâmica dos parâmetros
+    const params = new HttpParams({
+      fromObject: {
+        ...(filter.conteiner ? { cntr: filter.conteiner } : {}),
+        ...(filter.lote ? { lote: filter.lote } : {}),
+        ...(filter.numero ? { numero: filter.numero } : {})
+      }
+    });
+
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/buscar`, { params }).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
           throw new Error(response.error || 'Erro desconhecido');
+        } else {
+          const novaConferencia = response.result;
+          this.conferenceSubject.next(novaConferencia);
         }
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        this.notificationService.showError(error); // Exibe erro no SweetAlert
+        this.notificationService.showError(error);
         return throwError(() => error);
       }),
-      finalize(() => this.notificationService.hideLoading()) // Fecha loading corretamente
+      finalize(() => this.notificationService.hideLoading())
     );
   }
 
@@ -138,10 +187,10 @@ export class PhysicalConferenceService {
    * @param conference 
    * @returns 
    */
-  startConference(conference: PhysicalConferenceModel | null): Observable<ServiceResult<any>> {
+  startConference(conference: PhysicalConferenceModel | null): Observable<ServiceResult<boolean>> {
     this.notificationService.showLoading();
 
-    return this.http.post<ServiceResult<any>>(`${this.apiUrl}/conferencia/iniciar-conferencia`, conference).pipe(
+    return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/iniciar-conferencia`, conference).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -449,32 +498,7 @@ export class PhysicalConferenceService {
     );
   }
 
-  //#region Subscribe PhysicalConference
-
-  private conferenceSubject = new BehaviorSubject<PhysicalConferenceModel>(new PhysicalConferenceModel);
-
-  /**
-   * Obtém a conferência atual como um Observable, permitindo que outros componentes se inscrevam.
-   */
-  getConference$(): Observable<PhysicalConferenceModel> {
-    return this.conferenceSubject.asObservable();
-  }
-
-  // Método para obter a conference atual sem Observable
-  getCurrentConference(): PhysicalConferenceModel {
-    return this.conferenceSubject.value;
-  }
-
-  /**
-   * Atualiza a conferência, notificando todos os inscritos.
-   */
-  updateConference(conference: PhysicalConferenceModel) {
-    const updatedConference = { ...conference };
-    this.conferenceSubject.next(updatedConference);
-  }
-
   //EMBALAGENS
-
   /**
    * Carrega os tipos de embalagens
    * @returns 

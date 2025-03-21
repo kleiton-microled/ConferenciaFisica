@@ -7,6 +7,6 @@
   "AUTH_URL": "https://api.conferencia-fisica.com.br/api/auth",
   "BASE_IMAGES": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br",
   "DESCARGA_EXPORTACAO_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api/descarga-exportacao",
-  "CONFERENCIA_FISICA_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api",
+  "CONFERENCIA_FISICA_URL": "https://localhost:5000/api",
   "PRE_REGISTRO_URL": "https://localhost:5000/api/pre-registro"
 }
