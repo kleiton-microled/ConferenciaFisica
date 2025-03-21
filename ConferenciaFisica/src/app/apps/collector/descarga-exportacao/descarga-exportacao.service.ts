@@ -317,6 +317,23 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
+    getProcessosByContainer(container: string): Observable<ServiceResult<Foto[]>> {
+        return this.http.get<ServiceResult<Foto[]>>(`${DESCARGA_EXPORTACAO_URL}/processo-container/${container}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+    
     postProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
         return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/processo`, data).pipe(
             map(response => {
