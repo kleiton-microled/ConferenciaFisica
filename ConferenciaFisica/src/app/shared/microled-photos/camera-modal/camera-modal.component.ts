@@ -50,9 +50,9 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const fotoBase64 = canvas.toDataURL('image/png');
-      let d = this.types.find(x => x.codigo == this.tipoSelecionado);
-      
-      this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: d?.id?? 0, tipoDescription: d?.descricao ?? '' });
+      let d = this.types.find(x => x.id == this.tipoSelecionado);
+
+      this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: d?.id?? 0, tipoDescription: d?.descricao ?? '', tipoProcesso: d?.codigo ?? 0 });
     }
 
     this.fecharCamera();

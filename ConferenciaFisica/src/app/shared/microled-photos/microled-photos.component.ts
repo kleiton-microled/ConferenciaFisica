@@ -6,14 +6,16 @@ import { EnumValue } from '../models/enumValue.model';
 import { FotoCapturada } from './camera-modal/foto-capturada.model';
 
 export interface Foto {
-  talieId: number | null;
   id: number;
+  idTipoFoto: number;
+  idTipoProcesso: number;
+  talieId: number | null;
+  containerId: string | null;
+  imagemPath: string | null;
   descricao: string;
   observacao: string;
-  type: number;
   typeDescription: string;
   imagemBase64: string;
-  imagemPath: string | null;
 }
 
 @Component({
@@ -63,14 +65,16 @@ export class MicroledPhotosComponent implements OnInit {
     let ultimaFoto = this.fotos.length > 0 ? this.fotos[this.fotos.length - 1]: null;
     let id = ultimaFoto?.id ?? this.nextId++;
     const novaFoto: Foto = {
-      id:id,
+      id: id,
       descricao: "",
       observacao: "",
-      type: resultado.tipo,
+      idTipoFoto: resultado.tipo,
       typeDescription: resultado.tipoDescription,
       imagemBase64: resultado.imagemBase64,
       talieId: null,
-      imagemPath: null
+      imagemPath: null,
+      idTipoProcesso: resultado.tipoProcesso,
+      containerId: null
     };
     
     this.fotos.push(novaFoto);

@@ -34,6 +34,10 @@ import { AvariaConferencia } from "../models/avaria.model";
 import { TiposEmbalagens } from "../models/tipos-embalagens.model";
 import { LotesAgendamentoModel } from "../models/lotes.model";
 import { Router } from "@angular/router";
+import { BASE_IMAGES } from "src/app/Http/Config/config";
+import { Foto, MicroledPhotosComponent } from "src/app/shared/microled-photos/microled-photos.component";
+import { DescargaExportacaoService } from "../../descarga-exportacao/descarga-exportacao.service";
+import { EnumValue } from "src/app/shared/models/enumValue.model";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -119,6 +123,7 @@ export class PhysicalConferenceHeaderComponent {
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
+    private service: DescargaExportacaoService,
     private conferenceService: PhysicalConferenceService,
     private storageService: PhysicalConferenceStorageService,
     private notificationService: NotificationService,
@@ -914,6 +919,80 @@ export class PhysicalConferenceHeaderComponent {
     });
   }
   //#endregion
+
+abrirModalFotos() {
+    const modalRef = this.modalService.open(MicroledPhotosComponent, {
+      size: 'xl',
+      backdrop: 'static',
+      centered: false
+    });
+
+    modalRef.componentInstance.urlPath = 'uploads/fotos';
+    modalRef.componentInstance.conteiner = 'CONT-1234';
+    modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
+    this.service.getListarTiposProcessos('app-physical-conference-header').subscribe((ret: ServiceResult<EnumValue[]>) => {
+      if (ret.status) {
+        modalRef.componentInstance.photosTypes = ret.result;
+      } else { }
+    });
+
+    this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
+      console.log(ret.result)
+      if (ret.status) {
+        modalRef.componentInstance.fotos = ret.result;
+      } else { }
+    });
+
+    modalRef.componentInstance.salvarFotoEmitter.subscribe(async (resultado: Foto) => {
+
+      resultado.containerId = this.selectedContainer;
+      await this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+      
+      await this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
+        
+        if (ret.status) {
+          modalRef.componentInstance.fotos = ret.result;
+        } else { }
+      });
+    });
+
+    modalRef.componentInstance.salvarAlteracaoFotoEmitter.subscribe(async (resultado: Foto) => {
+
+      await this.service.putProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+
+      await this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
+        
+        if (ret.status) {
+          modalRef.componentInstance.fotos = ret.result;
+        } else { }
+      });
+    });
+
+    modalRef.componentInstance.excluirFotoEmitter.subscribe(async (resultado: Foto) => {
+
+      await this.service.deleteProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
+
+
+  }
 
   //#region AUXILIARES
   /**

@@ -370,7 +370,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
     modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
-    this.service.getListarTiposProcessos().subscribe((ret: ServiceResult<EnumValue[]>) => {
+    this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {
         modalRef.componentInstance.photosTypes = ret.result;
       } else { }
@@ -383,18 +383,18 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       } else { }
     });
 
-    modalRef.componentInstance.salvarFotoEmitter.subscribe((resultado: Foto) => {
+    modalRef.componentInstance.salvarFotoEmitter.subscribe(async (resultado: Foto) => {
 
       resultado.talieId = this.descargaAtual.talie?.id ?? 0;
-      this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+      await this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
         } else {
           this.notificationService.showAlert(ret);
         }
       });
-
-      this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+      
+      await this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
         
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
@@ -402,9 +402,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       });
     });
 
-    modalRef.componentInstance.salvarAlteracaoFotoEmitter.subscribe((resultado: Foto) => {
+    modalRef.componentInstance.salvarAlteracaoFotoEmitter.subscribe(async (resultado: Foto) => {
 
-      this.service.putProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+      await this.service.putProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
         } else {
@@ -412,7 +412,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+      await this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
         
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
@@ -420,9 +420,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       });
     });
 
-    modalRef.componentInstance.excluirFotoEmitter.subscribe((resultado: Foto) => {
+    modalRef.componentInstance.excluirFotoEmitter.subscribe(async (resultado: Foto) => {
 
-      this.service.deleteProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+      await this.service.deleteProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
         } else {
