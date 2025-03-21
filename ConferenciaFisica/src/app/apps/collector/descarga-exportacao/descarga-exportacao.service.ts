@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { DescargaExportacao } from "./models/descarga-exportacao.model";
 import { BaseService } from "src/app/Http/base-service";
-import { DESCARGA_EXPORTACAO_URL } from "src/app/Http/Config/config";
+import { DESCARGA_EXPORTACAO_URL, DESCARGA_UTIL_URL } from "src/app/Http/Config/config";
 import { BehaviorSubject, catchError, finalize, map, Observable, throwError } from "rxjs";
 import { Talie } from "../models/talie.model";
 import { AvariaDescarga } from "./models/avaria-descarga.model";
@@ -283,8 +283,8 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
-    getListarTiposProcessos(): Observable<ServiceResult<EnumValue[]>> {
-        return this.http.get<ServiceResult<EnumValue[]>>(`${DESCARGA_EXPORTACAO_URL}/tipos-processos`).pipe(
+    getListarTiposProcessos(nomeProcesso: string): Observable<ServiceResult<EnumValue[]>> {
+        return this.http.get<ServiceResult<EnumValue[]>>(`${DESCARGA_UTIL_URL}/processo/${nomeProcesso}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
