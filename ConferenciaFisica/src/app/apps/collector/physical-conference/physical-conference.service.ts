@@ -30,7 +30,7 @@ export interface ConferenceLotes {
   providedIn: 'root'
 })
 export class PhysicalConferenceService {
-  //private apiUrl = 'https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api';
+  //private apiUrl = 'https://localhost:5000/api';
   private apiUrl = "";//AppUrls.CONFERENCIA_FISICA;
 
   constructor(private http: HttpClient, private configService: ConfigService,
