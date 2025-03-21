@@ -141,6 +141,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      */
     this.subscription = this.service.getCurrentDescarga().subscribe(descarga => {
       if (descarga) {
+        console.log('Descarga Atual: ', descarga);
         this.descargaAtual = descarga;
         this.itensList = descarga.talie?.talieItem ?? [];
         this.form.patchValue({

@@ -223,6 +223,8 @@ export class PhysicalConferenceHeaderComponent {
    */
   atualizarFormulario(conference: PhysicalConferenceModel): void {
     if (conference) {
+      const dataFormatada = this.formatarDataString(conference?.inicio);
+      //this.formatarData(conference?.inicio, 'inicioConferencia');
       this.form.patchValue({
         id: conference?.id,
         tipo: conference?.tipo,
@@ -234,8 +236,8 @@ export class PhysicalConferenceHeaderComponent {
         embalagem: conference?.embalagem,
         quantidade: conference?.quantidade,
         tipoConferencia: conference?.tipo,
-        inicioConferencia: conference?.inicio,
-        termino: conference?.termino,
+        inicioConferencia: this.formatarDataString(conference?.inicio),
+        termino: this.formatarDataString(conference?.termino),
         cpfCliente: conference?.cpfCliente,
         nomeCliente: conference?.nomeCliente,
         retiradaAmostra: conference?.retiradaAmostra,
@@ -413,6 +415,20 @@ export class PhysicalConferenceHeaderComponent {
             if (ret.status && ret.result) {
               this.conferenceService.updateConference(ret.result);
               this.atualizarFormulario(this.conference);
+              this.atualizarBotoes([
+                { nome: 'stop', enabled: true, visible: true },
+                { nome: 'alert', enabled: true, visible: true },
+                { nome: 'start', enabled: false, visible: true },
+                { nome: 'clear', enabled: true, visible: true },
+                { nome: 'exit', enabled: true, visible: true },
+                { nome: 'delete', enabled: false, visible: true },
+                { nome: 'save', enabled: true, visible: true },
+                { nome: 'observacao', enabled: false, visible: false },
+                { nome: 'photo', enabled: true, visible: true },
+                { nome: 'marcante', enabled: false, visible: false }
+              ]);
+
+              this.isDisableBtnModal = false;
             }
           });
         }
@@ -921,7 +937,7 @@ export class PhysicalConferenceHeaderComponent {
   }
   //#endregion
 
-abrirModalFotos() {
+  abrirModalFotos() {
     const modalRef = this.modalService.open(MicroledPhotosComponent, {
       size: 'xl',
       backdrop: 'static',
@@ -954,9 +970,9 @@ abrirModalFotos() {
           this.notificationService.showAlert(ret);
         }
       });
-      
+
       await this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
-        
+
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
         } else { }
@@ -974,7 +990,7 @@ abrirModalFotos() {
       });
 
       await this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
-        
+
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
         } else { }
@@ -1036,6 +1052,31 @@ abrirModalFotos() {
       { nome: 'photo', enabled: false, visible: true }
     ]);
   }
+
+  private formatarDataString(isoDate: Date): string | null {
+    if (!isoDate) return null;
+  
+    const data = new Date(isoDate);
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+  
+    const horas = String(data.getHours()).padStart(2, '0');
+    const minutos = String(data.getMinutes()).padStart(2, '0');
+    const segundos = String(data.getSeconds()).padStart(2, '0');
+  
+    return `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
+  }
+  
+
+  private formatarData(isoDate: Date, controlName: string): void {
+    const dataFormatada = this.formatarDataString(isoDate);
+    if (dataFormatada) {
+      this.form.get(controlName)?.setValue(dataFormatada);
+    }
+  }
+
+
 
   sair() {
     this.router.navigate(['/apps/tools']);

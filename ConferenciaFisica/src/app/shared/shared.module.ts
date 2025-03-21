@@ -6,6 +6,7 @@ import { MicroledSelectComponent } from './microled-select/microled-select.compo
 import { ActionFooterComponent } from './action-footer/action-footer.component';
 import { MicroledPhotosComponent } from './microled-photos/microled-photos.component';
 import { CameraModalComponent } from './microled-photos/camera-modal/camera-modal.component';
+import { DateFormatPipe } from './pipes/date-mask.pipe';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { CameraModalComponent } from './microled-photos/camera-modal/camera-moda
     MicroledSelectComponent,
     ActionFooterComponent,
     CameraModalComponent,
-    MicroledPhotosComponent],
+    MicroledPhotosComponent,
+    DateFormatPipe],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -23,7 +25,8 @@ import { CameraModalComponent } from './microled-photos/camera-modal/camera-moda
   exports: [
     MicroledSelectComponent, 
     ActionFooterComponent, 
-    MicroledPhotosComponent
+    MicroledPhotosComponent,
+    DateFormatPipe
   ]
 })
 export class SharedModule { }
