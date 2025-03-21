@@ -7,6 +7,7 @@ import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { catchError, map, Observable, of, skip, Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import Swal from 'sweetalert2';
+import { PhysicalConferenceModel } from '../models/physical-conference.model';
 
 interface Lacre {
   NumeroLacre: string;
@@ -49,13 +50,11 @@ export class LacresFormComponent implements OnInit {
 
   ngOnInit(): void {
     // 🔥 Escutar mudanças na conference e atualizar o formulário
-    this.conferenceSubscription = this.service.getCurrentConference()
-      .pipe(skip(1)) // Evita rodar na primeira execução
-      .subscribe(conference => {
-        if (conference) {
-          this.idConferencia = conference.id;
-        }
-      });
+    this.service.getCurrentConference().subscribe((ret: PhysicalConferenceModel) => {
+      if(ret){
+        this.idConferencia = ret.id;
+      }
+    });
 
     this.lacresForm.valueChanges.subscribe(val => {
       if (this.currentLacre) {
@@ -118,7 +117,7 @@ export class LacresFormComponent implements OnInit {
       console.log('GetCurrentConference: ', this.service.getCurrentConference());
       const novoLacre: LacresModel = {
         id: null,
-        idConferencia: 1,//this.service.getCurrentConference().id,
+        idConferencia: this.idConferencia,
         numero: this.lacresForm.value.NumeroLacre,
         tipo: tipoLacreSelecionado?.id ?? 0,
         descricaoTipo: tipoLacreSelecionado?.codigo + ' - ' + tipoLacreSelecionado?.descricao,
@@ -150,11 +149,11 @@ export class LacresFormComponent implements OnInit {
   saveLacre(lacre: LacresModel): Observable<boolean> {
     return this.service.saveLacreConferencia(lacre).pipe(
       map((ret: ServiceResult<boolean>) => {
-        if (ret.status) {
-          this.notificationService.showSuccess(ret);
-        } else {
-          this.notificationService.showAlert(ret);
-        }
+        // if (ret.status) {
+        //   this.notificationService.showSuccess(ret);
+        // } else {
+        //   this.notificationService.showAlert(ret);
+        // }
         return ret.status; // 🔥 Retorna um Observable<boolean>
       }),
       catchError((error) => {

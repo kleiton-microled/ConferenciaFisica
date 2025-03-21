@@ -29,6 +29,11 @@ export class AvariasModalComponent<T extends Record<string, any>> implements OnI
 
   ngOnInit(): void {
     this.inicializarFormulario();
+
+    if (this.conteiner) {
+      this.avariasForm.controls['conteiner'].setValue(this.conteiner);
+      this.avariasForm.controls['conteiner'].disable();
+    }
   }
 
   inicializarFormulario(): void {
@@ -53,6 +58,7 @@ export class AvariasModalComponent<T extends Record<string, any>> implements OnI
     });
 
     this.avariasForm = this.fb.group(formControls);
+
 
 
     // Se a model tiver `tiposAvarias`, inicializa a lista
