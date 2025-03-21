@@ -32,6 +32,7 @@ import { AvariasModalComponent } from "src/app/shared/avarias/avarias-modal.comp
 import { TiposAvarias } from "src/app/shared/avarias/tipos-avarias.model";
 import { AvariaConferencia } from "../models/avaria.model";
 import { TiposEmbalagens } from "../models/tipos-embalagens.model";
+import { LotesAgendamentoModel } from "../models/lotes.model";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -41,7 +42,7 @@ import { TiposEmbalagens } from "../models/tipos-embalagens.model";
 export class PhysicalConferenceHeaderComponent {
   form!: FormGroup;
   containers: ConferenceContainer[] = [];
-  lotes: ConferenceLotes[] = [];
+  lotes: LotesAgendamentoModel[] = [];
   tipolacres: TipoLacre[] = [];
   lacresConferencia: LacresModel[] = [];
 
@@ -86,8 +87,8 @@ export class PhysicalConferenceHeaderComponent {
   private formSubscription!: Subscription;
 
   //Filtro
-  selectedContainer: string = "0"; // Variável para armazenar a seleção do container
-  selectedLote: string = "0"; // Variável para armazenar a seleção do lote
+  selectedContainer: string = ""; // Variável para armazenar a seleção do container
+  selectedLote: string = ""; // Variável para armazenar a seleção do lote
   selectedNumero: string = ""; // Variável para armazenar a pesquisa por número
 
   conference: PhysicalConferenceModel = new PhysicalConferenceModel();
@@ -113,15 +114,14 @@ export class PhysicalConferenceHeaderComponent {
     //this.loadConferences();
     this.inicializarFormulario();
 
-    // 🔥 Escutar mudanças na conference e atualizar o formulário
-    this.conferenceSubscription = this.conferenceService
-      .getConference$()
-      .pipe(skip(1)) // Evita rodar na primeira execução
-      .subscribe((conference) => {
-        if (conference) {
-          this.form.patchValue(conference, { emitEvent: false });
-        }
-      });
+    // 🔥 Escutar mudanças na conferencia e atualizar o formulário
+    this.conferenceService.getCurrentConference().subscribe((conferencia: PhysicalConferenceModel) => {
+      if (conferencia) {
+        this.conference = conferencia;
+        console.log('Conferencia Atual: ', this.conference);
+        //this.form.patchValue(this.conference);
+      }
+    });
 
     // 🔥 Escutar mudanças no formulário e atualizar a conference
     this.formSubscription = this.form.valueChanges
@@ -130,6 +130,7 @@ export class PhysicalConferenceHeaderComponent {
         distinctUntilChanged() // Apenas dispara se houver mudança real
       )
       .subscribe((values) => {
+        console.log('Valores: ', values);
         this.atualizarConference(values);
       });
 
@@ -170,10 +171,10 @@ export class PhysicalConferenceHeaderComponent {
       conteiner: [""],
       lote: [""],
       //numero: [{ value: '', disabled: true }],
-      tipoCarga: [{ value: "", disabled: false }],
-      viagem: [{ value: "", disabled: false }],
+      tipoCarga: [{ value: "", disabled: true }],
+      viagem: [{ value: "", disabled: true }],
       motivoAbertura: [{ value: "", disabled: false }],
-      embalagem: [""],
+      embalagem: [{ value: "", disabled: false }],
       quantidade: [{ value: "", disabled: false }],
       tipoConferencia: [{ value: "", disabled: false }],
       inicioConferencia: [{ value: "", disabled: false }],
@@ -184,13 +185,13 @@ export class PhysicalConferenceHeaderComponent {
       cpfConferente: [{ value: "", disabled: false }],
       nomeConferente: [{ value: "", disabled: false }],
       qtdDocumento: [{ value: "", disabled: false }],
-      dataPrevista: [{ value: "", disabled: false }],
+      dataPrevista: [{ value: "", disabled: true }],
       quantidadeDivergente: [{ value: "", disabled: false }],
       qtdVolumesDivergentes: [{ value: "", disabled: true }],
       qtdRepresentantes: [{ value: "", disabled: false }],
       qtdAjudantes: [{ value: "", disabled: false }],
       qtdOperadores: [{ value: "", disabled: false }],
-      divergenciaQualificacao: [{ value: "", disabled: false }],
+      divergenciaQualificacao: [{ value: '', disabled: false }],
       movimentacao: [{ value: "", disabled: false }],
       desunitizacao: [{ value: "", disabled: false }],
     });
@@ -201,70 +202,70 @@ export class PhysicalConferenceHeaderComponent {
    * @param conference
    */
   atualizarFormulario(conference: PhysicalConferenceModel): void {
-    console.log("Conferencia Form: ", conference);
-    this.form.patchValue({
-      id: conference?.id,
-      tipo: conference?.tipo,
-      numeroConteiner: conference?.cntr,
-      conteiner: conference?.cntr,
-      tipoCarga: conference?.tipoCarga,
-      viagem: conference?.viagem,
-      motivoAbertura: conference?.motivoAbertura,
-      embalagem: conference?.embalagem,
-      quantidade: conference?.quantidade,
-      tipoConferencia: conference?.tipo,
-      inicioConferencia: conference?.inicio,
-      fimConferencia: conference?.fim,
-      cpfCliente: conference?.cpfCliente,
-      nomeCliente: conference?.nomeCliente,
-      retiradaAmostra: conference?.retiradaAmostra,
-      cpfConferente: "457.244.118-32",
-      nomeConferente: "Microled",
-      qtdDocumento: conference?.qtdDocumento,
-      dataPrevista: conference?.dataPrevista,
-      quantidadeDivergente: conference?.quantidadeDivergente,
-      qtdVolumesDivergentes: conference?.quantidadeVolumesDivergentes,
-      qtdRepresentantes: conference?.quantidadeRepresentantes,
-      qtdAjudantes: conference?.quantidadeAjudantes,
-      qtdOperadores: conference?.quantidadeOperadores,
-      divergenciaQualificacao: conference?.divergenciaQualificacao
-        .toString()
-        .trim(),
-      movimentacao: conference?.movimentacao,
-      desunitizacao: conference?.desunitizacao,
-    });
-
-    this.conferenceService.updateConference(conference);
-
-    this.loadLacresConferencia(conference.id);
-
-    this.loadCadastrosAdicionais(conference?.id || 0);
-
-    this.loadDocumentosConferencia(conference?.id || 0);
-
-    this.conferenceService
-      .getTiposAvarias()
-      .subscribe((ret: ServiceResult<TiposAvarias[]>) => {
-        if (ret.status) {
-          this.tiposAvarias = ret.result ?? [];
-        }
+    if (conference) {
+      this.form.patchValue({
+        id: conference?.id,
+        tipo: conference?.tipo,
+        numeroConteiner: conference?.cntr,
+        conteiner: conference?.cntr,
+        tipoCarga: conference?.tipoCarga,
+        viagem: conference?.viagem,
+        motivoAbertura: conference?.motivoAbertura,
+        embalagem: conference?.embalagem,
+        quantidade: conference?.quantidade,
+        tipoConferencia: conference?.tipo,
+        inicioConferencia: conference?.inicio,
+        fimConferencia: conference?.fim,
+        cpfCliente: conference?.cpfCliente,
+        nomeCliente: conference?.nomeCliente,
+        retiradaAmostra: conference?.retiradaAmostra,
+        cpfConferente: "457.244.118-32",
+        nomeConferente: "Microled",
+        qtdDocumento: conference?.qtdDocumento,
+        dataPrevista: conference?.dataPrevista,
+        quantidadeDivergente: conference?.quantidadeDivergente,
+        qtdVolumesDivergentes: conference?.quantidadeVolumesDivergentes,
+        qtdRepresentantes: conference?.quantidadeRepresentantes,
+        qtdAjudantes: conference?.quantidadeAjudantes,
+        qtdOperadores: conference?.quantidadeOperadores,
+        divergenciaQualificacao: conference?.divergenciaQualificacao,
+        movimentacao: conference?.movimentacao,
+        desunitizacao: conference?.desunitizacao,
       });
 
-    this.conferenceService
-      .getTiposEmbalagens()
-      .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
-        if (ret.status) {
-          this.tiposEmbalagens = ret.result ?? [];
-        }
-      });
+      this.conferenceService.updateConference(conference);
 
-    this.conferenceService
-      .getAvariaConferencia(conference.id)
-      .subscribe((ret: ServiceResult<AvariaConferencia>) => {
-        if (ret.status && ret.result) {
-          this.avariasConferencia = ret.result;
-        }
-      });
+      this.loadLacresConferencia(conference.id);
+
+      this.loadCadastrosAdicionais(conference?.id || 0);
+
+      this.loadDocumentosConferencia(conference?.id || 0);
+
+      this.conferenceService
+        .getTiposAvarias()
+        .subscribe((ret: ServiceResult<TiposAvarias[]>) => {
+          if (ret.status) {
+            this.tiposAvarias = ret.result ?? [];
+          }
+        });
+
+      this.conferenceService
+        .getTiposEmbalagens()
+        .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
+          if (ret.status) {
+            this.tiposEmbalagens = ret.result ?? [];
+          }
+        });
+
+      this.conferenceService
+        .getAvariaConferencia(conference.id)
+        .subscribe((ret: ServiceResult<AvariaConferencia>) => {
+          if (ret.status && ret.result) {
+            this.avariasConferencia = ret.result;
+          }
+        });
+    }
+
   }
 
   /**
@@ -305,10 +306,10 @@ export class PhysicalConferenceHeaderComponent {
    * Carregar os lotes
    */
   loadLotes() {
-    this.conferenceService.getMockLotes().subscribe({
-      next: (response: ServiceResult<any>) => {
+    this.conferenceService.getLotes().subscribe({
+      next: (response: ServiceResult<LotesAgendamentoModel[]>) => {
         if (response.status) {
-          this.lotes = response.result;
+          this.lotes = response.result ?? [];
         }
       },
       error: (err) => console.error("Erro na requisição:", err),
@@ -363,46 +364,6 @@ export class PhysicalConferenceHeaderComponent {
     console.log("Tipo de Lacre Recebido:", tipoLacre);
   }
 
-  /**
-   * Reset do formulario de conferencia
-   */
-  limparConferenciaAtual() {
-    Swal.fire({
-      title: "Limpar Conferência!!!",
-      text: "Deseja limpar a conferência atual?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "SIM",
-      cancelButtonText: "NÃO",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.ResetConferencia();
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-      }
-    });
-  }
-
-  ResetConferencia() {
-    this.form.reset();
-    this.lacresConferencia = [];
-    this.representantes = [];
-    this.documentos = [];
-    this.operadores = [];
-    this.ajudantes = [];
-    this.avariasConferencia = new AvariaConferencia();
-    this.isDisableBtnModal = true;
-    this.atualizarBotoes([
-      { nome: 'stop', enabled: false, visible: true },
-      { nome: 'alert', enabled: false, visible: true },
-      { nome: 'start', enabled: true, visible: true },
-      { nome: 'clear', enabled: false, visible: true },
-      { nome: 'delete', enabled: false, visible: true },
-      { nome: 'marcante', enabled: false, visible: false },
-      { nome: 'observacao', enabled: false, visible: false },
-      { nome: 'photo', enabled: false, visible: true }
-    ]);
-  }
-
   applyFilter(): void {
     this.loadContainers();
   }
@@ -416,29 +377,30 @@ export class PhysicalConferenceHeaderComponent {
   }
 
   startPhysicalConference() {
-    console.log('startPhysicalConference');
-    this.conferenceService.getConference$().subscribe((conference) => {
-      if (conference) {
-        conference.inicio = new Date();
-        this.conferenceService.updateConference(conference);
-      }
-    });
+    if (this.conference) {
+      const inicio = new Date();
+      const cntr = this.selectedContainer;
+      const bl = this.selectedLote;
 
-    this.conferenceService
-      .startConference(this.conferenceService.getCurrentConference())
-      .subscribe({
-        next: (response) => {
-          if (response.status) {
-            this.notificationService.showSuccess(response);
-            this.closeModal();
-          } else {
-            this.notificationService.showAlert(response);
-          }
-        },
-        error: (error) => {
-          console.error("Erro ao iniciar conferência", error);
-        },
+      let filter = { conteiner: cntr ?? "", lote: bl ?? "" };
+
+      this.conferenceService.updateConference({ inicio, cntr, bl });
+      this.conferenceService.startConference(this.conference).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.conferenceService.getConference(filter).subscribe((ret: ServiceResult<PhysicalConferenceModel>) => {
+            if(ret.status && ret.result){
+              this.conferenceService.updateConference(ret.result);
+              this.atualizarFormulario(
+                ret.result != null ? ret.result : this.conference
+              );
+            }
+          });
+        }
       });
+    }
+
+    console.log('Conferencia Atualizada', this.conference);
+
   }
 
   //#region MOCK
@@ -454,12 +416,13 @@ export class PhysicalConferenceHeaderComponent {
     };
 
     //this.conferences = await this.storageService.searchConferences(filtro);
+    console.log('filterConferences');
     this.conferenceService.getConference(filter).subscribe({
       next: (response: ServiceResult<PhysicalConferenceModel>) => {
         if (response.status) {
           if (response.result?.id === 0) {
             let infoResponse =
-              "Conferência não encontrada para esse conteiner, deseja iniciar uma nova conferência?";
+              "Conferência não encontrada para esse conteiner/lote, deseja iniciar uma nova conferência?";
             this.modalService.dismissAll();
             setTimeout(() => {
               Swal.fire({
@@ -471,6 +434,7 @@ export class PhysicalConferenceHeaderComponent {
                 cancelButtonText: "NÃO",
               }).then((result) => {
                 if (result.isConfirmed) {
+                  console.log('Iniciou uma nova conferencia: ', this.conference);
                   this.startPhysicalConference();
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                 }
@@ -521,7 +485,7 @@ export class PhysicalConferenceHeaderComponent {
     let conference = this.conferenceService.getCurrentConference();
 
     this.conferenceService
-      .updatePhysicalConference(conference)
+      .updatePhysicalConference(this.conference)
       .subscribe((ret: ServiceResult<boolean>) => {
         if (ret.result) {
           this.notificationService.showSuccess(ret);
@@ -554,6 +518,7 @@ export class PhysicalConferenceHeaderComponent {
   openModal(content: TemplateRef<any>) {
     this.modalService.open(content, { size: "lg" });
     this.loadContainers();
+    this.loadLotes();
   }
 
   /**
@@ -575,24 +540,24 @@ export class PhysicalConferenceHeaderComponent {
     modalRef.componentInstance.opcoesSelect = ["Ajudante"];
     modalRef.componentInstance.registros = this.ajudantes;
 
-    modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
-      let conference = this.conferenceService.getCurrentConference();
-      let cadastro = CadastroAdicionalModel.New(
-        conference.id,
-        reg.nome,
-        reg.cpf,
-        reg.qualificacao,
-        "Ajudantes"
-      );
+    // modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
+    //   this.conference = this.conferenceService.getCurrentConference();
+    //   let cadastro = CadastroAdicionalModel.New(
+    //     conference.id,
+    //     reg.nome,
+    //     reg.cpf,
+    //     reg.qualificacao,
+    //     "Ajudantes"
+    //   );
 
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
-        if (result) {
-          this.ajudantes.push(reg);
-        } else {
-          console.log("Falha no cadastro.");
-        }
-      });
-    });
+    //   this.saveCadastroAdicional(cadastro).subscribe((result) => {
+    //     if (result) {
+    //       this.ajudantes.push(reg);
+    //     } else {
+    //       console.log("Falha no cadastro.");
+    //     }
+    //   });
+    // });
 
     // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
@@ -613,24 +578,24 @@ export class PhysicalConferenceHeaderComponent {
     modalRef.componentInstance.opcoesSelect = ["Operador"];
     modalRef.componentInstance.registros = this.operadores;
 
-    modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
-      let conference = this.conferenceService.getCurrentConference();
-      console.log("ConferenciaExata: ", conference);
-      let cadastro = CadastroAdicionalModel.New(
-        conference.id,
-        reg.nome,
-        reg.cpf,
-        reg.qualificacao,
-        "Representantes"
-      );
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
-        if (result) {
-          this.operadores.push(reg);
-        } else {
-          console.log("Falha no cadastro.");
-        }
-      });
-    });
+    // modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
+    //   let conference = this.conferenceService.getCurrentConference();
+    //   console.log("ConferenciaExata: ", conference);
+    //   let cadastro = CadastroAdicionalModel.New(
+    //     conference.id,
+    //     reg.nome,
+    //     reg.cpf,
+    //     reg.qualificacao,
+    //     "Representantes"
+    //   );
+    //   this.saveCadastroAdicional(cadastro).subscribe((result) => {
+    //     if (result) {
+    //       this.operadores.push(reg);
+    //     } else {
+    //       console.log("Falha no cadastro.");
+    //     }
+    //   });
+    // });
 
     // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
@@ -651,24 +616,24 @@ export class PhysicalConferenceHeaderComponent {
     modalRef.componentInstance.opcoesSelect = ["Despachante", "Engenheiro"];
     modalRef.componentInstance.registros = this.representantes;
 
-    modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
-      let conference = this.conferenceService.getCurrentConference();
-      let cadastro = CadastroAdicionalModel.New(
-        conference.id,
-        reg.nome,
-        reg.cpf,
-        reg.qualificacao,
-        "Representantes"
-      );
+    // modalRef.componentInstance.saveEvent.subscribe((reg: any) => {
+    //   let conference = this.conferenceService.getCurrentConference();
+    //   let cadastro = CadastroAdicionalModel.New(
+    //     conference.id,
+    //     reg.nome,
+    //     reg.cpf,
+    //     reg.qualificacao,
+    //     "Representantes"
+    //   );
 
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
-        if (result) {
-          this.representantes.push(reg);
-        } else {
-          console.log("Falha no cadastro.");
-        }
-      });
-    });
+    //   this.saveCadastroAdicional(cadastro).subscribe((result) => {
+    //     if (result) {
+    //       this.representantes.push(reg);
+    //     } else {
+    //       console.log("Falha no cadastro.");
+    //     }
+    //   });
+    // });
 
     // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
@@ -695,24 +660,24 @@ export class PhysicalConferenceHeaderComponent {
         }
       });
 
-    modalRef.componentInstance.saveEvent.subscribe(
-      (reg: DocumentosConferencia) => {
-        let conference = this.conferenceService.getCurrentConference();
-        let cadastro = DocumentosConferencia.New(
-          conference.id,
-          reg.numero,
-          reg.tipo
-        );
+    // modalRef.componentInstance.saveEvent.subscribe(
+    //   (reg: DocumentosConferencia) => {
+    //     let conference = this.conferenceService.getCurrentConference();
+    //     let cadastro = DocumentosConferencia.New(
+    //       conference.id,
+    //       reg.numero,
+    //       reg.tipo
+    //     );
 
-        this.saveDocumentoConferencia(cadastro).subscribe((result) => {
-          if (result) {
-            this.documentos.push(reg);
-          } else {
-            console.log("Falha no cadastro.");
-          }
-        });
-      }
-    );
+    //     this.saveDocumentoConferencia(cadastro).subscribe((result) => {
+    //       if (result) {
+    //         this.documentos.push(reg);
+    //       } else {
+    //         console.log("Falha no cadastro.");
+    //       }
+    //     });
+    //   }
+    // );
 
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
       this.excluirDocumentoConferencia(id);
@@ -742,7 +707,7 @@ export class PhysicalConferenceHeaderComponent {
 
     // Passa informações adicionais
     modalRef.componentInstance.conteiner = this.form.controls["numeroConteiner"].value;
-    modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
+    //modalRef.componentInstance.idConferencia = this.conferenceService.getCurrentConference().id;
 
     // ✅ Ouvindo o evento de salvamento da modal
     modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
@@ -911,6 +876,48 @@ export class PhysicalConferenceHeaderComponent {
         }
       });
   }
+  //#endregion
 
+  //#region AUXILIARES
+  /**
+  * Reset do formulario de conferencia
+  */
+  limparConferenciaAtual() {
+    Swal.fire({
+      title: "Limpar Conferência!!!",
+      text: "Deseja limpar a conferência atual?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "SIM",
+      cancelButtonText: "NÃO",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ResetConferencia();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
+  }
+
+  ResetConferencia() {
+    this.form.reset();
+    this.lacresConferencia = [];
+    this.representantes = [];
+    this.documentos = [];
+    this.operadores = [];
+    this.ajudantes = [];
+    this.avariasConferencia = new AvariaConferencia();
+    this.isDisableBtnModal = true;
+    this.atualizarBotoes([
+      {nome: 'save', enabled: false, visible: true},
+      { nome: 'stop', enabled: false, visible: true },
+      { nome: 'alert', enabled: false, visible: true },
+      { nome: 'start', enabled: true, visible: true },
+      { nome: 'clear', enabled: false, visible: true },
+      { nome: 'delete', enabled: false, visible: true },
+      { nome: 'marcante', enabled: false, visible: false },
+      { nome: 'observacao', enabled: false, visible: false },
+      { nome: 'photo', enabled: false, visible: true }
+    ]);
+  }
   //#endregion
 }

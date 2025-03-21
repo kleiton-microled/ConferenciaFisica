@@ -175,8 +175,8 @@
               <label for="divergenciaQualificacao">Divergencia de Qualificação</label>
               <select id="divergenciaQualificacao" class="form-select" formControlName="divergenciaQualificacao">
                 <option value="0">Selecione</option>
-                <option value="1">SIM</option>
-                <option value="2">NÃO</option>
+                <option [ngValue]=true>SIM</option>
+                <option [ngValue]=false>NÃO</option>
               </select>
             </div>
             <div class="col-2">

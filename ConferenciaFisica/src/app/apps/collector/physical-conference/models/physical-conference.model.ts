@@ -27,7 +27,7 @@ export class PhysicalConferenceModel {
     quantidadeAjudantes: number = 0;
     quantidadeOperadores: number = 0;
     conferenciaRemota: boolean = false;
-    divergenciaQualificacao: number = 0;
+    divergenciaQualificacao: boolean = false;
     movimentacao: number = 0;
     desunitizacao: number = 0;
     observacao: string = "";
