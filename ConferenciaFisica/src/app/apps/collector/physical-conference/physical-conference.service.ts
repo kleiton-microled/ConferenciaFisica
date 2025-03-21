@@ -188,8 +188,6 @@ export class PhysicalConferenceService {
    * @returns 
    */
   getConferencePorId(id: number): Observable<ServiceResult<PhysicalConferenceModel>> {
-    this.notificationService.showLoading();
-
     return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/buscar-por-id?id=${id}`).pipe(
       map(response => {
         if (!response.status) {
@@ -205,7 +203,7 @@ export class PhysicalConferenceService {
         this.notificationService.showError(error);
         return throwError(() => error);
       }),
-      finalize(() => this.notificationService.hideLoading())
+      finalize(() => null)
     );
   }
 

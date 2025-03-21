@@ -68,8 +68,8 @@
                 <input id="inicioConferencia" type="text" class="form-control" formControlName="inicioConferencia" />
               </div>
               <div class="col-2">
-                <label for="fimConferencia">Fim Conferência</label>
-                <input id="fimConferencia" type="text" class="form-control" formControlName="fimConferencia" />
+                <label for="termino">Fim Conferência</label>
+                <input id="termino" type="text" class="form-control" formControlName="termino" />
               </div>
               <div class="col-2">
                 <label for="cpfCliente">Cpf Cliente</label>
@@ -164,7 +164,7 @@
               </div>
 
               <div class="col-2 d-flex align-items-end position-relative">
-                <button type="submit" #btnServicosExecutados class="btn btn-servicos-executados mt-3">
+                <button type="submit" #btnServicosExecutados (click)="openModal(servicosModal)" class="btn btn-servicos-executados mt-3">
                   SERVIÇOS EXECUTADOS
                 </button>
               </div>
@@ -215,6 +215,7 @@
                          (startEvent)="openModal(advancedFilterModal)" 
                          (cleanupEvent)="limparConferenciaAtual()"
                          (avariasEvent)="getModalAvaria()"
+                         (finalizarEvent)="finalizarConferencia()"
                          (exitEvent)="sair()"></app-action-footer>
     </div>
   </div>
@@ -265,5 +266,60 @@
     <button type="button" class="btn btn-primary" (click)="filterConferences()">
       Aplicar Filtro
     </button>
+  </div>
+</ng-template>
+
+<ng-template #servicosModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Adicionar Serviço</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="servicoForm">
+      <div class="row">
+        <!-- Quantidade -->
+        <div class="col-4">
+          <label for="quantidade" class="form-label">Quantidade:</label>
+          <input type="number" id="quantidade" class="form-control" formControlName="quantidade">
+        </div>
+
+        <!-- Serviços -->
+        <div class="col-4">
+          <label for="servico" class="form-label">Serviço:</label>
+          <select id="servico" class="form-select" formControlName="servico">
+            <option value="">Selecione</option>
+            <option *ngFor="let serv of listaServicos" [value]="serv.id">{{ serv.nome }}</option>
+          </select>
+        </div>
+
+        <!-- Botão Adicionar -->
+        <div class="col-4 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="button" (click)="adicionarServico()">Adicionar</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Tabela -->
+    <div class="table-responsive mt-4" *ngIf="servicosAdicionados.length > 0">
+      <table class="table table-bordered table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Serviço</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of servicosAdicionados">
+            <td>{{ s.nome }}</td>
+            <td>{{ s.quantidade }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Fechar</button>
   </div>
 </ng-template>
