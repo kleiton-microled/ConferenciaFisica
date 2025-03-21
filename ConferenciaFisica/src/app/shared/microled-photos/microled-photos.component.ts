@@ -10,7 +10,7 @@ export interface Foto {
   idTipoFoto: number;
   idTipoProcesso: number;
   talieId: number | null;
-  containerId: number | null;
+  containerId: string | null;
   imagemPath: string | null;
   descricao: string;
   observacao: string;
