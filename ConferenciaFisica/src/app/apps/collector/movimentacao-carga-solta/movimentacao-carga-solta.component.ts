@@ -29,8 +29,18 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     { id: 3, name: "Item 3" },
   ];
 
+  motivos = [
+    { id: 1, name: "Item 1" },
+    { id: 2, name: "Item 2" },
+    { id: 3, name: "Item 3" },
+  ];
+
   get itemControl(): FormControl {
     return this.form.get("item") as FormControl;
+  }
+
+  get motivoControl(): FormControl {
+    return this.form.get("motivo") as FormControl;
   }
 
   onSelectChange(value: any): void {
@@ -43,7 +53,7 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     alert: { enabled: false, visible: false },
     clear: { enabled: false, visible: false },
     exit: { enabled: true, visible: true },
-    save: { enabled: false, visible: true },
+    save: { enabled: true, visible: true },
     delete: { enabled: false, visible: false },
     photo: { enabled: false, visible: false },
     marcante: { enabled: false, visible: false },
@@ -60,9 +70,25 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
   ) {
 
     this.form = this.formBuilder.group({
-      // finalidade: new FormControl("", Validators.required),
       item: new FormControl(""),
-      // placa: new FormControl(""),
+      marcante: new FormControl(""),
+      lote: new FormControl(""),
+      reserva: new FormControl(""),
+      etqprateleira: new FormControl(""),
+      ocupacao: new FormControl(""),
+      ARM: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      // etqprateleira: new FormControl(""),
+      
       // placaCarreta: new FormControl("", Validators.required),
       // ticket: new FormControl("", Validators.required),
     });

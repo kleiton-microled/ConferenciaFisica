@@ -23,24 +23,109 @@
                             <input id="reserva" type="text" class="form-control" formControlName="reserva" />
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    <div class="row mt-1">
+                        <label for="items">Items</label>
                         <app-microled-select label="Items" [items]="items" [control]="itemControl"
                             (selectionChange)="onSelectChange($event)">
                         </app-microled-select>
                     </div>
-                    <!-- <div class="row mt-3">
+                    <div class="row mt-4">
                         <div class="col-3">
-                            <app-microled-select label="Patio destino" [items]="items" [control]="itemControl"
+                            <label for="etqprateleira">Etq Pateleira</label>
+                            <input id="etqprateleira" type="text" class="form-control"
+                                formControlName="etqprateleira" />
+                        </div>
+                        <div class="col-3">
+                            <label for="ocupacao">Ocupaçao</label>
+                            <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
+                        </div>
+                        <div class="col-3">
+                            <label for="ARM">ARM</label>
+                            <input id="ARM" type="text" class="form-control" formControlName="ARM" />
+                        </div>
+                        <div class="row col-3">
+                            <label for="motivos">Motivos</label>
+                            <app-microled-select [items]="motivos" [control]="itemControl"
                                 (selectionChange)="onSelectChange($event)">
                             </app-microled-select>
                         </div>
-                    </div> -->
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <label for="quantidade">Quantidade</label>
+                            <input id="quantidade" type="number" class="form-control" formControlName="quantidade" />
+                        </div>
+                        <div class="col-3">
+                            <label for="embalagem">Embalagem</label>
+                            <input id="embalagem" type="text" class="form-control" formControlName="embalagem" />
+                        </div>
+                        <div class="col-3">
+                            <label for="anvisa">Anvisa</label>
+                            <input id="anvisa" type="text" class="form-control" formControlName="anvisa" />
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <label for="marcante">Numero NFE</label>
+                            <input id="marcante" type="number" class="form-control" formControlName="marcante" />
+                        </div>
+                        <div class="col-3">
+                            <label for="lote">Lote</label>
+                            <input id="lote" type="text" class="form-control" formControlName="lote" />
+                        </div>
+                        <div class="col-3">
+                            <label for="reserva">Reserva</label>
+                            <input id="reserva" type="text" class="form-control" formControlName="reserva" />
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-3">
+                            <label for="etqprateleira">Etq Pateleira</label>
+                            <input id="etqprateleira" type="text" class="form-control"
+                                formControlName="etqprateleira" />
+                        </div>
+                        <div class="col-3">
+                            <label for="ocupacao">Ocupaçao</label>
+                            <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
+                        </div>
+                        <div class="col-3">
+                            <label for="ARM">ARM</label>
+                            <input id="ARM" type="text" class="form-control" formControlName="ARM" />
+                        </div>
+                        <div class="row col-3">
+                            <label for="motivos">Motivos</label>
+                            <app-microled-select label="motivo" [items]="motivos" [control]="itemControl"
+                                (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-3">
+                            <label for="etqprateleira">Etq Pateleira</label>
+                            <input id="etqprateleira" type="text" class="form-control"
+                                formControlName="etqprateleira" />
+                        </div>
+                        <div class="col-3">
+                            <label for="ocupacao">Ocupaçao</label>
+                            <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
+                        </div>
+                        <div class="col-3">
+                            <label for="ARM">ARM</label>
+                            <input id="ARM" type="text" class="form-control" formControlName="ARM" />
+                        </div>
+                        <div class="row col-3">
+                            <label for="motivos">Motivos</label>
+                            <app-microled-select label="motivo" [items]="motivos" [control]="itemControl"
+                                (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                    </div>
                 </form>
 
-                <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="''" (startEvent)="''"
-                    (cleanupEvent)="''" (avariasEvent)="''" (observacaoEvent)="''" (exitEvent)="redirecionarHome()"
-                    (marcanteEvent)="''"></app-action-footer>
+
             </div>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="''" (startEvent)="''"
+                (cleanupEvent)="''" (avariasEvent)="''" (observacaoEvent)="''" (exitEvent)="redirecionarHome()"></app-action-footer>
         </div>
     </div>
 </div>
