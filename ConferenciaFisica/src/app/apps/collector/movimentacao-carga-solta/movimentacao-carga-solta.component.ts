@@ -35,12 +35,25 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     { id: 3, name: "Item 3" },
   ];
 
+  arms = [
+    { id: 1, name: "ARM 01" },
+    { id: 2, name: "ARM 02" },
+  ];
+
   get itemControl(): FormControl {
     return this.form.get("item") as FormControl;
   }
 
+  get etqprateleira(): FormControl {
+    return this.form.get("etqprateleira") as FormControl;
+  }
+
   get motivoControl(): FormControl {
     return this.form.get("motivo") as FormControl;
+  }
+
+  get armControl(): FormControl {
+    return this.form.get("ARM") as FormControl;
   }
 
   onSelectChange(value: any): void {
@@ -77,20 +90,20 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
       etqprateleira: new FormControl(""),
       ocupacao: new FormControl(""),
       ARM: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      // etqprateleira: new FormControl(""),
-      
-      // placaCarreta: new FormControl("", Validators.required),
-      // ticket: new FormControl("", Validators.required),
+      Cannot: new FormControl(""),
+      quantidade: new FormControl(""),
+      embalagem: new FormControl(""),
+      anvisa: new FormControl(""),
+      numeroNfe: new FormControl(""),
+      volume: new FormControl(""),
+      nvocc: new FormControl(""),
+      onu: new FormControl(""),
+      mercadoria: new FormControl(""),
+      container: new FormControl(""),
+      imo: new FormControl(""),
+      cliente: new FormControl(""),
+      entrada: new FormControl(""),
+      motivo: new FormControl(""),
     });
   }
 

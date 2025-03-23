@@ -25,28 +25,26 @@
                     </div>
                     <div class="row mt-1">
                         <label for="items">Items</label>
-                        <app-microled-select label="Items" [items]="items" [control]="itemControl"
+                        <app-microled-select [items]="items" [control]="itemControl"
                             (selectionChange)="onSelectChange($event)">
                         </app-microled-select>
                     </div>
                     <div class="row mt-4">
                         <div class="col-3">
                             <label for="etqprateleira">Etq Pateleira</label>
-                            <input id="etqprateleira" type="text" class="form-control"
-                                formControlName="etqprateleira" />
+                            <input id="etqprateleira" type="text" class="form-control" formControlName="etqprateleira" />
                         </div>
                         <div class="col-3">
                             <label for="ocupacao">Ocupaçao</label>
                             <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
                         </div>
-                        <div class="col-3">
-                            <label for="ARM">ARM</label>
-                            <input id="ARM" type="text" class="form-control" formControlName="ARM" />
+                        <div class="row col-3">
+                            <app-microled-select label="arms" [items]="arms" [control]="armControl" (selectionChange)="onSelectChange($event)">
+                        </app-microled-select>
                         </div>
                         <div class="row col-3">
                             <label for="motivos">Motivos</label>
-                            <app-microled-select [items]="motivos" [control]="itemControl"
-                                (selectionChange)="onSelectChange($event)">
+                            <app-microled-select [items]="motivos" [control]="motivoControl"(selectionChange)="onSelectChange($event)">
                             </app-microled-select>
                         </div>
                     </div>
@@ -66,58 +64,52 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col-3">
-                            <label for="marcante">Numero NFE</label>
-                            <input id="marcante" type="number" class="form-control" formControlName="marcante" />
+                            <label for="numeroNfe">Numero NFE</label>
+                            <input id="numeroNfe" type="number" class="form-control" formControlName="numeroNfe" />
                         </div>
                         <div class="col-3">
-                            <label for="lote">Lote</label>
-                            <input id="lote" type="text" class="form-control" formControlName="lote" />
+                            <label for="embalagem">Embalagem</label>
+                            <input id="embalagem" type="text" class="form-control" formControlName="embalagem" />
                         </div>
                         <div class="col-3">
-                            <label for="reserva">Reserva</label>
-                            <input id="reserva" type="text" class="form-control" formControlName="reserva" />
+                            <label for="volume">Volume</label>
+                            <input id="volume" type="text" class="form-control" formControlName="volume" />
                         </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-3">
-                            <label for="etqprateleira">Etq Pateleira</label>
-                            <input id="etqprateleira" type="text" class="form-control"
-                                formControlName="etqprateleira" />
+                            <label for="etqprateleira">Local</label>
+                            <input id="etqprateleira" type="text" class="form-control" formControlName="etqprateleira" />
                         </div>
                         <div class="col-3">
-                            <label for="ocupacao">Ocupaçao</label>
-                            <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
+                            <label for="mercadoria">Mercadoria</label>
+                            <input id="mercadoria" type="text" class="form-control" formControlName="mercadoria" />
                         </div>
                         <div class="col-3">
-                            <label for="ARM">ARM</label>
-                            <input id="ARM" type="text" class="form-control" formControlName="ARM" />
+                            <label for="cliente">Cliente</label>
+                            <input id="cliente" type="text" class="form-control" formControlName="cliente" />
                         </div>
-                        <div class="row col-3">
-                            <label for="motivos">Motivos</label>
-                            <app-microled-select label="motivo" [items]="motivos" [control]="itemControl"
-                                (selectionChange)="onSelectChange($event)">
-                            </app-microled-select>
+                        <div class="col-3">
+                            <label for="nvocc">NVOCC</label>
+                            <input id="nvocc" type="text" class="form-control" formControlName="nvocc" />
                         </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-3">
-                            <label for="etqprateleira">Etq Pateleira</label>
-                            <input id="etqprateleira" type="text" class="form-control"
-                                formControlName="etqprateleira" />
+                            <label for="entrada">Entrada</label>
+                            <input id="entrada" type="text" class="form-control" formControlName="entrada" />
                         </div>
                         <div class="col-3">
-                            <label for="ocupacao">Ocupaçao</label>
-                            <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
+                            <label for="container">Container</label>
+                            <input id="container" type="text" class="form-control" formControlName="container" />
                         </div>
                         <div class="col-3">
-                            <label for="ARM">ARM</label>
-                            <input id="ARM" type="text" class="form-control" formControlName="ARM" />
+                            <label for="imo">IMO</label>
+                            <input id="imo" type="text" class="form-control" formControlName="imo" />
                         </div>
-                        <div class="row col-3">
-                            <label for="motivos">Motivos</label>
-                            <app-microled-select label="motivo" [items]="motivos" [control]="itemControl"
-                                (selectionChange)="onSelectChange($event)">
-                            </app-microled-select>
+                        <div class="col-3">
+                            <label for="onu">ONU</label>
+                            <input id="onu" type="text" class="form-control" formControlName="onu" />
                         </div>
                     </div>
                 </form>
