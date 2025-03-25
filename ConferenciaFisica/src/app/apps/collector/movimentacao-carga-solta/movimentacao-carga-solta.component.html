@@ -8,7 +8,7 @@
                         <h4 style="font-weight: 100">Movimentação de carga solta</h4>
                     </div>
                 </div>
-                <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-3">
+                <form [formGroup]="form" class="mt-3">
                     <div class="row mt-3">
                         <div class="col-3">
                             <label for="marcante">Marcante</label>
@@ -27,7 +27,7 @@
                         <label for="items">Items</label>
                         <app-microled-select [items]="items" [control]="itemControl"
                             (selectionChange)="onSelectChange($event)">
-                        </app-microled-select>
+                        </app-microled-select>  
                     </div>
                     <div class="row mt-4">
                         <div class="col-3">
@@ -117,7 +117,7 @@
 
             </div>
             <app-action-footer [buttonsState]="footerButtonsState" 
-                                    (saveEvent)="''" 
+                                    (saveEvent)="onSubmit()" 
                                     (startEvent)="''"
                                     (cleanupEvent)="''" 
                                     (avariasEvent)="''" 
