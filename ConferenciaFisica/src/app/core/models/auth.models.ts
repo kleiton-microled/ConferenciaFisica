@@ -10,4 +10,7 @@ export class User {
     avatar?: string;
     location?: string;
     title?: string;
+
+    roles?: string[];
+    permissions?: string[];
 }

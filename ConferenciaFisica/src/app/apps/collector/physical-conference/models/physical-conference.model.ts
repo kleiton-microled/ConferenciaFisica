@@ -14,7 +14,7 @@ export class PhysicalConferenceModel {
     quantidade: number = 0;
     tipoConferencia: number = 0;
     inicio: Date = new Date();
-    termino: Date | null = null;
+    termino!: Date;
     cpfCliente: string | null = "";
     nomeCliente: string | null = "";
     retiradaAmostra: number = 0;

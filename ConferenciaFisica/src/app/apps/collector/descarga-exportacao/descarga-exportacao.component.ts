@@ -141,6 +141,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      */
     this.subscription = this.service.getCurrentDescarga().subscribe(descarga => {
       if (descarga) {
+        console.log('Descarga Atual: ', descarga);
         this.descargaAtual = descarga;
         this.itensList = descarga.talie?.talieItem ?? [];
         this.form.patchValue({
@@ -264,13 +265,19 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   onRowSelected(item: any): void {
-
-    this.itemSelecionado = item;
-    this.buscarArmazens();
-    this.buscarMarcantesTalieItem(item.id);
-    this.atualizarBotoes([
-      { nome: 'marcante', enabled: true, visible: true }
-    ]);
+    if(item){
+      this.itemSelecionado = item;
+      this.buscarArmazens();
+      this.buscarMarcantesTalieItem(item.id);
+      this.atualizarBotoes([
+        { nome: 'marcante', enabled: true, visible: true }
+      ]);
+    }else{
+      this.atualizarBotoes([
+        { nome: 'marcante', enabled: false, visible: true }
+      ]);
+    }
+    
   }
 
 
@@ -566,8 +573,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
       this.service.saveMarcante(this.marcante).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
-          this.buscarMarcantesTalieItem(this.descargaAtual.talie?.id ?? 0);
+          this.buscarMarcantesTalieItem(this.marcante.talieItemId);
           this.notificationService.showSuccess(ret);
+          this.marcanteForm.reset();
         } else {
           this.notificationService.showAlert(ret);
         }

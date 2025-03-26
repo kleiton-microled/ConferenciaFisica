@@ -31,6 +31,7 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
   @Input() tableClasses: string = '';
   @Input() theadClasses: string = '';
   @Input() hasRowSelection: boolean = false;
+  @Input() singleRowSelection: boolean = false;
   @Input() columns: Column[] = [];
   collectionSize: number = this.tableData.length;
   selectAll: boolean = false;
@@ -164,9 +165,26 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
   * Captura a linha selecionada e emite o evento para o componente pai
   * @param record Objeto da linha selecionada
   */
-  selectRow(record: any): void {
-    this.rowSelected.emit(record); // Emite a linha para o componente pai
+  selectRow(record: any, index: number): void {
+    const isAlreadySelected = this.isSelected[index];
+  
+    if (this.singleRowSelection) {
+      // Se já estiver selecionado, desmarca
+      if (isAlreadySelected) {
+        this.isSelected = this.tableData.map(() => false);
+      } else {
+        this.isSelected = this.tableData.map((_, i) => i === index);
+      }
+    } else {
+      this.isSelected[index] = !this.isSelected[index];
+      this.selectAll = this.isSelected.every(x => x === true);
+    }
+  
+    this.rowSelected.emit(isAlreadySelected ? null : record);
   }
+  
+  
+
 
 
 

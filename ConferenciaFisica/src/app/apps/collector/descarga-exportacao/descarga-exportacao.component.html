@@ -98,7 +98,8 @@
                     <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
                         [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="true"
                         [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false" tableClasses="table-centered"
-                        theadClasses="table-light">
+                        theadClasses="table-light"
+                        [singleRowSelection]="true">
                     </app-advanced-table>
 
                     <!-- Botões -->
@@ -221,7 +222,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="modal.dismiss">Fechar</button>
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
         <button type="button" class="btn btn-primary" (click)="salvarMarcante()">Salvar</button>
     </div>
 </ng-template>

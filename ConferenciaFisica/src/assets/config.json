@@ -1,4 +1,5 @@
 {
+  "AUTH":"https://localhost:7167/api/Auth/login",
   "CUSTOMER_URL": "https://localhost:5000/api/Conferencia/conteineres",
   "VEHICLE_URL": "https://api.conferencia-fisica.com.br/api/vehicles",
   "SERVICES_URL": "https://api.conferencia-fisica.com.br/api/Service",
@@ -6,7 +7,7 @@
   "ORDERS_URL": "https://api.conferencia-fisica.com.br/api/orders",
   "AUTH_URL": "https://api.conferencia-fisica.com.br/api/auth",
   "BASE_IMAGES": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br",
-  "DESCARGA_EXPORTACAO_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api/descarga-exportacao",
-  "CONFERENCIA_FISICA_URL": "https://localhost:5000/api",
+  "DESCARGA_EXPORTACAO_URL": "https://localhost:5000/api/descarga-exportacao",
+  "CONFERENCIA_FISICA_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api",
   "PRE_REGISTRO_URL": "https://localhost:5000/api/pre-registro"
 }

@@ -27,10 +27,19 @@ export const TOOLS: ToolsModel[] = [
   },
   {
     id: 4,
+    title: "Estufagem Container",
+    description:
+      "Modulo de estufagem container",
+    version: 1,
+    link: "apps/collector/estufagem-container",
+  },
+  {
+    id: 5,
     title: "Movimentação de carga solta",
     description:
       "Modulo de movimentação carga solta",
     version: 1,
     link: "apps/collector/movimentaca-carga-solta",
   }
+  
 ];

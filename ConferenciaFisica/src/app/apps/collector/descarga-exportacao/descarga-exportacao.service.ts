@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { DescargaExportacao } from "./models/descarga-exportacao.model";
 import { BaseService } from "src/app/Http/base-service";
-import { DESCARGA_EXPORTACAO_URL, DESCARGA_UTIL_URL } from "src/app/Http/Config/config";
+import { DESCARGA_UTIL_URL } from "src/app/Http/Config/config";
 import { BehaviorSubject, catchError, finalize, map, Observable, throwError } from "rxjs";
 import { Talie } from "../models/talie.model";
 import { AvariaDescarga } from "./models/avaria-descarga.model";
@@ -21,10 +21,16 @@ import { ConfigService } from "src/app/shared/services/config.service";
 export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
 
     private descargaSubject = new BehaviorSubject<DescargaExportacao | null>(null);
+    private urlApi = "";
 
+    
     constructor(http: HttpClient, private configService: ConfigService, private notificationService: NotificationService) {
         super(http, configService.getConfig('DESCARGA_EXPORTACAO_URL'));
+
+        this.urlApi = configService.getConfig('DESCARGA_EXPORTACAO_URL');
     }
+
+    
 
     // Obtém o estado atual da DescargaExportacao
     getCurrentDescarga(): Observable<DescargaExportacao | null> {
@@ -58,6 +64,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         this.descargaSubject.next(null);
     }
 
+ 
 
 
     /**
@@ -66,7 +73,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     saveAvaria(data: AvariaDescarga): Observable<ServiceResult<boolean>> {
-        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/cadastrar-avaria`, data).pipe(
+        return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/cadastrar-avaria`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -88,7 +95,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     saveDescargaExportacao(data: DescargaExportacao | null): Observable<ServiceResult<boolean>> {
-        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/gravar-talie`, data).pipe(
+        return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/gravar-talie`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -110,7 +117,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns bool
      */
     saveTalieItem(data: TalieItem, registro: number): Observable<ServiceResult<boolean>> {
-        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/salvar-talie-item?registro=${registro}`, data).pipe(
+        return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/salvar-talie-item?registro=${registro}`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -132,7 +139,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     deleteTalieItem(id: number, registro: number): Observable<ServiceResult<boolean>> {
-        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/excluir-talie-item/${registro}?talieItemId=${id}`,).pipe(
+        return this.http.delete<ServiceResult<boolean>>(`${this.urlApi}/excluir-talie-item/${registro}?talieItemId=${id}`,).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -155,7 +162,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     saveObservacao(observacao: string, talieId: number): Observable<ServiceResult<boolean>> {
-        const url = `${DESCARGA_EXPORTACAO_URL}/gravar-observacao?observacao=${encodeURIComponent(observacao)}&talieId=${talieId}`;
+        const url = `${this.urlApi}/gravar-observacao?observacao=${encodeURIComponent(observacao)}&talieId=${talieId}`;
 
         return this.http.post<ServiceResult<boolean>>(url, null).pipe(
             map(response => {
@@ -179,7 +186,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     getArmazens(patio: number = 1): Observable<ServiceResult<Armazen[]>> {
-        return this.http.get<ServiceResult<Armazen[]>>(`${DESCARGA_EXPORTACAO_URL}/carregar-armazens?patio=${patio}`).pipe(
+        return this.http.get<ServiceResult<Armazen[]>>(`${this.urlApi}/carregar-armazens?patio=${patio}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
@@ -201,7 +208,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     saveMarcante(data: Marcante): Observable<ServiceResult<boolean>> {
-        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/gravar-marcante`, data).pipe(
+        return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/gravar-marcante`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -223,7 +230,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     getMarcanteTaliItem(talieItemId: number): Observable<ServiceResult<Marcante[]>> {
-        return this.http.get<ServiceResult<Marcante[]>>(`${DESCARGA_EXPORTACAO_URL}/carregar-marcantes-talie-item?talieItemId=${talieItemId}`).pipe(
+        return this.http.get<ServiceResult<Marcante[]>>(`${this.urlApi}/carregar-marcantes-talie-item?talieItemId=${talieItemId}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
@@ -245,7 +252,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns bool
      */
     deleteMarcanteTalieItem(id: number): Observable<ServiceResult<boolean>> {
-        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/excluir-marcante-talie-item/?id=${id}`,).pipe(
+        return this.http.delete<ServiceResult<boolean>>(`${this.urlApi}/excluir-marcante-talie-item/?id=${id}`,).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -267,7 +274,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns 
      */
     getFinalizarProcesso(talieId: number, crossdock: boolean): Observable<ServiceResult<boolean>> {
-        return this.http.get<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/finalizar-processo?id=${talieId}&crossdock=${crossdock}`).pipe(
+        return this.http.get<ServiceResult<boolean>>(`${this.urlApi}/finalizar-processo?id=${talieId}&crossdock=${crossdock}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
@@ -301,7 +308,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     getProcessosByTalie(talieId: number): Observable<ServiceResult<Foto[]>> {
-        return this.http.get<ServiceResult<Foto[]>>(`${DESCARGA_EXPORTACAO_URL}/processo/${talieId}`).pipe(
+        return this.http.get<ServiceResult<Foto[]>>(`${this.urlApi}/processo/${talieId}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
@@ -318,7 +325,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     getProcessosByContainer(container: string): Observable<ServiceResult<Foto[]>> {
-        return this.http.get<ServiceResult<Foto[]>>(`${DESCARGA_EXPORTACAO_URL}/processo-container/${container}`).pipe(
+        return this.http.get<ServiceResult<Foto[]>>(`${this.urlApi}/processo-container/${container}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
@@ -335,7 +342,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
     
     postProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
-        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/processo`, data).pipe(
+        return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/processo`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -352,7 +359,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     putProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
-        return this.http.put<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/processo`, data).pipe(
+        return this.http.put<ServiceResult<boolean>>(`${this.urlApi}/processo`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -369,7 +376,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     deleteProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
-        return this.http.delete<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/processo/${data.id}`).pipe(
+        return this.http.delete<ServiceResult<boolean>>(`${this.urlApi}/processo/${data.id}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
@@ -386,7 +393,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     saveFotos(data: Marcante): Observable<ServiceResult<boolean>> {
-        return this.http.post<ServiceResult<boolean>>(`${DESCARGA_EXPORTACAO_URL}/salvar-fotos`, data).pipe(
+        return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/salvar-fotos`, data).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);

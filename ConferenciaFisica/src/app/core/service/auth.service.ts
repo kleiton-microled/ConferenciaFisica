@@ -3,13 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 import { User } from '../models/auth.models';
+import { ConfigService } from 'src/app/shared/services/config.service';
 
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     user: User | null = null;
+    urlAuth: string = "https://localhost:7167/api/Auth/login";
 
-    constructor (private http: HttpClient) {
+    constructor (private http: HttpClient, configService: ConfigService) {
+        //this.urlAuth = configService.getConfig('AUTH');
     }
 
     /**
@@ -27,19 +30,29 @@ export class AuthenticationService {
      * @param email email of user
      * @param password password of user
      */
-    login(email: string, password: string): any {
+    // login(email: string, password: string): any {
 
-        return this.http.post<any>(`/api/login`, { email, password })
-            .pipe(map(user => {
-                // login successful if there's a jwt token in the response
-                if (user && user.token) {
-                    this.user = user;
-                    // store user details and jwt in session
-                    sessionStorage.setItem('currentUser', JSON.stringify(user));
-                }
-                return user;
-            }));
-    }
+    //     return this.http.post<any>(`/api/login`, { email, password })
+    //         .pipe(map(user => {
+    //             // login successful if there's a jwt token in the response
+    //             if (user && user.token) {
+    //                 this.user = user;
+    //                 // store user details and jwt in session
+    //                 sessionStorage.setItem('currentUser', JSON.stringify(user));
+    //             }
+    //             return user;
+    //         }));
+    // }
+    login(usuario: string, senha: string): any {
+        return this.http.post<User>(this.urlAuth, { usuario, senha })
+          .pipe(map(user => {
+            if (user && user.token) {
+              this.user = user;
+              sessionStorage.setItem('currentUser', JSON.stringify(user));
+            }
+            return user;
+          }));
+      }
 
     /**
      * Performs the signup auth
@@ -52,8 +65,6 @@ export class AuthenticationService {
             .pipe(map(user => user));
 
     }
-
-
 
     /**
      * Logout the user

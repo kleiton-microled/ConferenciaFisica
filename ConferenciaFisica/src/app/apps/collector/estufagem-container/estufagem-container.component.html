@@ -1,0 +1,127 @@
+<app-page-title [breadcrumbItems]="pageTitle" title></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Estufagem Container</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                          <label for="planejamento" class="required">planejamento</label>
+                          <input id="planejamento" type="text" class="form-control"
+                              formControlName="planejamento"
+                              [ngClass]="{'is-invalid': form.get('planejamento')?.invalid && form.get('planejamento')?.touched}">
+
+                          <div class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('planejamento'), 'planejamento')}}
+                          </div>
+                        </div>
+                        <div class="col-3">
+                            <label for="reserva" class="required">Reserva</label>
+                            <input id="reserva" type="text" class="form-control"
+                                formControlName="reserva"
+                                [ngClass]="{'is-invalid': form.get('reserva')?.invalid && form.get('reserva')?.touched}">
+
+                            <div class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('reserva'), 'reserva')}}
+                            </div>
+
+                        </div>
+                        <div class="col-3">
+                            <label for="cliente">Cliente</label>
+                            <input id="cliente" type="text" class="form-control"
+                                formControlName="cliente">
+                        </div>
+                        <div class="col-3">
+                            <label for="container">Container</label>
+                            <input id="container" type="text"
+                                class="form-control"
+                                formControlName="container">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="inicio">inicio</label>
+                            <input id="inicio" type="date" class="form-control"
+                                formControlName="inicio">
+                        </div>
+                        <div class="col-3">
+                            <label for="termino">termino</label>
+                            <input id="termino" type="date" class="form-control"
+                                formControlName="termino">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="conferente">conferente</label>
+                            <app-microled-select
+                                [items]="conferentes"
+                                [control]="conferenteControl"
+                                (selectionChange)="onConferenteSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                        <div class="col-3">
+                            <label for="equipe">equipe</label>
+                            <app-microled-select
+                                [items]="equipes"
+                                [control]="conferenteControl"
+                                (selectionChange)="onConferenteSelectChange($event)">
+                            </app-microled-select> </div>
+                        <div class="col-3">
+                            <label for="modo">modo</label>
+                            <app-microled-select
+                                [items]="modos"
+                                [control]="conferenteControl"
+                                (selectionChange)="onConferenteSelectChange($event)">
+                            </app-microled-select> </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="produto">produto</label>
+                            <input id="produto" type="text" class="form-control"
+                                formControlName="produto">
+                        </div>
+                        <div class="col-3">
+                            <label for="plan">plan</label>
+                            <input id="plan" type="text" class="form-control"
+                                formControlName="plan">
+                        </div>
+                        <div class="col-3">
+                            <label for="ttl">ttl</label>
+                            <input id="ttl" type="text" class="form-control"
+                                formControlName="ttl">
+                        </div>
+                        <div class="col-3">
+                            <label for="lote">lote</label>
+                            <input id="lote" type="text" class="form-control"
+                                formControlName="lote">
+                        </div>
+                    </div>
+                </form>
+
+                <app-advanced-table #advancedTable
+                    (handleTableLoad)="''"
+                    [tableData]="estufagemList"
+                    [columns]="columns"
+                    [pagination]="true"
+                    [hasRowSelection]="false"
+                    (search)="searchData($event)"
+                    [isSortable]="false"
+                    tableClasses="table-centered"
+                    theadClasses="table-light">
+                </app-advanced-table>
+
+            </div>
+            <app-action-footer [buttonsState]="footerButtonsState"
+                (saveEvent)="onSubmit()"
+                (startEvent)="''"
+                (cleanupEvent)="clearFomulario()"
+                (avariasEvent)="''"
+                (observacaoEvent)="''"
+                (exitEvent)="''"
+                (marcanteEvent)="''"></app-action-footer>
+        </div>
+    </div>
+</div>
