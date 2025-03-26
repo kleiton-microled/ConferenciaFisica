@@ -5,6 +5,7 @@ import { PhysicalConferenceComponent } from "./physical-conference/physical-conf
 import { DescargaExportacaoComponent } from "./descarga-exportacao/descarga-exportacao.component";
 import { PreRegistroComponent } from "./pre-registro/pre-registro.component";
 import { AuthGuard } from "src/app/core/guards/auth.guard";
+import { EstufagemContainerComponent } from "./estufagem-container/estufagem-container.component";
 
 const routes: Routes = [{
   path: '',
@@ -23,6 +24,10 @@ const routes: Routes = [{
 {
   path: 'pre-registro',
   component: PreRegistroComponent
+},
+{
+  path: 'estufagem-container',
+  component: EstufagemContainerComponent
 }];
 
 @NgModule({

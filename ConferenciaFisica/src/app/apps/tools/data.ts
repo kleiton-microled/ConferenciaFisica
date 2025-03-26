@@ -24,5 +24,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de pré registro",
     version: 1,
     link: "apps/collector/pre-registro",
+  },
+  {
+    id: 4,
+    title: "Estufagem Container",
+    description:
+      "Modulo de estufagem container",
+    version: 1,
+    link: "apps/collector/estufagem-container",
   }
 ];
