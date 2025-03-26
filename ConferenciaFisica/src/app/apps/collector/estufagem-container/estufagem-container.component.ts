@@ -3,21 +3,27 @@ import { PageTitleModule } from "../../../shared/page-title/page-title.module";
 import { SharedModule } from "../../../shared/shared.module";
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbDateParserFormatter, NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
 import { Estufagem } from '../models/estufagem.model';
 import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
 import { AdvancedTableModule } from 'src/app/shared/advanced-table/advanced-table.module';
 import Swal from 'sweetalert2';
+import { CommonModule } from "@angular/common";
+import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 
 @Component({
   selector: 'app-estufagem-container',
   standalone: true,
-  imports: [PageTitleModule, ReactiveFormsModule, SharedModule, AdvancedTableModule],
+  imports: [PageTitleModule, ReactiveFormsModule, SharedModule, AdvancedTableModule, CommonModule],
   templateUrl: './estufagem-container.component.html',
   styleUrl: './estufagem-container.component.scss'
 })
 
 export class EstufagemContainerComponent implements OnInit {
+  onSubmit() {
+    console.log(this.form.value);
+    // this.formUtils.markAllAsTouched(this.form);
+    if (this.form.invalid) return;
+  }
 
   searchData($event: string) {
     throw new Error('Method not implemented.');
@@ -57,6 +63,16 @@ export class EstufagemContainerComponent implements OnInit {
   { id: 2, name: 'EQUIPE TARDE (15h-23h' },
   { id: 3, name: 'EQUIPE NOITE (23h-07h' },];
 
+
+
+  constructor(private formBuilder: FormBuilder, public formValidationService: FormValidationService) {
+    this.form = this.getNewForm();
+  }
+
+  ngOnInit(): void {
+    this.initAdvancedTableData();
+  }
+
   get conferenteControl(): FormControl {
     return this.form.get('conferente') as FormControl;
   }
@@ -67,14 +83,6 @@ export class EstufagemContainerComponent implements OnInit {
 
   get modoControl(): FormControl {
     return this.form.get('conferente') as FormControl;
-  }
-
-  constructor(private formBuilder: FormBuilder,) {
-    this.form = this.getNewForm();
-  }
-
-  ngOnInit(): void {
-    this.initAdvancedTableData();
   }
 
   initAdvancedTableData(): void {
@@ -135,8 +143,8 @@ export class EstufagemContainerComponent implements OnInit {
 
   getNewForm(): FormGroup {
     return this.formBuilder.group({
-      planejamento: ['', Validators.required],
-      reserva: ['', Validators.required],
+      planejamento: ['', Validators.required, Validators.minLength(10)],
+      reserva: ['',  Validators.required, Validators.minLength(10)],
       cliente: ['', Validators.required],
       container: ['', Validators.required],
       inicio: ['', Validators.required],
@@ -151,5 +159,8 @@ export class EstufagemContainerComponent implements OnInit {
     });
   }
 
-
+  isFieldInvalid(field: string): boolean {
+    const control = this.form.get(field);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
+  }
 }

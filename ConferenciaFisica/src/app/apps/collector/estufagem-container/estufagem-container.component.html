@@ -11,15 +11,23 @@
                 <form [formGroup]="form">
                     <div class="row mb-3">
                         <div class="col-3">
-                            <label for="planejamento">Planejamento</label>
-                            <input id="planejamento" type="text"
-                                class="form-control"
-                                formControlName="planejamento">
+                          <label for="planejamento" class="required">planejamento</label>
+                          <input id="planejamento" type="text" class="form-control"
+                              formControlName="planejamento"
+                              [ngClass]="{'is-invalid': form.get('planejamento')?.invalid && form.get('planejamento')?.touched}">
+
+                          <div class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('planejamento'), 'planejamento')}}
+                          </div>
                         </div>
                         <div class="col-3">
-                            <label for="reserva">Reserva</label>
+                            <label for="reserva" class="required">Reserva</label>
                             <input id="reserva" type="text" class="form-control"
-                                formControlName="reserva">
+                                formControlName="reserva"
+                                [ngClass]="{'is-invalid': form.get('reserva')?.invalid && form.get('reserva')?.touched}">
+
+                            <div class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('reserva'), 'reserva')}}
+                            </div>
+
                         </div>
                         <div class="col-3">
                             <label for="cliente">Cliente</label>
@@ -72,41 +80,45 @@
                     <div class="row mb-3">
                         <div class="col-3">
                             <label for="produto">produto</label>
-                            <input id="produto" type="text" class="form-control" formControlName="produto">
+                            <input id="produto" type="text" class="form-control"
+                                formControlName="produto">
                         </div>
                         <div class="col-3">
                             <label for="plan">plan</label>
-                            <input id="plan" type="text" class="form-control" formControlName="plan">
+                            <input id="plan" type="text" class="form-control"
+                                formControlName="plan">
                         </div>
                         <div class="col-3">
                             <label for="ttl">ttl</label>
-                            <input id="ttl" type="text" class="form-control" formControlName="ttl">
+                            <input id="ttl" type="text" class="form-control"
+                                formControlName="ttl">
                         </div>
                         <div class="col-3">
                             <label for="lote">lote</label>
-                            <input id="lote" type="text" class="form-control" formControlName="lote">
+                            <input id="lote" type="text" class="form-control"
+                                formControlName="lote">
                         </div>
                     </div>
                 </form>
 
-            <app-advanced-table #advancedTable 
-                (handleTableLoad)="''" 
-                [tableData]="estufagemList"
-                [columns]="columns" 
-                [pagination]="true" 
-                [hasRowSelection]="false"
-                (search)="searchData($event)"
-                [isSortable]="false" 
-                tableClasses="table-centered"
-                theadClasses="table-light">
-            </app-advanced-table>
+                <app-advanced-table #advancedTable
+                    (handleTableLoad)="''"
+                    [tableData]="estufagemList"
+                    [columns]="columns"
+                    [pagination]="true"
+                    [hasRowSelection]="false"
+                    (search)="searchData($event)"
+                    [isSortable]="false"
+                    tableClasses="table-centered"
+                    theadClasses="table-light">
+                </app-advanced-table>
 
             </div>
             <app-action-footer [buttonsState]="footerButtonsState"
-                (saveEvent)="''" 
+                (saveEvent)="onSubmit()"
                 (startEvent)="''"
-                (cleanupEvent)="clearFomulario()" 
-                (avariasEvent)="''" 
+                (cleanupEvent)="clearFomulario()"
+                (avariasEvent)="''"
                 (observacaoEvent)="''"
                 (exitEvent)="''"
                 (marcanteEvent)="''"></app-action-footer>
