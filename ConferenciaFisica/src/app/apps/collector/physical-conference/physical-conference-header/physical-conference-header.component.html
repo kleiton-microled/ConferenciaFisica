@@ -84,10 +84,10 @@
                        [class.is-invalid]="form.get('cpfCliente')?.invalid && form.get('cpfCliente')?.touched"
                        formControlName="cpfCliente" />
               
-                <span class="text-danger small mt-1 d-block"
+                <!-- <span class="text-danger small mt-1 d-block"
                       *ngIf="form.get('cpfCliente')?.invalid && form.get('cpfCliente')?.touched">
                   {{ validationService.getErrorMessage(form.get('cpfCliente'), 'CPF do Cliente') }}
-                </span>
+                </span> -->
               </div>
               
               <div class="col-2">
