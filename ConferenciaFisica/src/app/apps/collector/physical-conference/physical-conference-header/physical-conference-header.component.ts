@@ -38,6 +38,7 @@ import { BASE_IMAGES } from "src/app/Http/Config/config";
 import { Foto, MicroledPhotosComponent } from "src/app/shared/microled-photos/microled-photos.component";
 import { DescargaExportacaoService } from "../../descarga-exportacao/descarga-exportacao.service";
 import { EnumValue } from "src/app/shared/models/enumValue.model";
+import { FormValidationService } from "src/app/shared/services/form-validator.service";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -127,7 +128,8 @@ export class PhysicalConferenceHeaderComponent {
     private conferenceService: PhysicalConferenceService,
     private storageService: PhysicalConferenceStorageService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    public validationService: FormValidationService
   ) { }
 
   ngOnInit(): void {

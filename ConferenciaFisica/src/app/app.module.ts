@@ -47,7 +47,7 @@ export function initializeApp(configService: ConfigService) {
         { provide: NgbDatepickerI18n, useClass: CustomDatepickerI18n }, I18n,
         { provide: NgbDateParserFormatter, useClass: CustomDatepickerFormatter },
         // provider used to create fake backend
-        FakeBackendProvider,
+        //FakeBackendProvider,
         provideHttpClient(withInterceptorsFromDi()),
     ]
 })

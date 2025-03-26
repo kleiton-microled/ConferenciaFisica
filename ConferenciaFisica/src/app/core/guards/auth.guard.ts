@@ -1,25 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate } from '@angular/router';
 
 import { AuthenticationService } from '../service/auth.service';
 
 @Injectable({ providedIn: 'root' })
-export class AuthGuard  {
-    constructor (
-        private router: Router,
-        private authenticationService: AuthenticationService
-    ) { }
+export class AuthGuard implements CanActivate {
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const currentUser = this.authenticationService.currentUser();
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {}
 
-        if (currentUser) {
-            return true;
-        }
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    const currentUser = this.authenticationService.currentUser();
 
-
-        // not logged in so redirect to login page with the return url
-        this.router.navigate(['auth/login'], { queryParams: { returnUrl: state.url } });
-        return false;
+    if (!currentUser) {
+      // Não autenticado
+      this.router.navigate(['auth/login'], { queryParams: { returnUrl: state.url } });
+      return false;
     }
+
+    const expectedRoles = route.data['roles'] as string[];
+
+    // Se não tem roles definidas na rota, apenas verifica login
+    if (!expectedRoles || expectedRoles.length === 0) {
+      return true;
+    }
+
+    const userRoles = currentUser.roles || [];
+    const hasRole = userRoles.some((role: string) => expectedRoles.includes(role));
+
+    if (!hasRole) {
+      this.router.navigate(['/acesso-negado']);
+      return false;
+    }
+
+    return true;
+  }
 }

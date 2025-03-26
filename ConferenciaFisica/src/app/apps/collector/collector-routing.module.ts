@@ -4,6 +4,7 @@ import { NgModule } from "@angular/core";
 import { PhysicalConferenceComponent } from "./physical-conference/physical-conference.component";
 import { DescargaExportacaoComponent } from "./descarga-exportacao/descarga-exportacao.component";
 import { PreRegistroComponent } from "./pre-registro/pre-registro.component";
+import { AuthGuard } from "src/app/core/guards/auth.guard";
 
 const routes: Routes = [{
   path: '',
@@ -11,7 +12,9 @@ const routes: Routes = [{
 },
 {
   path: 'physical-conference',
-  component: PhysicalConferenceComponent
+  component: PhysicalConferenceComponent,
+  canActivate: [AuthGuard],
+  data: { roles: ['CONF_FISICA'] }
 },
 {
   path: 'descarga-exportacao',

@@ -1,4 +1,5 @@
 {
+  "AUTH":"https://localhost:7167/api/Auth/login",
   "CUSTOMER_URL": "https://localhost:5000/api/Conferencia/conteineres",
   "VEHICLE_URL": "https://api.conferencia-fisica.com.br/api/vehicles",
   "SERVICES_URL": "https://api.conferencia-fisica.com.br/api/Service",

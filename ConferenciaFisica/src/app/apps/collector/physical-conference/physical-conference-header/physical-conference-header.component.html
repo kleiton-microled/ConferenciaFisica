@@ -71,11 +71,25 @@
                 <label for="termino">Fim Conferência</label>
                 <input id="termino" type="text" class="form-control" formControlName="termino" />
               </div>
-              <div class="col-2">
+              <!-- <div class="col-2">
                 <label for="cpfCliente">Cpf Cliente</label>
                 <input id="cpfCliente" type="text" appCpfMask maxlength="14" class="form-control"
                   formControlName="cpfCliente" />
+              </div> -->
+              <div class="col-2">
+                <label for="cpfCliente">Cpf Cliente</label>
+                <input id="cpfCliente" type="text"
+                       appCpfMask maxlength="14"
+                       class="form-control"
+                       [class.is-invalid]="form.get('cpfCliente')?.invalid && form.get('cpfCliente')?.touched"
+                       formControlName="cpfCliente" />
+              
+                <span class="text-danger small mt-1 d-block"
+                      *ngIf="form.get('cpfCliente')?.invalid && form.get('cpfCliente')?.touched">
+                  {{ validationService.getErrorMessage(form.get('cpfCliente'), 'CPF do Cliente') }}
+                </span>
               </div>
+              
               <div class="col-2">
                 <label for="nomeCliente">Nome Cliente</label>
                 <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente" />
