@@ -7,6 +7,9 @@ import { PreRegistroComponent } from "./pre-registro/pre-registro.component";
 import { MovimentacaoCargaSoltaComponent } from "./movimentacao-carga-solta/movimentacao-carga-solta.component";
 import { AuthGuard } from "src/app/core/guards/auth.guard";
 import { EstufagemContainerComponent } from "./estufagem-container/estufagem-container.component";
+import { MarcanteCargaSoltaComponent } from "./marcante-carga-solta/marcante-carga-solta.component";
+import { MovimentacaoContainerComponent } from "./movimentacao-container/movimentacao-container.component";
+import { InventarioCargaSoltaComponent } from "./inventario-carga-solta/inventario-carga-solta.component";
 
 const routes: Routes = [{
   path: '',
@@ -26,15 +29,40 @@ const routes: Routes = [{
 },
 {
   path: 'pre-registro',
-  component: PreRegistroComponent
+  component: PreRegistroComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
 },
 {
   path: 'estufagem-container',
-  component: EstufagemContainerComponent
+  component: EstufagemContainerComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
 },
 {
   path: 'movimentaca-carga-solta',
-  component: MovimentacaoCargaSoltaComponent
+  component: MovimentacaoCargaSoltaComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+
+},
+{
+  path: 'marcante-carga-solta',
+  component: MarcanteCargaSoltaComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+},
+{
+  path: 'movimentacao-container',
+  component: MovimentacaoContainerComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+},
+{
+  path: 'inventario-carga-solta',
+  component: InventarioCargaSoltaComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
 }];
 
 @NgModule({

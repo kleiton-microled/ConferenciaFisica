@@ -102,7 +102,6 @@ export class PreRegistroComponent implements OnInit {
   }
 
   redirecionarHome() {
-    console.log("teste")
     this.router.navigate(['/apps/tools']);
   }
   
