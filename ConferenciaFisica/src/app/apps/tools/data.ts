@@ -56,6 +56,14 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de Movimentação de conteiner",
     version: 1,
     link: "apps/collector/movimentacao-container",
+  },
+  {
+    id: 8,
+    title: "Inventario Carga Solta",
+    description:
+      "Modulo de Inventario Carga Solta",
+    version: 1,
+    link: "apps/collector/inventario-carga-solta",
   }
   
 ];

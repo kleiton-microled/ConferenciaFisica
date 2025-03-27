@@ -9,6 +9,7 @@ import { AuthGuard } from "src/app/core/guards/auth.guard";
 import { EstufagemContainerComponent } from "./estufagem-container/estufagem-container.component";
 import { MarcanteCargaSoltaComponent } from "./marcante-carga-solta/marcante-carga-solta.component";
 import { MovimentacaoContainerComponent } from "./movimentacao-container/movimentacao-container.component";
+import { InventarioCargaSoltaComponent } from "./inventario-carga-solta/inventario-carga-solta.component";
 
 const routes: Routes = [{
   path: '',
@@ -54,6 +55,12 @@ const routes: Routes = [{
 {
   path: 'movimentacao-container',
   component: MovimentacaoContainerComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+},
+{
+  path: 'inventario-carga-solta',
+  component: InventarioCargaSoltaComponent,
   canActivate:[AuthGuard],
   data: {roles: ['TODAS']}
 }];

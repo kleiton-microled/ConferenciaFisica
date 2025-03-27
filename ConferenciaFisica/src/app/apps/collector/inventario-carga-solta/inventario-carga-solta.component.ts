@@ -2,39 +2,34 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
-import { SharedModule } from "../../../shared/shared.module";
-import { PageTitleModule } from "../../../shared/page-title/page-title.module";
+import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-  selector: 'app-movimentacao-container',
+  selector: 'app-inventario-carga-solta',
   standalone: true,
   imports: [PageTitleModule, ReactiveFormsModule, SharedModule],
-  templateUrl: './movimentacao-container.component.html',
-  styleUrl: './movimentacao-container.component.scss'
+  templateUrl: './inventario-carga-solta.component.html',
+  styleUrl: './inventario-carga-solta.component.scss'
 })
-export class MovimentacaoContainerComponent {
-
-
-  historicoMovimentos() {
-    throw new Error('Method not implemented.');
-  }
+export class InventarioCargaSoltaComponent {
 
   pageTitle: BreadcrumbItem[] = [];
   form: FormGroup;
-  containers = [
+  arms = [
     { id: 1, name: "Importação" },
     { id: 2, name: "Exportação" },
   ];
 
-  get containerControl(): FormControl {
-    return this.form.get("motivo") as FormControl;
+  get armControl(): FormControl {
+    return this.form.get("arm") as FormControl;
   }
 
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
     start: { enabled: false, visible: false },
     stop: { enabled: false, visible: false },
     alert: { enabled: false, visible: false },
-    clear: { enabled: true, visible: true },
+    clear: { enabled: false, visible: false },
     exit: { enabled: true, visible: true },
     save: { enabled: true, visible: true },
     delete: { enabled: false, visible: false },
@@ -42,7 +37,9 @@ export class MovimentacaoContainerComponent {
     marcante: { enabled: false, visible: false },
     observacao: { enabled: false, visible: false }
   };
-
+  /**
+   *
+   */
   constructor(
     private formBuilder: FormBuilder,
     private router: Router
@@ -50,33 +47,18 @@ export class MovimentacaoContainerComponent {
     this.form = this.getNewForm();
   }
 
+
   redirecionarHome() {
     this.router.navigate(['/apps/tools']);
   }
 
-  filtrar() {
-    throw new Error('Method not implemented.');
-  }
-
-  limparForm() { this.form.reset(); }
-
   getNewForm(): FormGroup {
     return this.formBuilder.group({
-      sigla: [''],
-      localAtual: [''],
-      local: [''],
-      container: [''],
-      motivo: [''],
       marcante: [''],
-      tamanho: [''],
-      tipo: [''],
-      gwt: [''],
-      temperatura: [''],
-      imo: [''],
-      entrada: [''],
-      viagem: [''],
-      ef: [''],
-      posicionar: [''],
+      local: [''],
+      localPos: [''],
+      arm: [''],
     });
   }
+
 }

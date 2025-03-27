@@ -1,0 +1,47 @@
+<app-page-title [breadcrumbItems]="pageTitle" title=""></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Inventario Carga Solta</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="marcante">Marcante</label>
+                            <input id="marcante" type="text" class="form-control" formControlName="marcante">
+                        </div>
+                        <div class="col-3">
+                            <label for="local">Local</label>
+                            <input id="local" type="text" class="form-control" formControlName="local">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="localPos">Local POS</label>
+                            <input id="localPos" type="text" class="form-control" formControlName="localPos">
+                        </div>
+                        <div class="col-3">
+                            <app-microled-select label="ARM" [items]="arms" [control]="armControl"></app-microled-select>
+                        </div>
+                    </div>
+                </form>
+
+                <app-action-footer 
+                    [buttonsState]="footerButtonsState" 
+                    (saveEvent)="''" 
+                    (startEvent)="''"
+                    (cleanupEvent)="''" 
+                    (avariasEvent)="''" 
+                    (observacaoEvent)="''" 
+                    (exitEvent)="redirecionarHome()"
+                    (marcanteEvent)="''">
+                </app-action-footer>
+            </div>
+        </div>
+    </div>
+</div>
