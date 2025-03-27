@@ -1,40 +1,52 @@
 import { Injectable } from '@angular/core';
-import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate } from '@angular/router';
-
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 import { AuthenticationService } from '../service/auth.service';
+import Swal from 'sweetalert2'; // se estiver usando diretamente
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
-
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
-  ) {}
+    private authService: AuthenticationService
+  ) { }
+
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const currentUser = this.authenticationService.currentUser();
+    const currentUser = this.authService.currentUser();
 
-    if (!currentUser) {
-      // Não autenticado
+    if (!currentUser?.token) {
       this.router.navigate(['auth/login'], { queryParams: { returnUrl: state.url } });
       return false;
     }
 
-    const expectedRoles = route.data['roles'] as string[];
+    const decodedToken = jwtDecode<any>(currentUser.token);
+    const expectedRoles: string[] = route.data['roles'] || [];
+    const expectedPermissions: string[] = route.data['permissions'] || [];
 
-    // Se não tem roles definidas na rota, apenas verifica login
-    if (!expectedRoles || expectedRoles.length === 0) {
-      return true;
-    }
+    const roleClaim = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+    const userRoles = Array.isArray(decodedToken[roleClaim]) ? decodedToken[roleClaim] : [decodedToken[roleClaim]];
+    const userPermissions = Array.isArray(decodedToken['permission']) ? decodedToken['permission'] : [decodedToken['permission']];
 
-    const userRoles = currentUser.roles || [];
-    const hasRole = userRoles.some((role: string) => expectedRoles.includes(role));
+    const hasRole = expectedRoles.length === 0 || expectedRoles.some(role => userRoles.includes(role));
+    const hasPermission = expectedPermissions.length === 0 || expectedPermissions.some(p => userPermissions.includes(p));
 
-    if (!hasRole) {
-      this.router.navigate(['/acesso-negado']);
+    if (!hasRole || !hasPermission) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Acesso Negado',
+        text: 'Você não tem permissão para acessar esta funcionalidade.',
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Ok'
+      }).then(() => {
+        this.router.navigate(['/apps/tools']);
+      });
+
       return false;
     }
 
     return true;
+
   }
 }

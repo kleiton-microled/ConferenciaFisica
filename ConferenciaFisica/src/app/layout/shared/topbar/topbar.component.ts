@@ -25,6 +25,7 @@ import { NotificationItem } from "../models/notification.model";
 import { ProfileOptionItem } from "../models/profileoption.model";
 import { SearchResultItem, SearchUserItem } from "../models/search.model";
 import { changeBodyAttribute, getLayoutConfig } from "../helper/utils";
+import { User } from "src/app/core/models/auth.models";
 
 @Component({
   selector: "app-topbar",
@@ -43,6 +44,7 @@ export class TopbarComponent implements OnInit {
   selectedLanguage?: Language;
   searchResults: SearchResultItem[] = [];
   searchUsers: SearchUserItem[] = [];
+  user: User | null = null;
 
   loggedInUser: any = {};
   topnavCollapsed: boolean = true;
@@ -67,6 +69,7 @@ export class TopbarComponent implements OnInit {
     this.leftSidebarType = config.leftSidebarType;
 
     this.loggedInUser = this.authService.currentUser();
+    console.log(this.loggedInUser.username);
 
     document.addEventListener("fullscreenchange", this.exitHandler);
     document.addEventListener("webkitfullscreenchange", this.exitHandler);

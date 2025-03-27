@@ -16,11 +16,13 @@ const routes: Routes = [{
   path: 'physical-conference',
   component: PhysicalConferenceComponent,
   canActivate: [AuthGuard],
-  data: { roles: ['CONF_FISICA'] }
+  data: { roles: ['TODAS','CONF_FISICA'] }
 },
 {
   path: 'descarga-exportacao',
-  component: DescargaExportacaoComponent
+  component: DescargaExportacaoComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS','DESC_EXPORTACAO']}
 },
 {
   path: 'pre-registro',

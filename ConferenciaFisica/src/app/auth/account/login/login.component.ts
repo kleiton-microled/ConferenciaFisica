@@ -37,6 +37,11 @@ export class LoginComponent implements OnInit {
 
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/apps/tools';
+
+    // this.authenticationService.userLogged$.subscribe(user => {
+    //   console.log('Usuário logado detectado:', user);
+    //   // faça qualquer coisa, ex: carregar dados, mudar UI, etc.
+    // });
   }
 
   /**
@@ -56,6 +61,7 @@ export class LoginComponent implements OnInit {
         .pipe(first())
         .subscribe(
           (data: any) => {
+            
             this.router.navigate([this.returnUrl]);
           },
           (error: any) => {

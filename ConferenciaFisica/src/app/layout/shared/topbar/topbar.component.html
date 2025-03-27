@@ -82,10 +82,10 @@
                                             <i class="mdi mdi-comment-account-outline"></i>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
+                                    <!-- <div class="flex-grow-1 text-truncate ms-2">
                                         <h5 class="noti-item-title fw-semibold font-14">Kleiton Freitas <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
                                         <small class="noti-item-subtitle text-muted">Realizou um agendamento...</small>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </a>
@@ -111,9 +111,9 @@
             <!-- User Dropdown -->
             <li class="dropdown" ngbDropdown>
                 <a ngbDropdownToggle class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="assets/images/users/user-1.jpg" alt="user-image" class="rounded-circle">
+                    <!-- <img src="assets/images/users/user-1.jpg" alt="user-image" class="rounded-circle"> -->
                     <span class="ms-1 d-none d-md-inline-block">
-                        Kleiton <i class="mdi mdi-chevron-down"></i>
+                        {{this.loggedInUser.username}} <i class="mdi mdi-chevron-down"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end profile-dropdown" ngbDropdownMenu>

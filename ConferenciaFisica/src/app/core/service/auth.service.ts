@@ -4,12 +4,25 @@ import { map } from 'rxjs/operators';
 
 import { User } from '../models/auth.models';
 import { ConfigService } from 'src/app/shared/services/config.service';
+import { jwtDecode } from 'jwt-decode';
+import { Subject } from 'rxjs';
 
+export interface DecodedToken {
+    nameid: string;         // ClaimTypes.NameIdentifier
+    name: string;           // ClaimTypes.Name
+    role?: string | string[]; // Pode ser uma ou várias roles
+    permission?: string | string[]; // Permissões personalizadas
+    exp: number;            // Expiração
+    iss: string;            // Emissor
+    aud: string;            // Audiência
+  }
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     user: User | null = null;
-    urlAuth: string = "https://localhost:7167/api/Auth/login";
+    
+    urlAuth: string = "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login";
+    //urlAuth: string = "https://localhost:7167/api/Auth/login";
 
     constructor (private http: HttpClient, configService: ConfigService) {
         //this.urlAuth = configService.getConfig('AUTH');
@@ -26,33 +39,36 @@ export class AuthenticationService {
     }
 
     /**
-     * Performs the login auth
-     * @param email email of user
-     * @param password password of user
+     * Metodo que retonar o token e suas claims para o usuario
+     * @param usuario 
+     * @param senha 
+     * @returns 
      */
-    // login(email: string, password: string): any {
-
-    //     return this.http.post<any>(`/api/login`, { email, password })
-    //         .pipe(map(user => {
-    //             // login successful if there's a jwt token in the response
-    //             if (user && user.token) {
-    //                 this.user = user;
-    //                 // store user details and jwt in session
-    //                 sessionStorage.setItem('currentUser', JSON.stringify(user));
-    //             }
-    //             return user;
-    //         }));
-    // }
     login(usuario: string, senha: string): any {
-        return this.http.post<User>(this.urlAuth, { usuario, senha })
-          .pipe(map(user => {
+        return this.http.post<User>(this.urlAuth, { usuario, senha }).pipe(
+          map(user => {
             if (user && user.token) {
+              const decoded = jwtDecode<any>(user.token);
+      
+              user.username = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+              user.roles = Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
+                ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+                : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]];
+              user.permissions = decoded["permission"] || [];
+      
               this.user = user;
+      
+              // Salva no sessionStorage
               sessionStorage.setItem('currentUser', JSON.stringify(user));
+
             }
+      
             return user;
-          }));
+          })
+        );
       }
+      
+      
 
     /**
      * Performs the signup auth
