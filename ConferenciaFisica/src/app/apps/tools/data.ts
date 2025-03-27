@@ -48,6 +48,14 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de Marcantes carga solta",
     version: 1,
     link: "apps/collector/marcante-carga-solta",
+  },
+  {
+    id: 7,
+    title: "Movimentação de conteiner",
+    description:
+      "Modulo de Movimentação de conteiner",
+    version: 1,
+    link: "apps/collector/movimentacao-container",
   }
   
 ];

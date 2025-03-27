@@ -8,6 +8,7 @@ import { MovimentacaoCargaSoltaComponent } from "./movimentacao-carga-solta/movi
 import { AuthGuard } from "src/app/core/guards/auth.guard";
 import { EstufagemContainerComponent } from "./estufagem-container/estufagem-container.component";
 import { MarcanteCargaSoltaComponent } from "./marcante-carga-solta/marcante-carga-solta.component";
+import { MovimentacaoContainerComponent } from "./movimentacao-container/movimentacao-container.component";
 
 const routes: Routes = [{
   path: '',
@@ -47,6 +48,12 @@ const routes: Routes = [{
 {
   path: 'marcante-carga-solta',
   component: MarcanteCargaSoltaComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+},
+{
+  path: 'movimentacao-container',
+  component: MovimentacaoContainerComponent,
   canActivate:[AuthGuard],
   data: {roles: ['TODAS']}
 }];
