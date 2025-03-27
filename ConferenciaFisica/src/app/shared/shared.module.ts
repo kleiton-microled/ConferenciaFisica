@@ -7,6 +7,7 @@ import { ActionFooterComponent } from './action-footer/action-footer.component';
 import { MicroledPhotosComponent } from './microled-photos/microled-photos.component';
 import { CameraModalComponent } from './microled-photos/camera-modal/camera-modal.component';
 import { DateFormatPipe } from './pipes/date-mask.pipe';
+import { MicroledInputWithSelectComponent } from './microled-input-with-select/microled-input-with-select.component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { DateFormatPipe } from './pipes/date-mask.pipe';
     ActionFooterComponent,
     CameraModalComponent,
     MicroledPhotosComponent,
+    MicroledInputWithSelectComponent,
     DateFormatPipe],
   imports: [
     CommonModule,
@@ -26,6 +28,7 @@ import { DateFormatPipe } from './pipes/date-mask.pipe';
     MicroledSelectComponent, 
     ActionFooterComponent, 
     MicroledPhotosComponent,
+    MicroledInputWithSelectComponent,
     DateFormatPipe
   ]
 })
