@@ -85,7 +85,7 @@ export class NotificationService {
     Swal.fire({
       title,
       text: message,
-      icon: 'success',
+      icon: title == 'Sucesso' ? 'success' : 'info',
       confirmButtonText: 'OK'
     });
   }

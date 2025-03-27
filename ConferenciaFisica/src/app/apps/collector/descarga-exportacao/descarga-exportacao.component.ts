@@ -22,6 +22,7 @@ import { Marcante } from '../models/marcante.model';
 import { Router } from '@angular/router';
 import { EnumValue } from 'src/app/shared/models/enumValue.model';
 import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config';
+import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -80,7 +81,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private conferenceService: PhysicalConferenceService,
     private notificationService: NotificationService,
     private sanitizer: DomSanitizer,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public messageValidationService: FormValidationService) {
     this.form = this.fb.group({
       id: new FormControl({ value: '', disabled: false }),
       inicio: new FormControl({ value: '', disabled: true }),
@@ -126,7 +128,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     this.marcanteForm = this.fb.group({
       marcante: ['', Validators.required],
-      quantidade: [null, [Validators.required, Validators.min(1)]],
+      quantidade: [null, [Validators.required]],
       armazem: ['', Validators.required],
       local: ['', Validators.required]
     });
@@ -141,7 +143,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      */
     this.subscription = this.service.getCurrentDescarga().subscribe(descarga => {
       if (descarga) {
-        console.log('Descarga Atual: ', descarga);
         this.descargaAtual = descarga;
         this.itensList = descarga.talie?.talieItem ?? [];
         this.form.patchValue({
@@ -173,22 +174,23 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       console.log(this.descargaAtual, 'Values Termino', values.termino);
     });
 
-    // this.form.valueChanges.subscribe((values) => {
-    //   console.log(values, this.descargaAtual);
-
-    //   if (!this.descargaAtual) return;
-    //   Object.assign(this.descargaAtual, values);
-    // });
-
     this.marcanteForm.valueChanges.subscribe((values) => {
       if (!this.marcante) return;
 
       Object.assign(this.marcante, values);
     });
 
-    // this.form.controls['termino'].valueChanges.subscribe(value => {
-    //   this.validarDataTermino(value);
-    // });
+    this.marcanteForm.controls['quantidade'].valueChanges.subscribe(value => {
+      if (value > this.itemSelecionado.quantidadeNf) {
+        this.notificationService.showMessage('Quantidade não pode ser maior que: ' + this.itemSelecionado.quantidadeNf, 'Info');
+        this.marcanteForm.controls['quantidade'].reset();
+      }
+
+      if(value === 0){
+        this.marcanteForm.controls['quantidade'].reset();
+      }
+
+    });
 
     this.initAdvancedTableData();
   }
@@ -265,19 +267,19 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   onRowSelected(item: any): void {
-    if(item){
+    if (item) {
       this.itemSelecionado = item;
       this.buscarArmazens();
       this.buscarMarcantesTalieItem(item.id);
       this.atualizarBotoes([
         { nome: 'marcante', enabled: true, visible: true }
       ]);
-    }else{
+    } else {
       this.atualizarBotoes([
         { nome: 'marcante', enabled: false, visible: true }
       ]);
     }
-    
+
   }
 
 
@@ -297,7 +299,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       <a href="javascript:void(0);" class="action-icon edit-btn" data-id="${item.id}">
         <i class="mdi mdi-square-edit-outline"></i>
       </a>
-      <a href="javascript:void(0);" class="action-icon delete-btn" data-id="${item.id}"}">
+      <a href="javascript:void(0);" class="action-icon delete-btn" data-id="${item.id}">
         <i class="mdi mdi-delete"></i>
       </a>
     `);
@@ -400,9 +402,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           this.notificationService.showAlert(ret);
         }
       });
-      
+
       await this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
-        
+
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
         } else { }
@@ -420,7 +422,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       });
 
       await this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
-        
+
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
         } else { }

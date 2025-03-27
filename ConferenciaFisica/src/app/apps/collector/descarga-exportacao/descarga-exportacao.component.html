@@ -162,13 +162,26 @@
                 <!-- Marcante -->
                 <div class="col-3">
                     <label for="marcante" class="form-label">Marcante:</label>
-                    <input type="text" id="marcante" class="form-control" formControlName="marcante">
+                    <input type="text" id="marcante" class="form-control" formControlName="marcante"
+                    [ngClass]="{'is-invalid': (marcanteForm.get('marcante')?.invalid && 
+                    marcanteForm.get('marcante')?.touched)}">
+
+                <div class="invalid-feedback">{{messageValidationService.getErrorMessage(marcanteForm.get('marcante'), 'Numero Marcante')}}</div>
                 </div>
 
                 <!-- Quantidade -->
                 <div class="col-3">
                     <label for="quantidade" class="form-label">Quantidade:</label>
-                    <input type="number" id="quantidade" class="form-control" formControlName="quantidade">
+                    <input type="number" 
+                           id="quantidade" 
+                           class="form-control" 
+                           formControlName="quantidade"
+                           [ngClass]="{'is-invalid': (marcanteForm.get('quantidade')?.invalid && 
+                                                      marcanteForm.get('quantidade')?.touched) ||
+                                                     (marcanteForm.get('quantidade')?.value > this.itemSelecionado.quantidadeNf)}">
+                    
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(marcanteForm.get('quantidade'), 'Quantidade')}}</div>
+
                 </div>
 
                 <!-- Armazém -->
@@ -182,7 +195,7 @@
 
                 <!-- Local -->
                 <div class="col-3">
-                    <label for="local" class="form-label">Local:</label>
+                    <label for="local" class="form-label">Local Planejado:</label>
                     <input type="text" id="local" class="form-control" formControlName="local">
                 </div>
             </div>
@@ -223,7 +236,7 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-        <button type="button" class="btn btn-primary" (click)="salvarMarcante()">Salvar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarMarcante()" [disabled]="this.marcanteForm.invalid">Salvar</button>
     </div>
 </ng-template>
 
