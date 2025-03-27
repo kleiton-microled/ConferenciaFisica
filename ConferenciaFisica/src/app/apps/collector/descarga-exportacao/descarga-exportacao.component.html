@@ -95,9 +95,16 @@
                             </app-microled-select>
                         </div>
                     </div>
-                    <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
-                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="true"
-                        [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false" tableClasses="table-centered"
+                    <app-advanced-table #advancedTable 
+                        (handleTableLoad)="handleTableLoad($event)"
+                        [tableData]="itensList" 
+                        [columns]="columns" 
+                        [pagination]="true" 
+                        [hasRowSelection]="false"
+                        [isSearchable]="false" 
+                        (rowSelected)="onRowSelected($event)" (search)="''" 
+                        [isSortable]="false" 
+                        tableClasses="table-centered"
                         theadClasses="table-light"
                         [singleRowSelection]="true">
                     </app-advanced-table>
