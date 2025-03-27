@@ -314,12 +314,22 @@ export class PhysicalConferenceHeaderComponent {
         if (response.status) {
           this.containers = response.result;
         } else {
-          Swal.fire({
-            title: "Info",
-            text: response.mensagens[0],
-            icon: "info",
-            confirmButtonText: "Fechar",
-          });
+          if(!response.status && response.error != ""){
+            Swal.fire({
+              title: "Atenção",
+              text: response.error ?? "Erro desconhecido",
+              icon: "error",
+              confirmButtonText: "Fechar",
+            });
+          }else{
+            Swal.fire({
+              title: "Info",
+              text: response.mensagens[0],
+              icon: "info",
+              confirmButtonText: "Fechar",
+            });
+          }
+          
         }
       },
       //error: (err) => console.error('Erro na requisição:', err)

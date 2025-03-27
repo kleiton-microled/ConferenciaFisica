@@ -38,8 +38,8 @@ export class NotificationService {
   showError(errorResponse: any) {
     this.hideLoading();
 
-    let errorMessage = 'Ocorreu um erro desconhecido.';
-
+    let errorMessage = '';
+    console.log(errorMessage);
     if (errorResponse?.error) {
       const serviceResult = errorResponse.error as ServiceResult<any>;
 

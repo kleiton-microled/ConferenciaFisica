@@ -10,17 +10,17 @@
     <!-- form -->
     <form name="login-form2" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
-            <label for="emailaddress" class="form-label">Email</label>
-            <input class="form-control" type="text" id="emailaddress" required placeholder="Digite seu usuário" formControlName="email" [ngClass]="{'is-invalid': formSubmitted && formValues.email.invalid}">
-            @if(formSubmitted && formValues.email.invalid){
+            <label for="username" class="form-label">Usuário</label>
+            <input class="form-control" type="text" id="username" required placeholder="Digite seu usuário" formControlName="username" [ngClass]="{'is-invalid': formSubmitted && formValues.username.invalid}">
+            @if(formSubmitted && formValues.username.invalid){
             <div class="invalid-feedback">
-                @if(formValues.email.errors?.required){
+                @if(formValues.username.errors?.required){
                 <div>
-                    Email é obrigatório.
+                    Usuário é obrigatório.
                 </div>
-                }@if(formValues.email.errors?.email){
+                }@if(formValues.username.errors?.username){
                 <div>
-                    Email inválido.
+                    Usuário inválido.
                 </div>
                 }
             </div>}
@@ -29,7 +29,7 @@
             <a [routerLink]="['../reset-password']" class="text-muted float-end"><small>Esqueceu a senha?</small></a>
             <label for="password" class="form-label">Senha</label>
             <div class="input-group input-group-merge">
-                <input [type]="showPassword? 'text' : 'password'" id="password" class="form-control" placeholder="Digite sua senha" formControlName="password" required minlength="4" [ngClass]="{'is-invalid': formSubmitted && formValues.password.invalid}">
+                <input [type]="showPassword? 'text' : 'password'" id="password" class="form-control" placeholder="Digite sua senha" formControlName="password" required minlength="1" [ngClass]="{'is-invalid': formSubmitted && formValues.password.invalid}">
                 <div class="input-group-text" (click)="showPassword=!showPassword">
                     <span class="password-eye"></span>
                 </div>
@@ -38,10 +38,6 @@
                     @if(formValues.password.errors?.required){
                     <div>
                         Senha é obrigatório.
-                    </div>
-                    }@if(formValues.password.errors?.minlength){
-                    <div>
-                        Senha precisa ter mais de 3 caracteres.
                     </div>
                     }
                 </div>

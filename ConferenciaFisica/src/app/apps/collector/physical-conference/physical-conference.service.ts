@@ -15,6 +15,7 @@ import { AvariaConferencia } from './models/avaria.model';
 import { TiposEmbalagens } from './models/tipos-embalagens.model';
 import { ConfigService } from 'src/app/shared/services/config.service';
 import { LotesAgendamentoModel } from './models/lotes.model';
+import { ContainerAgendamentoModel } from './models/conteiner.model';
 
 export interface ConferenceContainer {
   display: string;
@@ -81,13 +82,13 @@ export class PhysicalConferenceService {
    * @param filtro (opcional) Filtro de busca
    * @returns Observable<ConferenceContainer[]>
    */
-  getContainers(): Observable<ServiceResult<any>> {
+  getContainers(): Observable<ServiceResult<ContainerAgendamentoModel[]>> {
     this.notificationService.showLoading(); // Mostra loading
 
-    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/conferencia/conteineres`).pipe(
+    return this.http.get<ServiceResult<ContainerAgendamentoModel[]>>(`${this.apiUrl}/conferencia/conteineres`).pipe(
       map(response => {
-        if (!response.status) {
-          this.notificationService.showAlert(response);
+        if (!response.status && response.error) {
+          this.notificationService.showError(response);
           throw new Error(response.error || 'Erro desconhecido');
         }
         return response;
