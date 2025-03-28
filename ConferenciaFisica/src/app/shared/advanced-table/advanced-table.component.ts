@@ -153,15 +153,6 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
   }
 
   /**
-   * selects row
-   * @param index row index
-   */
-  // selectRow(index: number): void {
-  //   this.isSelected[index] = !this.isSelected[index];
-  //   this.selectAll = (this.isSelected.filter(x => x === true).length === this.tableData.length);
-  // }
-
-  /**
   * Captura a linha selecionada e emite o evento para o componente pai
   * @param record Objeto da linha selecionada
   */

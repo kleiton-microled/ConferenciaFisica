@@ -190,7 +190,7 @@ export class PhysicalConferenceHeaderComponent {
       numerolote: [{ value: "", disabled: true }],
       conteiner: [""],
       lote: [""],
-      //numero: [{ value: '', disabled: true }],
+      bl: [{ value: '', disabled: true }],
       tipoCarga: [{ value: "", disabled: true }],
       viagem: [{ value: "", disabled: true }],
       motivoAbertura: [{ value: "", disabled: false }],
@@ -228,6 +228,7 @@ export class PhysicalConferenceHeaderComponent {
       this.form.patchValue({
         id: conference?.id,
         tipo: conference?.tipo,
+        bl: conference?.bl,
         numeroConteiner: conference?.cntr,
         conteiner: conference?.cntr,
         tipoCarga: conference?.tipoCarga,

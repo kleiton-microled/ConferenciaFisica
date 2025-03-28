@@ -14,6 +14,7 @@ import { Marcante } from "../models/marcante.model";
 import { EnumValue } from "src/app/shared/models/enumValue.model";
 import { Foto } from "src/app/shared/microled-photos/microled-photos.component";
 import { ConfigService } from "src/app/shared/services/config.service";
+import { Yard } from "../models/yard.model";
 
 @Injectable({
     providedIn: 'root'
@@ -191,6 +192,28 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
                     throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * Metodo utilizado para input with select, pois ele traz o resultado de acordo com o que é digitado
+     * @param term 
+     * @returns 
+     */
+    getYard(term: string): Observable<Yard[]> {
+        return this.http.get<Yard[]>(`${this.urlApi}/locais?termo=${term}`).pipe(
+            map(response => {
+                if (!response) {
+                    this.notificationService.showAlert(response);
+                    throw new Error('Erro');
                 }
                 return response;
             }),

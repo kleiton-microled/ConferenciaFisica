@@ -72,7 +72,8 @@
         <tbody>
             @for (record of tableData | slice: (service.page-1) * service.pageSize : service.page * service.pageSize;;
             track $index) {
-            <tr [class.selected]="isSelected[+((service.page-1) * service.pageSize)]" (click)="selectRow(record, $index + ((service.page - 1) * service.pageSize))">
+                <tr [ngClass]="{ 'highlighted': isSelected[$index + ((service.page - 1) * service.pageSize)] }"
+                (click)="selectRow(record, $index + ((service.page - 1) * service.pageSize))">            
                 @if(hasRowSelection){
                 <td>
                     <div class="form-check">

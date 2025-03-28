@@ -12,7 +12,7 @@ import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { DescargaExportacao } from './models/descarga-exportacao.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { Foto, MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { TalieItem } from '../models/talie-item.model';
 import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
 import { AvariaDescarga } from './models/avaria-descarga.model';
@@ -109,14 +109,14 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       numerada: [false],
       carimbo: [false],
       peso: [''],
-      imo: [''],
-      imo2: [''],
-      imo3: [''],
-      imo4: [''],
-      uno: [''],
-      uno2: [''],
-      uno3: [''],
-      uno4: [''],
+      imo: ['', Validators.maxLength(3)],
+      imo2: ['',Validators.maxLength(3)],
+      imo3: ['',Validators.maxLength(3)],
+      imo4: ['',Validators.maxLength(3)],
+      uno: ['',Validators.maxLength(4)],
+      uno2: ['',Validators.maxLength(4)],
+      uno3: ['',Validators.maxLength(4)],
+      uno4: ['',Validators.maxLength(4)],
       fumigacao: [''],
       remonte: [''],
       observacao: ['']
@@ -305,6 +305,25 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     `);
   }
 
+  buscarLocais = (termo: string): Observable<{ value: any; descricao: string }[]> => {
+    return this.service.getYard(termo).pipe(
+      // Transforma o retorno em { value, descricao }
+      map((res: any[]) => res.map(item => ({
+        value: item.id,           // ou o campo correto da sua API
+        descricao: item.descricao // ou nome, label, etc
+      })))
+    );
+  };
+  
+  onLocalSelecionado(local: { value: any; descricao: string }) {
+    if (!local.value) {
+      this.marcanteForm.get('local')?.reset(); // limpa se inválido
+    } else {
+      this.marcanteForm.get('local')?.setValue(local.descricao); // ou local.value
+    }
+  }
+  
+  
   abrirModal(content: any) {
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
   }

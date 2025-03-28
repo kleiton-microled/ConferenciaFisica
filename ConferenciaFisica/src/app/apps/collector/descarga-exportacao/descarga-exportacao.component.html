@@ -95,9 +95,16 @@
                             </app-microled-select>
                         </div>
                     </div>
-                    <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
-                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="true"
-                        [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false" tableClasses="table-centered"
+                    <app-advanced-table #advancedTable 
+                        (handleTableLoad)="handleTableLoad($event)"
+                        [tableData]="itensList" 
+                        [columns]="columns" 
+                        [pagination]="true" 
+                        [hasRowSelection]="false"
+                        [isSearchable]="false" 
+                        (rowSelected)="onRowSelected($event)" (search)="''" 
+                        [isSortable]="false" 
+                        tableClasses="table-centered"
                         theadClasses="table-light"
                         [singleRowSelection]="true">
                     </app-advanced-table>
@@ -196,7 +203,13 @@
                 <!-- Local -->
                 <div class="col-3">
                     <label for="local" class="form-label">Local Planejado:</label>
-                    <input type="text" id="local" class="form-control" formControlName="local">
+                    <microled-input-with-select
+                      [placeholder]="'Buscar cliente...'"
+                      [fetchData]="buscarLocais.bind(this)"
+                      (selectedItem)="onLocalSelecionado($event)">
+                    </microled-input-with-select>
+
+                    <!-- <input type="text" id="local" class="form-control" formControlName="local"> -->
                 </div>
             </div>
         </form>
@@ -307,38 +320,73 @@
                 </div>
                 <div class="col-3">
                     <label>IMO</label>
-                    <input type="text" class="form-control" formControlName="imo">
+                    <input type="text" 
+                           class="form-control" 
+                           formControlName="imo"
+                           [ngClass]="{'is-invalid': editItemForm.get('imo')?.invalid}">
+
+                            <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo'), 'Imo')}}
+                            </div>
+
                 </div>
                 <div class="col-2">
                     <label>-</label>
-                    <input type="text" class="form-control" formControlName="imo2">
+                    <input type="text" class="form-control" formControlName="imo2"
+                    [ngClass]="{'is-invalid': editItemForm.get('imo2')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo2'), 'Imo2')}}
+                    </div>
                 </div>
                 <div class="col-2">
                     <label>-</label>
-                    <input type="text" class="form-control" formControlName="imo3">
+                    <input type="text" class="form-control" formControlName="imo3"
+                    [ngClass]="{'is-invalid': editItemForm.get('imo3')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo3'), 'Imo3')}}
+                    </div>
                 </div>
                 <div class="col-2">
                     <label>-</label>
-                    <input type="text" class="form-control" formControlName="imo4">
+                    <input type="text" class="form-control" formControlName="imo4"
+                    [ngClass]="{'is-invalid': editItemForm.get('imo4')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo4'), 'Imo4')}}
+                    </div>
                 </div>
             </div>
 
             <div class="row mt-3">
                 <div class="col-3">
                     <label>UNO</label>
-                    <input type="text" class="form-control" formControlName="uno">
+                    <input type="text" class="form-control" formControlName="uno"
+                    [ngClass]="{'is-invalid': editItemForm.get('uno')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno'), 'Uno')}}
+                    </div>
                 </div>
                 <div class="col-3">
                     <label>-</label>
-                    <input type="text" class="form-control" formControlName="uno2">
+                    <input type="text" class="form-control" formControlName="uno2"
+                    [ngClass]="{'is-invalid': editItemForm.get('uno2')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno2'), 'Uno2')}}
+                    </div>
                 </div>
                 <div class="col-3">
                     <label>-</label>
-                    <input type="text" class="form-control" formControlName="uno3">
+                    <input type="text" class="form-control" formControlName="uno3"
+                    [ngClass]="{'is-invalid': editItemForm.get('uno3')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno3'), 'Uno3')}}
+                    </div>
                 </div>
                 <div class="col-3">
                     <label>-</label>
-                    <input type="text" class="form-control" formControlName="uno4">
+                    <input type="text" class="form-control" formControlName="uno4"
+                    [ngClass]="{'is-invalid': editItemForm.get('uno4')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno4'), 'Uno4')}}
+                    </div>
                 </div>
             </div>
 
@@ -364,6 +412,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-        <button class="btn btn-primary" (click)="salvarAlteracoes(modal)">Salvar Alterações</button>
+        <button class="btn btn-primary" (click)="salvarAlteracoes(modal)" [disabled]="this.editItemForm.invalid">Salvar Alterações</button>
     </div>
 </ng-template>
