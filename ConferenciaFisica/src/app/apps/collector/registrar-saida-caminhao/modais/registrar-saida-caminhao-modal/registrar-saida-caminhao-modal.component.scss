@@ -1,0 +1,9 @@
+label {
+    text-transform: uppercase;
+  }
+  
+label.required::after {
+    content: "*";
+    color: red;
+    font: bold;
+}

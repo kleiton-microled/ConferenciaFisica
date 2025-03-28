@@ -21,7 +21,6 @@ import { FormValidationService } from 'src/app/shared/services/Messages/form-val
 export class EstufagemContainerComponent implements OnInit {
   onSubmit() {
     console.log(this.form.value);
-    // this.formUtils.markAllAsTouched(this.form);
     if (this.form.invalid) return;
   }
 
