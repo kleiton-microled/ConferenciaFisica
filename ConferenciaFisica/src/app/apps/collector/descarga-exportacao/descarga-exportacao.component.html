@@ -18,13 +18,25 @@
                         <div class="col-3 position-relative">
                             <label for="inicio">Início</label>
                             <div class="input-group">
-                                <input id="inicio" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
-                                    #d1="ngbDatepicker" appNgbDatepickerPt formControlName="inicio">
-                                <button class="btn btn-outline-secondary" (click)="d1.toggle()" type="button">
+                                <input id="inicio" 
+                                       class="form-control" 
+                                       placeholder="dd/mm/aaaa" 
+                                       ngbDatepicker
+                                       #d1="ngbDatepicker" 
+                                       appNgbDatepickerPt 
+                                       formControlName="inicio">
+
+                                <button class="btn btn-outline-secondary" 
+                                        (click)="d1.toggle()" 
+                                        type="button"
+                                        [disabled]="this.isDisabled">
                                     <i class="far fa-calendar-alt"></i>
                                 </button>
-                                <button class="btn btn-outline-danger" *ngIf="form.controls['inicio'].value"
-                                    (click)="limparData('inicio')" type="button">
+                                <button class="btn btn-outline-danger" 
+                                        *ngIf="form.controls['inicio'].value"
+                                        (click)="limparData('inicio')" 
+                                        type="button"
+                                        [disabled]="this.isDisabled">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -112,9 +124,12 @@
                     <!-- Botões -->
                     <div class="row">
                         <div class="col text-end">
-                            <button type="button" class="btn btn-primary me-2"
-                                (click)="buscarRegistro()">Buscar</button>
-                            <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button>
+                            <button type="button" 
+                                    style="width: 250px; height: 50px; font-size: large;"
+                                    class="btn btn-primary me-2"
+                                    (click)="buscarRegistro()"
+                                    [disabled]="this.form.get('id')?.invalid || this.form.disabled">Buscar</button>
+                            <!-- <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button> -->
                         </div>
                     </div>
                 </form>
@@ -204,12 +219,11 @@
                 <div class="col-3">
                     <label for="local" class="form-label">Local Planejado:</label>
                     <microled-input-with-select
+                      [disabled]="isDisabled"
                       [placeholder]="'Buscar cliente...'"
                       [fetchData]="buscarLocais.bind(this)"
                       (selectedItem)="onLocalSelecionado($event)">
                     </microled-input-with-select>
-
-                    <!-- <input type="text" id="local" class="form-control" formControlName="local"> -->
                 </div>
             </div>
         </form>
