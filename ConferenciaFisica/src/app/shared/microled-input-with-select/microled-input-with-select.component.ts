@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
@@ -8,8 +8,9 @@ import { Observable, of } from 'rxjs';
   templateUrl: './microled-input-with-select.component.html',
   styleUrls: ['./microled-input-with-select.component.scss']
 })
-export class MicroledInputWithSelectComponent {
+export class MicroledInputWithSelectComponent implements OnChanges {
   @Input() placeholder: string = 'Digite para buscar...';
+  @Input() disabled: boolean = false;
   @Input() fetchData!: (term: string) => Observable<{ value: any, descricao: string }[]>;
   @Output() selectedItem = new EventEmitter<{ value: any, descricao: string }>();
 
@@ -51,5 +52,15 @@ export class MicroledInputWithSelectComponent {
     this.inputControl.setValue(item.descricao);
     this.showSuggestions = false;
     this.selectedItem.emit(item);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['disabled']) {
+      if (this.disabled) {
+        this.inputControl.disable({ emitEvent: false });
+      } else {
+        this.inputControl.enable({ emitEvent: false });
+      }
+    }
   }
 }

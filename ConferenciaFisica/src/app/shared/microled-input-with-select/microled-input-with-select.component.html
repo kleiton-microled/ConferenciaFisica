@@ -1,6 +1,7 @@
 <div class="position-relative">
     <input type="text" 
-           class="form-control" 
+           class="form-control"
+           [disabled]="disabled" 
            [placeholder]="placeholder" 
            [formControl]="inputControl" 
            (focus)="showSuggestions = suggestions.length > 0" />

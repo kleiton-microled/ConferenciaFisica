@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { EnumValue } from 'src/app/shared/models/enumValue.model';
 import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config';
 import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
+import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -32,6 +33,7 @@ import { FormValidationService } from 'src/app/shared/services/Messages/form-val
 export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   pageTitle: BreadcrumbItem[] = [];
 
+  isDisabled: boolean = false; //usado para desabilitar o input withSelect
   private subscription!: Subscription;
   descargaAtual!: DescargaExportacao;
 
@@ -82,9 +84,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
-    public messageValidationService: FormValidationService) {
+    public messageValidationService: FormValidationService,
+    private toggleService: FormControlToggleService) {
     this.form = this.fb.group({
-      id: new FormControl({ value: '', disabled: false }),
+      id: new FormControl({ value: '', disabled: false }, Validators.required),
       inicio: new FormControl({ value: '', disabled: true }),
       termino: new FormControl({ value: '', disabled: false }),
       talie: new FormControl({ value: '', disabled: true }),
@@ -110,13 +113,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       carimbo: [false],
       peso: [''],
       imo: ['', Validators.maxLength(3)],
-      imo2: ['',Validators.maxLength(3)],
-      imo3: ['',Validators.maxLength(3)],
-      imo4: ['',Validators.maxLength(3)],
-      uno: ['',Validators.maxLength(4)],
-      uno2: ['',Validators.maxLength(4)],
-      uno3: ['',Validators.maxLength(4)],
-      uno4: ['',Validators.maxLength(4)],
+      imo2: ['', Validators.maxLength(3)],
+      imo3: ['', Validators.maxLength(3)],
+      imo4: ['', Validators.maxLength(3)],
+      uno: ['', Validators.maxLength(4)],
+      uno2: ['', Validators.maxLength(4)],
+      uno3: ['', Validators.maxLength(4)],
+      uno4: ['', Validators.maxLength(4)],
       fumigacao: [''],
       remonte: [''],
       observacao: ['']
@@ -133,7 +136,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       local: ['', Validators.required]
     });
   }
-
 
   ngOnInit(): void {
     this.service.iniciarDescarga();
@@ -186,7 +188,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.marcanteForm.controls['quantidade'].reset();
       }
 
-      if(value === 0){
+      if (value === 0) {
         this.marcanteForm.controls['quantidade'].reset();
       }
 
@@ -282,7 +284,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   }
 
-
   handleTableLoad(event: any): void {
     document.querySelectorAll(".service").forEach((e) => {
       e.addEventListener("click", () => {
@@ -299,9 +300,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       <a href="javascript:void(0);" class="action-icon edit-btn" data-id="${item.id}">
         <i class="mdi mdi-square-edit-outline"></i>
       </a>
-      <a href="javascript:void(0);" class="action-icon delete-btn" data-id="${item.id}">
-        <i class="mdi mdi-delete"></i>
-      </a>
+      <a href="javascript:void(0);" class="action-icon delete-btn ${this.isDisabled ? 'disabled' : ''}" 
+       data-id="${item.id}"
+       style="${this.isDisabled ? 'pointer-events: none; opacity: 0.5;' : ''}">
+      <i class="mdi mdi-delete"></i>
+    </a>
     `);
   }
 
@@ -314,7 +317,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       })))
     );
   };
-  
+
   onLocalSelecionado(local: { value: any; descricao: string }) {
     if (!local.value) {
       this.marcanteForm.get('local')?.reset(); // limpa se inválido
@@ -322,8 +325,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       this.marcanteForm.get('local')?.setValue(local.descricao); // ou local.value
     }
   }
-  
-  
+
+
   abrirModal(content: any) {
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
   }
@@ -515,6 +518,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           { nome: 'observacao', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
           { nome: 'photo', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
         ]);
+
+        if (this.descargaAtual.talie?.termino != null) {
+          this.bloquearForm();
+        }
+
 
         this.observacaoForm.controls['observacao'].setValue(this.descargaAtual.talie?.observacao);
 
@@ -810,6 +818,34 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     } else {
       this.atualizarBotoes([{ nome: 'stop', enabled: false, visible: true }]);
     }
+
+  }
+
+  bloquearForm() {
+    //bloquear form principal
+    this.toggleService.toggleFormControls(this.form, true);
+    //bloquear form de item
+    this.toggleService.toggleFormControls(this.editItemForm, true);
+    // bloquear form de observacao
+    this.toggleService.toggleFormControls(this.observacaoForm, true);
+    //bloquear form do marcante
+    this.toggleService.toggleFormControls(this.marcanteForm, true);
+
+    this.isDisabled = true;
+
+  }
+
+  desbloquearForm() {
+    //bloquear form principal
+    this.toggleService.toggleFormControls(this.form, false);
+    //bloquear form de item
+    this.toggleService.toggleFormControls(this.editItemForm, false);
+    // bloquear form de observacao
+    this.toggleService.toggleFormControls(this.observacaoForm, false);
+    //bloquear form do marcante
+    this.toggleService.toggleFormControls(this.marcanteForm, false);
+
+    this.isDisabled = false;
 
   }
 
