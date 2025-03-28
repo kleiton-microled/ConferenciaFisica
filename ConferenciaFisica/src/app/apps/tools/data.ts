@@ -72,5 +72,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo para Registrar Saida Caminhão",
     version: 1,
     link: "apps/collector/registrar-saida-caminhao",
+  },
+  {
+    id: 10,
+    title: "Descarga Armazem",
+    description:
+      "Modulo para Descarga Armazem",
+    version: 1,
+    link: "apps/collector/descarga-armazem",
   }
 ];
