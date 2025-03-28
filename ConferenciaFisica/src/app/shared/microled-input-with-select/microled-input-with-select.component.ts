@@ -23,15 +23,27 @@ export class MicroledInputWithSelectComponent {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((term: string) => {
-        if (term.length >= 3 && this.fetchData) {
+        if (term.length >= 1 && this.fetchData) {
           return this.fetchData(term);
         }
+        this.clearSelection();
         return of([]);
       })
     ).subscribe(results => {
       this.suggestions = results.slice(0, 10);
       this.showSuggestions = this.suggestions.length > 0;
+
+      // Verifica se o valor atual não corresponde a nenhum item da lista
+      const typedValue = this.inputControl.value?.toLowerCase();
+      const match = this.suggestions.find(s => s.descricao.toLowerCase() === typedValue);
+      if (!match && typedValue && typedValue.length >= 3) {
+        this.clearSelection(); // ← limpa se não houver correspondência
+      }
     });
+  }
+
+  private clearSelection() {
+    this.selectedItem.emit({ value: null, descricao: '' }); // ou null se preferir
   }
   
 
