@@ -64,6 +64,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de Inventario Carga Solta",
     version: 1,
     link: "apps/collector/inventario-carga-solta",
+  },
+  {
+    id: 9,
+    title: "Registrar Saida Caminhão",
+    description:
+      "Modulo para Registrar Saida Caminhão",
+    version: 1,
+    link: "apps/collector/registrar-saida-caminhao",
   }
-  
 ];
