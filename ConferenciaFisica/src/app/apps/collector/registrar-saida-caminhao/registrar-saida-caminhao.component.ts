@@ -27,7 +27,7 @@ export class RegistrarSaidaCaminhaoComponent {
     alert: { enabled: false, visible: false },
     clear: { enabled: false, visible: false },
     exit: { enabled: true, visible: true },
-    save: { enabled: true, visible: true },
+    save: { enabled: false, visible: false },
     delete: { enabled: false, visible: false },
     photo: { enabled: false, visible: false },
     marcante: { enabled: false, visible: false },
