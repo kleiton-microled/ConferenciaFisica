@@ -69,7 +69,6 @@
                         <div class="col text-end">
                             <button type="button" class="btn btn-primary me-2"
                                 (click)="buscarRegistro()">Buscar</button>
-                            <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button>
                         </div>
                     </div>
                 </form>
@@ -91,7 +90,7 @@
                     [buttonsState]="footerButtonsState"
                     (saveEvent)="''"
                     (startEvent)="''"
-                    (cleanupEvent)="''"
+                    (cleanupEvent)="limpar()"
                     (avariasEvent)="''"
                     (observacaoEvent)="''"
                     (exitEvent)="redirecionarHome()"

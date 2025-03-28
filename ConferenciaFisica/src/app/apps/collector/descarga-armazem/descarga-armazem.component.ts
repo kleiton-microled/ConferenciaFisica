@@ -32,7 +32,7 @@ export class DescargaArmazemComponent {
     start: { enabled: false, visible: false },
     stop: { enabled: false, visible: false },
     alert: { enabled: false, visible: false },
-    clear: { enabled: false, visible: false },
+    clear: { enabled: true, visible: true },
     exit: { enabled: true, visible: true },
     save: { enabled: true, visible: true },
     delete: { enabled: false, visible: false },
@@ -175,7 +175,7 @@ export class DescargaArmazemComponent {
       `);
   }
 
-  limpar() { this.form.reset(); }
+  limpar() { this.form.reset(); this.itensList = [] }
 
   onSelectChange($event: any) {
     console.log($event)
