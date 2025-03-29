@@ -12,6 +12,7 @@ import { MovimentacaoContainerComponent } from "./movimentacao-container/movimen
 import { InventarioCargaSoltaComponent } from "./inventario-carga-solta/inventario-carga-solta.component";
 import { RegistrarSaidaCaminhaoComponent } from "./registrar-saida-caminhao/registrar-saida-caminhao.component";
 import { DescargaArmazemComponent } from "./descarga-armazem/descarga-armazem.component";
+import { DescargaCdComponent } from "./descarga-cd/descarga-cd.component";
 
 const routes: Routes = [{
   path: '',
@@ -75,6 +76,12 @@ const routes: Routes = [{
 {
   path: 'descarga-armazem',
   component: DescargaArmazemComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+},
+{
+  path: 'descarga-cd',
+  component: DescargaCdComponent,
   canActivate:[AuthGuard],
   data: {roles: ['TODAS']}
 }];

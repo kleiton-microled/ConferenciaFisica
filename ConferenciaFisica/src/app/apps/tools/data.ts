@@ -80,5 +80,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo para Descarga Armazem",
     version: 1,
     link: "apps/collector/descarga-armazem",
+  },
+  {
+    id: 11,
+    title: "Descarga CD",
+    description:
+      "Modulo para Descarga CD",
+    version: 1,
+    link: "apps/collector/descarga-cd",
   }
 ];
