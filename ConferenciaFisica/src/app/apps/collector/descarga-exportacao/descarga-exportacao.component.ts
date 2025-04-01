@@ -643,7 +643,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       cancelButtonText: 'NÃO',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.service.deleteTalieItem(id, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
+        let notaFiscal = this.descargaAtual.talie?.talieItem.find(x => x.id == id)?.notaFiscal ?? "";
+        this.service.deleteTalieItem(id, this.descargaAtual.registro, notaFiscal).subscribe((ret: ServiceResult<boolean>) => {
           if (ret.status && ret.result) {
             this.buscarRegistro();
             this.notificationService.showSuccess(ret);

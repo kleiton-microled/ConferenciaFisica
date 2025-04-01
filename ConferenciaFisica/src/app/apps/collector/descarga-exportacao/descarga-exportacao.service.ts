@@ -139,8 +139,8 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @param id 
      * @returns 
      */
-    deleteTalieItem(id: number, registro: number): Observable<ServiceResult<boolean>> {
-        return this.http.delete<ServiceResult<boolean>>(`${this.urlApi}/excluir-talie-item/${registro}?talieItemId=${id}`,).pipe(
+    deleteTalieItem(id: number, registro: number, notaFiscal: string): Observable<ServiceResult<boolean>> {
+        return this.http.delete<ServiceResult<boolean>>(`${this.urlApi}/excluir-talie-item/${registro}?talieItemId=${id}&notaFiscal=${notaFiscal}`,).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showError(response);
