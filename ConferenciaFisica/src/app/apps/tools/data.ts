@@ -75,10 +75,18 @@ export const TOOLS: ToolsModel[] = [
   },
   {
     id: 10,
-    title: "Romaneio de Desovas",
+    title: "Descarga Armazem",
     description:
-      "Modulo Romaneio de Desovas",
+      "Modulo para Descarga Armazem",
     version: 1,
-    link: "apps/collector/registrar-saida-caminhao",
+    link: "apps/collector/descarga-armazem",
+  },
+  {
+    id: 11,
+    title: "Descarga CD",
+    description:
+      "Modulo para Descarga CD",
+    version: 1,
+    link: "apps/collector/descarga-cd",
   }
 ];

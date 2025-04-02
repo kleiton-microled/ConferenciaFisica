@@ -1,0 +1,102 @@
+<app-page-title [breadcrumbItems]="pageTitle" title></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Registrar Saida
+                            Caminhão</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="registro" class="required">Registro</label>
+                            <input id="registro" type="text"
+                                class="form-control"
+                                formControlName="registro"
+                                [ngClass]="{'is-invalid': form.get('registro')?.invalid && form.get('registro')?.touched}">
+
+                            <div
+                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('registro'), 'Registro')}}
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <label for="talie">Talie</label>
+                            <input id="talie" type="text" class="form-control" formControlName="talie" [disabled]="true">
+                        </div>
+                        <div class="col-3">
+                            <label for="inicio">Inicio</label>
+                            <input id="inicio" type="text" class="form-control" formControlName="inicio" [disabled]="true">
+                        </div>
+                        <div class="col-3">
+                            <label for="termino">Termino</label>
+                            <input id="termino" type="text" class="form-control" formControlName="termino" [disabled]="true">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        
+                        <div class="col-3">
+                            <label for="cliente">cliente</label>
+                            <input id="cliente" type="text" class="form-control" formControlName="cliente" [disabled]="true">
+                        </div>
+                        <div class="col-3">
+                            <label for="placa">placa</label>
+                            <input id="placa" type="text" class="form-control" formControlName="placa" [disabled]="true">
+                        </div>
+                        <div class="col-3">
+                            <label for="reserva">reserva</label>
+                            <input id="reserva" type="text" class="form-control" formControlName="reserva" [disabled]="true">
+                        </div>
+                        <div class="col-3">
+                            <app-microled-select label="CONFERENTE" [items]="conferentes" [control]="conferenteControl"
+                                (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                        <div class="col-3">
+                            <app-microled-select label="EQUIPE" [items]="equipes" [control]="equipeControl"
+                                (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                        <div class="col-3">
+                            <app-microled-select label="MODO" [items]="modos" [control]="modoControl"
+                                (selectionChange)="onSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-primary me-2"
+                                (click)="buscarRegistro()">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+                <app-advanced-table #advancedTable
+                    (handleTableLoad)="handleTableLoad($event)"
+                    [tableData]="itensList"
+                    [columns]="columns"
+                    [pagination]="true"
+                    [hasRowSelection]="false"
+                    [isSearchable]="false"
+                    (rowSelected)="onRowSelected($event)" (search)="''"
+                    [isSortable]="false"
+                    tableClasses="table-centered"
+                    theadClasses="table-light"
+                    [singleRowSelection]="true">
+                </app-advanced-table>
+
+                <app-action-footer
+                    [buttonsState]="footerButtonsState"
+                    (saveEvent)="''"
+                    (startEvent)="''"
+                    (cleanupEvent)="limpar()"
+                    (avariasEvent)="''"
+                    (observacaoEvent)="''"
+                    (exitEvent)="redirecionarHome()"
+                    (marcanteEvent)="''"></app-action-footer>
+
+            </div>
+        </div>
+    </div>
+</div>
