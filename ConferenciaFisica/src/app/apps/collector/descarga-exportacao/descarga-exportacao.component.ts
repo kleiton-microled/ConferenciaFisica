@@ -37,10 +37,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
   descargaAtual!: DescargaExportacao;
 
-  form: FormGroup;
-  observacaoForm: FormGroup;
-
-  marcanteForm: FormGroup;
+  
   marcante = new Marcante();
   listaMarcantes: Marcante[] = [];
 
@@ -76,6 +73,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   @ViewChild('editItemModal') editItemModal!: TemplateRef<any>;
   itensList: TalieItem[] = [];
+  form: FormGroup;
+  observacaoForm: FormGroup;
+
+  marcanteForm: FormGroup;
 
   constructor(private router: Router,
     private fb: FormBuilder,
@@ -545,6 +546,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
+    console.log('Vai salvar isso: ',this.descargaAtual);
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
@@ -789,7 +791,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   onSelectChange(value: any) {
-    console.log('Selecionado:', value);
+    this.form.controls['equipe'].setValue(value);
   }
 
   validarDataTermino(value: any): void {

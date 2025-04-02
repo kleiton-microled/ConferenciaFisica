@@ -18,25 +18,15 @@
                         <div class="col-3 position-relative">
                             <label for="inicio">Início</label>
                             <div class="input-group">
-                                <input id="inicio" 
-                                       class="form-control" 
-                                       placeholder="dd/mm/aaaa" 
-                                       ngbDatepicker
-                                       #d1="ngbDatepicker" 
-                                       appNgbDatepickerPt 
-                                       formControlName="inicio">
+                                <input id="inicio" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
+                                    #d1="ngbDatepicker" appNgbDatepickerPt formControlName="inicio">
 
-                                <button class="btn btn-outline-secondary" 
-                                        (click)="d1.toggle()" 
-                                        type="button"
-                                        [disabled]="this.isDisabled">
+                                <button class="btn btn-outline-secondary" (click)="d1.toggle()" type="button"
+                                    [disabled]="this.isDisabled">
                                     <i class="far fa-calendar-alt"></i>
                                 </button>
-                                <button class="btn btn-outline-danger" 
-                                        *ngIf="form.controls['inicio'].value"
-                                        (click)="limparData('inicio')" 
-                                        type="button"
-                                        [disabled]="this.isDisabled">
+                                <button class="btn btn-outline-danger" *ngIf="form.controls['inicio'].value"
+                                    (click)="limparData('inicio')" type="button" [disabled]="this.isDisabled">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -92,9 +82,9 @@
 
                     <!-- Row 3 -->
                     <div class="row mb-3">
-                        <div class="col-4">
+                        <div class="col-3">
                             <label for="conferente">Conferente</label>
-                            <input id="conferente" type="text" class="form-control" formControlName="conferente">
+                            <p><span style="font-weight: bold;">Microled</span></p>
                         </div>
                         <div class="col-4">
                             <app-microled-select label="Selecione a Equipe" [items]="listEquipes"
@@ -107,43 +97,27 @@
                             </app-microled-select>
                         </div>
                     </div>
-                    <app-advanced-table #advancedTable 
-                        (handleTableLoad)="handleTableLoad($event)"
-                        [tableData]="itensList" 
-                        [columns]="columns" 
-                        [pagination]="true" 
-                        [hasRowSelection]="false"
-                        [isSearchable]="false" 
-                        (rowSelected)="onRowSelected($event)" (search)="''" 
-                        [isSortable]="false" 
-                        tableClasses="table-centered"
-                        theadClasses="table-light"
-                        [singleRowSelection]="true">
+                    <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
+                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="false"
+                        [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false"
+                        tableClasses="table-centered" theadClasses="table-light" [singleRowSelection]="true">
                     </app-advanced-table>
 
                     <!-- Botões -->
                     <div class="row">
                         <div class="col text-end">
-                            <button type="button" 
-                                    style="width: 250px; height: 50px; font-size: large;"
-                                    class="btn btn-primary me-2"
-                                    (click)="buscarRegistro()"
-                                    [disabled]="this.form.get('id')?.invalid || this.form.disabled">Buscar</button>
+                            <button type="button" style="width: 250px; height: 50px; font-size: large;"
+                                class="btn btn-primary me-2" (click)="buscarRegistro()"
+                                [disabled]="this.form.get('id')?.invalid || this.form.disabled">Buscar</button>
                             <!-- <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button> -->
                         </div>
                     </div>
                 </form>
             </div>
-            <app-action-footer 
-                [buttonsState]="footerButtonsState" 
-                (saveEvent)="gravarDescarga()" 
-                (startEvent)="''"
-                (cleanupEvent)="limpar()" 
-                (avariasEvent)="getModalAvaria()" 
-                (observacaoEvent)="abrirModal(observacaoModal)"
-                (marcanteEvent)="abrirModalMarcante(marcanteModal)"  
-                (exitEvent)="sair()"
-                (finalizarEvent)="finalizarProcessoDescarga()"
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="gravarDescarga()" (startEvent)="''"
+                (cleanupEvent)="limpar()" (avariasEvent)="getModalAvaria()"
+                (observacaoEvent)="abrirModal(observacaoModal)" (marcanteEvent)="abrirModalMarcante(marcanteModal)"
+                (exitEvent)="sair()" (finalizarEvent)="finalizarProcessoDescarga()"
                 (photoEvent)="abrirModalFotos()"></app-action-footer>
         </div>
     </div>
@@ -184,25 +158,24 @@
                 <!-- Marcante -->
                 <div class="col-3">
                     <label for="marcante" class="form-label">Marcante:</label>
-                    <input type="text" id="marcante" class="form-control" formControlName="marcante"
-                    [ngClass]="{'is-invalid': (marcanteForm.get('marcante')?.invalid && 
+                    <input type="text" id="marcante" class="form-control" formControlName="marcante" [ngClass]="{'is-invalid': (marcanteForm.get('marcante')?.invalid && 
                     marcanteForm.get('marcante')?.touched)}">
 
-                <div class="invalid-feedback">{{messageValidationService.getErrorMessage(marcanteForm.get('marcante'), 'Numero Marcante')}}</div>
+                    <div class="invalid-feedback">
+                        {{messageValidationService.getErrorMessage(marcanteForm.get('marcante'), 'Numero Marcante')}}
+                    </div>
                 </div>
 
                 <!-- Quantidade -->
                 <div class="col-3">
                     <label for="quantidade" class="form-label">Quantidade:</label>
-                    <input type="number" 
-                           id="quantidade" 
-                           class="form-control" 
-                           formControlName="quantidade"
-                           [ngClass]="{'is-invalid': (marcanteForm.get('quantidade')?.invalid && 
+                    <input type="number" id="quantidade" class="form-control" formControlName="quantidade"
+                        [ngClass]="{'is-invalid': (marcanteForm.get('quantidade')?.invalid && 
                                                       marcanteForm.get('quantidade')?.touched) ||
                                                      (marcanteForm.get('quantidade')?.value > this.itemSelecionado.quantidadeNf)}">
-                    
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(marcanteForm.get('quantidade'), 'Quantidade')}}</div>
+
+                    <div class="invalid-feedback">
+                        {{messageValidationService.getErrorMessage(marcanteForm.get('quantidade'), 'Quantidade')}}</div>
 
                 </div>
 
@@ -218,11 +191,8 @@
                 <!-- Local -->
                 <div class="col-3">
                     <label for="local" class="form-label">Local Planejado:</label>
-                    <microled-input-with-select
-                      [disabled]="isDisabled"
-                      [placeholder]="'Buscar cliente...'"
-                      [fetchData]="buscarLocais.bind(this)"
-                      (selectedItem)="onLocalSelecionado($event)">
+                    <microled-input-with-select [disabled]="isDisabled" [placeholder]="'Buscar cliente...'"
+                        [fetchData]="buscarLocais.bind(this)" (selectedItem)="onLocalSelecionado($event)">
                     </microled-input-with-select>
                 </div>
             </div>
@@ -263,7 +233,8 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-        <button type="button" class="btn btn-primary" (click)="salvarMarcante()" [disabled]="this.marcanteForm.invalid">Salvar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarMarcante()"
+            [disabled]="this.marcanteForm.invalid">Salvar</button>
     </div>
 </ng-template>
 
@@ -334,37 +305,39 @@
                 </div>
                 <div class="col-3">
                     <label>IMO</label>
-                    <input type="text" 
-                           class="form-control" 
-                           formControlName="imo"
-                           [ngClass]="{'is-invalid': editItemForm.get('imo')?.invalid}">
+                    <input type="text" class="form-control" formControlName="imo"
+                        [ngClass]="{'is-invalid': editItemForm.get('imo')?.invalid}">
 
-                            <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo'), 'Imo')}}
-                            </div>
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo'),
+                        'Imo')}}
+                    </div>
 
                 </div>
                 <div class="col-2">
                     <label>-</label>
                     <input type="text" class="form-control" formControlName="imo2"
-                    [ngClass]="{'is-invalid': editItemForm.get('imo2')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('imo2')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo2'), 'Imo2')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo2'),
+                        'Imo2')}}
                     </div>
                 </div>
                 <div class="col-2">
                     <label>-</label>
                     <input type="text" class="form-control" formControlName="imo3"
-                    [ngClass]="{'is-invalid': editItemForm.get('imo3')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('imo3')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo3'), 'Imo3')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo3'),
+                        'Imo3')}}
                     </div>
                 </div>
                 <div class="col-2">
                     <label>-</label>
                     <input type="text" class="form-control" formControlName="imo4"
-                    [ngClass]="{'is-invalid': editItemForm.get('imo4')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('imo4')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo4'), 'Imo4')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo4'),
+                        'Imo4')}}
                     </div>
                 </div>
             </div>
@@ -373,33 +346,37 @@
                 <div class="col-3">
                     <label>UNO</label>
                     <input type="text" class="form-control" formControlName="uno"
-                    [ngClass]="{'is-invalid': editItemForm.get('uno')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('uno')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno'), 'Uno')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno'),
+                        'Uno')}}
                     </div>
                 </div>
                 <div class="col-3">
                     <label>-</label>
                     <input type="text" class="form-control" formControlName="uno2"
-                    [ngClass]="{'is-invalid': editItemForm.get('uno2')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('uno2')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno2'), 'Uno2')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno2'),
+                        'Uno2')}}
                     </div>
                 </div>
                 <div class="col-3">
                     <label>-</label>
                     <input type="text" class="form-control" formControlName="uno3"
-                    [ngClass]="{'is-invalid': editItemForm.get('uno3')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('uno3')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno3'), 'Uno3')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno3'),
+                        'Uno3')}}
                     </div>
                 </div>
                 <div class="col-3">
                     <label>-</label>
                     <input type="text" class="form-control" formControlName="uno4"
-                    [ngClass]="{'is-invalid': editItemForm.get('uno4')?.invalid}">
+                        [ngClass]="{'is-invalid': editItemForm.get('uno4')?.invalid}">
 
-                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno4'), 'Uno4')}}
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno4'),
+                        'Uno4')}}
                     </div>
                 </div>
             </div>
@@ -426,6 +403,7 @@
 
     <div class="modal-footer">
         <button class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
-        <button class="btn btn-primary" (click)="salvarAlteracoes(modal)" [disabled]="this.editItemForm.invalid">Salvar Alterações</button>
+        <button class="btn btn-primary" (click)="salvarAlteracoes(modal)" [disabled]="this.editItemForm.invalid">Salvar
+            Alterações</button>
     </div>
 </ng-template>

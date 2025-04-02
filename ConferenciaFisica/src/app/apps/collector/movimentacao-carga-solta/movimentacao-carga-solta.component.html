@@ -8,121 +8,24 @@
                         <h4 style="font-weight: 100">Movimentação de carga solta</h4>
                     </div>
                 </div>
-                <form [formGroup]="form" class="mt-3">
-                    <div class="row mt-3">
-                        <div class="col-3">
-                            <label for="marcante">Marcante</label>
-                            <input id="marcante" type="text" class="form-control" formControlName="marcante" />
-                        </div>
-                        <div class="col-3">
-                            <label for="lote">Lote</label>
-                            <input id="lote" type="text" class="form-control" formControlName="lote" />
-                        </div>
-                        <div class="col-3">
-                            <label for="reserva">Reserva</label>
-                            <input id="reserva" type="text" class="form-control" formControlName="reserva" />
-                        </div>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <label for="local" class="form-label">Buscar Marcante</label>
+                        <microled-input-with-select
+                          [disabled]="false"
+                          [placeholder]="'Digite o numero do marcante...'"
+                          [fetchData]="buscarMarcantes.bind(this)"
+                          (selectedItem)="onMarcanteSelecionado($event)">
+                        </microled-input-with-select>
                     </div>
                     <div class="row mt-3">
-                        <label for="items">Items</label>
-                        <app-microled-select [items]="items" [control]="itemControl"
-                            (selectionChange)="onSelectChange($event)">
-                        </app-microled-select>  
+                        <app-movimenta-carga></app-movimenta-carga>
                     </div>
-                    <div class="row mt-2" style="margin-top: 0;">
-                        <div class="col-3">
-                            <label for="etqprateleira">Etq Pateleira</label>
-                            <input id="etqprateleira" type="text" class="form-control" formControlName="etqprateleira" />
-                        </div>
-                        <div class="col-3">
-                            <label for="ocupacao">Ocupaçao</label>
-                            <input id="ocupacao" type="text" class="form-control" formControlName="ocupacao" />
-                        </div>
-                        <div class="row col-3">
-                            <app-microled-select label="arms" [items]="arms" [control]="armControl" (selectionChange)="onSelectChange($event)">
-                        </app-microled-select>
-                        </div>
-                        <div class="row col-3">
-                            <label for="motivos">Motivos</label>
-                            <app-microled-select [items]="motivos" [control]="motivoControl"(selectionChange)="onSelectChange($event)">
-                            </app-microled-select>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-3">
-                            <label for="quantidade">Quantidade</label>
-                            <input id="quantidade" type="number" class="form-control" formControlName="quantidade" />
-                        </div>
-                        <div class="col-3">
-                            <label for="embalagem">Embalagem</label>
-                            <input id="embalagem" type="text" class="form-control" formControlName="embalagem" />
-                        </div>
-                        <div class="col-3">
-                            <label for="anvisa">Anvisa</label>
-                            <input id="anvisa" type="text" class="form-control" formControlName="anvisa" />
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-3">
-                            <label for="numeroNfe">Numero NFE</label>
-                            <input id="numeroNfe" type="number" class="form-control" formControlName="numeroNfe" />
-                        </div>
-                        <div class="col-3">
-                            <label for="embalagem">Embalagem</label>
-                            <input id="embalagem" type="text" class="form-control" formControlName="embalagem" />
-                        </div>
-                        <div class="col-3">
-                            <label for="volume">Volume</label>
-                            <input id="volume" type="text" class="form-control" formControlName="volume" />
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-3">
-                            <label for="etqprateleira">Local</label>
-                            <input id="etqprateleira" type="text" class="form-control" formControlName="etqprateleira" />
-                        </div>
-                        <div class="col-3">
-                            <label for="mercadoria">Mercadoria</label>
-                            <input id="mercadoria" type="text" class="form-control" formControlName="mercadoria" />
-                        </div>
-                        <div class="col-3">
-                            <label for="cliente">Cliente</label>
-                            <input id="cliente" type="text" class="form-control" formControlName="cliente" />
-                        </div>
-                        <div class="col-3">
-                            <label for="nvocc">NVOCC</label>
-                            <input id="nvocc" type="text" class="form-control" formControlName="nvocc" />
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-3">
-                            <label for="entrada">Entrada</label>
-                            <input id="entrada" type="text" class="form-control" formControlName="entrada" />
-                        </div>
-                        <div class="col-3">
-                            <label for="container">Container</label>
-                            <input id="container" type="text" class="form-control" formControlName="container" />
-                        </div>
-                        <div class="col-3">
-                            <label for="imo">IMO</label>
-                            <input id="imo" type="text" class="form-control" formControlName="imo" />
-                        </div>
-                        <div class="col-3">
-                            <label for="onu">ONU</label>
-                            <input id="onu" type="text" class="form-control" formControlName="onu" />
-                        </div>
-                    </div>
-                </form>
-
-
+                </div>
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" 
-                                    (saveEvent)="onSubmit()" 
-                                    (startEvent)="''"
-                                    (cleanupEvent)="''" 
-                                    (avariasEvent)="''" 
-                                    (observacaoEvent)="''" 
-                                    (exitEvent)="redirecionarHome()"></app-action-footer>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="''" (startEvent)="''"
+                (cleanupEvent)="''" (avariasEvent)="''" (observacaoEvent)="''"
+                (exitEvent)="redirecionarHome()"></app-action-footer>
         </div>
     </div>
 </div>

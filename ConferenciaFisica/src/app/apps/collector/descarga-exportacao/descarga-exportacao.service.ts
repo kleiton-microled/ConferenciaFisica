@@ -50,7 +50,10 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
             talie: null,
             placa: '',
             reserva: '',
-            cliente: ''
+            cliente: '',
+            conferente: 1,
+            nomeConferente: "Microled",
+            equipe: 0
         };
         this.descargaSubject.next(novaDescarga);
     }

@@ -1,27 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'; // Importe o ReactiveFormsModule
+import { FormBuilder } from '@angular/forms'; // Importe o ReactiveFormsModule
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
 import { PhysicalConferenceStorageService } from '../physical-conference/physical-conference-storage.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
-import { PageTitleModule } from "../../../shared/page-title/page-title.module";
-import { SharedModule } from "../../../shared/shared.module";
+import { DescargaExportacaoService } from '../descarga-exportacao/descarga-exportacao.service';
+import { Armazen } from '../models/armazens.model';
+import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
+import { map, Observable } from 'rxjs';
+import { ColetorService } from '../collector.service';
+import { MovimentacaoCargaSoltaService } from './movimentacao-carga-solta.service';
+import { MovimentacaoCargaSolta } from './carga.model';
 
 @Component({
   selector: 'app-movimentacao-carga-solta',
-  standalone: true,
-  imports: [
-    PageTitleModule,
-    SharedModule,
-    ReactiveFormsModule // Adicione o ReactiveFormsModule aqui
-  ],
   templateUrl: './movimentacao-carga-solta.component.html',
   styleUrl: './movimentacao-carga-solta.component.scss',
 })
 export class MovimentacaoCargaSoltaComponent implements OnInit {
-  form!: FormGroup;
   pageTitle: BreadcrumbItem[] = [];
   items = [
     { id: 1, name: "Item 1" },
@@ -35,26 +33,7 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     { id: 3, name: "Item 3" },
   ];
 
-  arms = [
-    { id: 1, name: "ARM 01" },
-    { id: 2, name: "ARM 02" },
-  ];
-
-  get itemControl(): FormControl {
-    return this.form.get("item") as FormControl;
-  }
-
-  get etqprateleira(): FormControl {
-    return this.form.get("etqprateleira") as FormControl;
-  }
-
-  get motivoControl(): FormControl {
-    return this.form.get("motivo") as FormControl;
-  }
-
-  get armControl(): FormControl {
-    return this.form.get("ARM") as FormControl;
-  }
+  listaArmazens: Armazen[] = [];
 
   onSelectChange(value: any): void {
     console.log("Selecionado:", value);
@@ -79,36 +58,16 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     private modalService: NgbModal,
     private conferenceService: PhysicalConferenceService,
     private storageService: PhysicalConferenceStorageService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private descargaService: DescargaExportacaoService,
+    private service: ColetorService,
+    private movimentacaoCargaService: MovimentacaoCargaSoltaService
   ) {
 
-    this.form = this.formBuilder.group({
-      item:[{value: '', disabled: true}, ],
-      marcante: [{value: '', disabled: false}, Validators.required, Validators.minLength(3)],
-      lote: [{value: '', disabled: false}],
-      reserva: [{value: '', disabled: false}],
-      etqprateleira: [{value: '', disabled: false}],
-      ocupacao: [{value: '', disabled: false}],
-      ARM: [{value: '', disabled: false}],
-      Cannot: [{value: '', disabled: false}],
-      quantidade: [{value: '', disabled: false}],
-      embalagem: [{value: '', disabled: false}],
-      anvisa: [{value: '', disabled: false}],
-      numeroNfe: [{value: '', disabled: false}],
-      volume: [{value: '', disabled: false}],
-      nvocc: [{value: '', disabled: false}],
-      onu: [{value: '', disabled: false}],
-      mercadoria: [{value: '', disabled: false}],
-      container: [{value: '', disabled: false}],
-      imo: [{value: '', disabled: false}],
-      cliente: [{value: '', disabled: false}],
-      entrada: [{value: '', disabled: false}],
-      motivo: [{value: '', disabled: false}],
-    });
   }
 
   ngOnInit(): void {
-
+    //this.loadArmazens(null);
   }
 
 
@@ -116,11 +75,38 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     this.router.navigate(['/apps/tools']);
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      console.log("Formulário enviado:", this.form.value);
-    } else {
-      console.log("Formulário inválido");
+  //Selects: listas de dados de dominio
+  loadArmazens(patios: number[] | null) {
+    this.descargaService.getArmazens(7).subscribe((ret: ServiceResult<Armazen[]>) => {
+      if (ret.status) {
+        this.listaArmazens = ret.result ?? [];
+      }
+    });
+  }
+
+  buscarMarcantes = (termo: string): Observable<{ value: any; descricao: string }[]> => {
+    return this.service.getMarcantes(termo).pipe(
+      // Transforma o retorno em { value, descricao }
+      map((res: any[]) => res.map(item => ({
+        value: item.id,           // ou o campo correto da sua API
+        descricao: item.numero // ou nome, label, etc
+      })))
+    );
+  };
+
+  onMarcanteSelecionado(marcante: { value: any; descricao: string }) {
+    if (marcante) {
+      console.log(marcante);
+      this.movimentacaoCargaService.getCargaParaMovimentacao(marcante.value).subscribe((ret: ServiceResult<MovimentacaoCargaSolta>) => {
+        if (ret.status && ret.result) {
+          this.movimentacaoCargaService.updateCarga(ret.result);
+          this.movimentacaoCargaService.getCargaAtual().subscribe((ret: MovimentacaoCargaSolta | null)=>{
+            console.log('Atualizado: ', ret);
+          });
+         
+        }
+      });
     }
   }
+
 }
