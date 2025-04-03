@@ -20,6 +20,7 @@ import { MovimentacaoCargaSolta } from './carga.model';
   styleUrl: './movimentacao-carga-solta.component.scss',
 })
 export class MovimentacaoCargaSoltaComponent implements OnInit {
+
   pageTitle: BreadcrumbItem[] = [];
   items = [
     { id: 1, name: "Item 1" },
@@ -70,6 +71,9 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
     //this.loadArmazens(null);
   }
 
+  openModalMovimentacao() {
+  //  this.modalService. openModal();
+    }
 
   redirecionarHome() {
     this.router.navigate(['/apps/tools']);

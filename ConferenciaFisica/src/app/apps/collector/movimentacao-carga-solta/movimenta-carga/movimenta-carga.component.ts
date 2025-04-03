@@ -9,6 +9,7 @@ import { DescargaExportacaoService } from '../../descarga-exportacao/descarga-ex
 import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { Armazen } from '../../models/armazens.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movimenta-carga',
@@ -16,6 +17,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
   styleUrls: ['./movimenta-carga.component.scss']
 })
 export class MovimentaCargaComponent implements OnInit {
+
   @ViewChild('modalMovimentacao') modalMovimentacaoRef: any;
 
   form!: FormGroup;
@@ -26,9 +28,22 @@ export class MovimentaCargaComponent implements OnInit {
   motivos = ['Transferência', 'Ajuste de estoque'];
 
   cargaSelecionada: MovimentacaoCargaSolta = new MovimentacaoCargaSolta();
+  footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
+    start: { enabled: false, visible: false },
+    stop: { enabled: false, visible: false },
+    alert: { enabled: false, visible: false },
+    clear: { enabled: false, visible: false },
+    exit: { enabled: true, visible: true },
+    save: { enabled: true, visible: true },
+    delete: { enabled: false, visible: false },
+    photo: { enabled: false, visible: false },
+    marcante: { enabled: false, visible: false },
+    observacao: { enabled: false, visible: false }
+  };
 
   constructor(private fb: FormBuilder,
     private modalService: NgbModal,
+     private router: Router,
     private service: MovimentacaoCargaSoltaService,
     private descargaService: DescargaExportacaoService,
     private notificationService: NotificationService) { }
@@ -73,6 +88,10 @@ export class MovimentaCargaComponent implements OnInit {
 
   get armazenControl(): FormControl {
     return this.form.get('armazem') as FormControl;
+  }
+
+  redirecionarHome() {
+    this.router.navigate(['/apps/tools']);
   }
 
   submitMovimentacao(modalRef: any): void {

@@ -9,6 +9,7 @@ export class Marcante{
     local: string = ""
     registro: number = 0;
     armazem: number = 0;
+    marcante: string = "";
 
     constructor(init?: Partial<Marcante>) {
         Object.assign(this, init);

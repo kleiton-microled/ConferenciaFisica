@@ -10,11 +10,11 @@
     <form [formGroup]="fotosForm">
         <div class="row">
             <!-- Número do Contêiner -->
-            <div class="col-md-3 ms-auto">
+            <!-- <div class="col-md-3 ms-auto">
                 <label class="form-label">Contêiner</label>
                 <input type="text" class="form-control" [value]="conteiner"
                     readonly>
-            </div>
+            </div> -->
         </div>
     </form>
 
@@ -46,11 +46,11 @@
                 <td>
                     <td>
                         <button class="btn btn-primary btn-sm"
-                            (click)="abrirModalEdicao(foto)">
+                            (click)="abrirModalEdicao(foto)" [ngClass]="{'disabled': isDisabled}" >
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-danger btn-sm"
-                            (click)="excluirFoto(foto.id)">
+                            (click)="excluirFoto(foto.id)" [ngClass]="{'disabled': isDisabled}">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
@@ -61,7 +61,7 @@
 
     <!-- Footer -->
     <div class="modal-footer">
-        <button class="btn btn-success" (click)="abrirCamera()">
+        <button class="btn btn-success" (click)="abrirCamera()"  [ngClass]="{'disabled': isDisabled}">
             <i class="fas fa-camera"></i> Tirar Foto
         </button>
         <div>

@@ -31,6 +31,8 @@ import { FormControlToggleService } from 'src/app/core/services/form-control-tog
   styleUrls: ['./descarga-exportacao.component.scss']
 })
 export class DescargaExportacaoComponent implements OnInit, OnDestroy {
+
+
   pageTitle: BreadcrumbItem[] = [];
 
   isDisabled: boolean = false; //usado para desabilitar o input withSelect
@@ -40,6 +42,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   
   marcante = new Marcante();
   listaMarcantes: Marcante[] = [];
+  talieTeste: TalieItem = new TalieItem();
 
   // Simulação de dados para o select de armazéns
   armazens: Armazen[] = [];
@@ -333,6 +336,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   abrirModalMarcante(content: any) {
+    this.marcanteForm.reset();
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
   }
 
@@ -400,8 +404,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
-    modalRef.componentInstance.conteiner = 'CONT-1234';
     modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
+    modalRef.componentInstance.isDisabled = this.descargaAtual.talie?.termino != null;
+
     this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {
         modalRef.componentInstance.photosTypes = ret.result;
@@ -490,6 +495,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     const item = this.descargaAtual.talie?.talieItem.find(i => i.id == id);
     if (!item) return;
 
+    Object.assign(this.talieTeste, item);
+    
     this.itemSelecionado = item;
     this.editItemForm.patchValue(item);
 
@@ -499,6 +506,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     this.modalService.open(this.editItemModal, { size: 'xl', backdrop: 'static', centered: false });
   }
+
+  fecharTalieItemModal(modal: any) {
+    Object.assign(this.itemSelecionado, this.talieTeste);
+    modal.close()
+    }
+
   //#endregion MODAIS
   //#region METODOS SERVICE
   /**
@@ -517,7 +530,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           { nome: 'clear', enabled: true, visible: true },
           { nome: 'delete', enabled: false, visible: true },
           { nome: 'observacao', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
-          { nome: 'photo', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'photo', enabled: true, visible: true },
         ]);
 
         if (this.descargaAtual.talie?.termino != null) {
@@ -601,7 +614,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       this.marcante.registro = this.descargaAtual.registro;
       this.marcante.talieId = this.descargaAtual.talie?.id ?? 0;
       this.marcante.talieItemId = this.itemSelecionado.id;
-
+      this.marcante.marcante = this.marcante.marcante.length < 12 ?  this.marcante.marcante.padStart(12, '0') :this.marcante.marcante ;
+      
       this.service.saveMarcante(this.marcante).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarMarcantesTalieItem(this.marcante.talieItemId);
@@ -835,7 +849,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.toggleService.toggleFormControls(this.marcanteForm, true);
 
     this.isDisabled = true;
-
   }
 
   desbloquearForm() {

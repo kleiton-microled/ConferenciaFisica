@@ -43,17 +43,17 @@
                             <div class="input-group">
                                 <input id="termino" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
                                     #d2="ngbDatepicker" appNgbDatepickerPt formControlName="termino">
-                                <button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button">
+                                <button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button" [disabled]="this.isDisabled">
                                     <i class="far fa-calendar-alt"></i>
                                 </button>
                                 <button class="btn btn-outline-danger" *ngIf="form.controls['termino'].value"
-                                    (click)="limparData('termino')" type="button">
+                                    (click)="limparData('termino')" type="button" [disabled]="this.isDisabled">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
                             <ng-template #footerTemplate>
                                 <div class="d-flex justify-content-end p-2">
-                                    <button class="btn btn-sm btn-danger" (click)="limparData('termino')">Limpar
+                                    <button class="btn btn-sm btn-danger" (click)="limparData('termino')" >Limpar
                                         Data</button>
                                 </div>
                             </ng-template>
@@ -243,7 +243,7 @@
 <ng-template #editItemModal let-modal>
     <div class="modal-header">
         <h5 class="modal-title">Editar Item</h5>
-        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+        <button type="button" class="btn-close" (click)="fecharTalieItemModal(modal)"></button>
     </div>
 
     <div class="modal-body">
@@ -402,7 +402,7 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button class="btn btn-secondary" (click)="fecharTalieItemModal(modal)">Fechar</button>
         <button class="btn btn-primary" (click)="salvarAlteracoes(modal)" [disabled]="this.editItemForm.invalid">Salvar
             Alterações</button>
     </div>
