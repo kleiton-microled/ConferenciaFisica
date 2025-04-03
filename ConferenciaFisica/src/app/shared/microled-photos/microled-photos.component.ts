@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CameraModalComponent } from './camera-modal/camera-modal.component';
@@ -27,6 +27,7 @@ export class MicroledPhotosComponent implements OnInit {
 
   @Input() conteiner: string = '';
   @Input() photosTypes: EnumValue[] = [];
+  @Input() isDisabled: boolean = false;
   @Output() salvarFotoEmitter = new EventEmitter<Foto>();
   @Output() salvarAlteracaoFotoEmitter = new EventEmitter<Foto>();
   @Output() excluirFotoEmitter = new EventEmitter<Foto>();

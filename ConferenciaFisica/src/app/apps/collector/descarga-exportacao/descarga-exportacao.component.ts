@@ -404,8 +404,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
-    modalRef.componentInstance.conteiner = 'CONT-1234';
     modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
+    modalRef.componentInstance.isDisabled = this.descargaAtual.talie?.termino != null;
+
     this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {
         modalRef.componentInstance.photosTypes = ret.result;
@@ -529,7 +530,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
           { nome: 'clear', enabled: true, visible: true },
           { nome: 'delete', enabled: false, visible: true },
           { nome: 'observacao', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
-          { nome: 'photo', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'photo', enabled: true, visible: true },
         ]);
 
         if (this.descargaAtual.talie?.termino != null) {
@@ -848,7 +849,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.toggleService.toggleFormControls(this.marcanteForm, true);
 
     this.isDisabled = true;
-
   }
 
   desbloquearForm() {
