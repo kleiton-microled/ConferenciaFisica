@@ -12,5 +12,6 @@
   "CONFERENCIA_FISICA_URL": "https://localhost:5000/api",
   "PRE_REGISTRO_URL": "https://localhost:5000/api/pre-registro",
   "COLETOR_URL_SERVICE": "https://localhost:5000/api/coletor",
-  "MOVIMENTACAO_CARGA_SOLTA_URL":"https://localhost:5000/api/movimentacao-carga-solta"
+  "MOVIMENTACAO_CARGA_SOLTA_URL":"https://localhost:5000/api/movimentacao-carga-solta",
+  "ESTUFAGEM_CONTEINER_URL":"https://localhost:5000/api/estufagem-conteiner"
 }
