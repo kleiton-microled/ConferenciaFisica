@@ -243,7 +243,7 @@
 <ng-template #editItemModal let-modal>
     <div class="modal-header">
         <h5 class="modal-title">Editar Item</h5>
-        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+        <button type="button" class="btn-close" (click)="fecharTalieItemModal(modal)"></button>
     </div>
 
     <div class="modal-body">
@@ -402,7 +402,7 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button class="btn btn-secondary" (click)="fecharTalieItemModal(modal)">Fechar</button>
         <button class="btn btn-primary" (click)="salvarAlteracoes(modal)" [disabled]="this.editItemForm.invalid">Salvar
             Alterações</button>
     </div>
