@@ -92,20 +92,28 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     public messageValidationService: FormValidationService,
     private toggleService: FormControlToggleService) {
-    this.form = this.fb.group({
-      id: new FormControl({ value: '', disabled: false }, Validators.required),
-      inicio: new FormControl({ value: '', disabled: true }),
-      termino: new FormControl({ value: '', disabled: false }),
-      talie: new FormControl({ value: '', disabled: true }),
-      placa: new FormControl({ value: '', disabled: true },),
-      reserva: new FormControl({ value: '', disabled: true },),
-      cliente: new FormControl({ value: '', disabled: true },),
-      conferente: new FormControl({ value: 'Microled', disabled: true }),
-      equipe: new FormControl(null, Validators.required),
-      operacao: new FormControl('', Validators.required),
+    this.form = this.getMainForm();
+
+    this.editItemForm = this.getEditItemForm();
+
+    this.observacaoForm = this.fb.group({
+      observacao: ['', Validators.required]
     });
 
-    this.editItemForm = this.fb.group({
+    this.marcanteForm = this.getMarcanteForm() ;
+  }
+
+  getMarcanteForm() : FormGroup{
+    return this.fb.group({
+      marcante: ['', Validators.required],
+      quantidade: [null, [Validators.required]],
+      armazem: ['', Validators.required],
+      local: ['', Validators.required]
+    })
+  }
+
+  getEditItemForm() : FormGroup {
+    return this.fb.group({
       notaFiscal: ['', Validators.required],
       quantidadeDescarga: ['', Validators.required],
       codigoEmbalagem: ['', Validators.required],
@@ -130,16 +138,20 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       remonte: [''],
       observacao: ['']
     });
+  }
 
-    this.observacaoForm = this.fb.group({
-      observacao: ['', Validators.required]
-    });
-
-    this.marcanteForm = this.fb.group({
-      marcante: ['', Validators.required],
-      quantidade: [null, [Validators.required]],
-      armazem: ['', Validators.required],
-      local: ['', Validators.required]
+  getMainForm(): FormGroup {
+    return this.fb.group({
+      id: new FormControl({ value: '', disabled: false }, Validators.required),
+      inicio: new FormControl({ value: '', disabled: true }),
+      termino: new FormControl({ value: '', disabled: false }),
+      talie: new FormControl({ value: '', disabled: true }),
+      placa: new FormControl({ value: '', disabled: true },),
+      reserva: new FormControl({ value: '', disabled: true },),
+      cliente: new FormControl({ value: '', disabled: true },),
+      conferente: new FormControl({ value: 'Microled', disabled: true }),
+      equipe: new FormControl(null, Validators.required),
+      operacao: new FormControl('', Validators.required),
     });
   }
 
@@ -786,10 +798,14 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   Reset() {
-    this.form.reset();
+    this.isDisabled = false;
+    this.form = this.getMainForm(); 
+    this.editItemForm = this.getEditItemForm(); 
+    this.marcanteForm = this.getMarcanteForm() ;
     this.service.deletarDescarga();
     this.form.controls['conferente'].setValue('Microled');
     this.itensList = [];
+    
     this.atualizarBotoes([
       { nome: 'stop', enabled: false, visible: true },
       { nome: 'alert', enabled: false, visible: true },

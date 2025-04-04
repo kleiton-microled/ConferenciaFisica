@@ -40,6 +40,10 @@ export class MicroledPhotosComponent implements OnInit {
 
   private nextId = 1; // Gerador de ID para fotos
   @ViewChild('editPhotoModal') editPhotoModal!: any;
+
+  @ViewChild('viewPhotoModal') viewPhotoModal: any;
+fotoAmpliadaSrc: string = '';
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -61,6 +65,15 @@ export class MicroledPhotosComponent implements OnInit {
       this.adicionarFoto(resultado);
     });
   }
+
+  ampliarFoto(src: string) {
+    this.fotoAmpliadaSrc = src;
+    this.modalService.open(this.viewPhotoModal, { size: 'lg' });
+}
+
+fecharVisualizacao(modal: any) {
+  modal.close()
+}
 
   adicionarFoto(resultado: FotoCapturada) {
     let ultimaFoto = this.fotos.length > 0 ? this.fotos[this.fotos.length - 1]: null;
