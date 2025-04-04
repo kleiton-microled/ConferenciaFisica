@@ -34,10 +34,13 @@
                 <td>
                     <img *ngIf="foto.imagemPath; else imagem64"
                         [src]="urlBasePhotos+'/' + foto.imagemPath"
-                        width="50" height="50">
-
+                        width="50" height="50" style="cursor: pointer;"
+                        (click)="ampliarFoto(urlBasePhotos+'/' + foto.imagemPath)">
+                
                     <ng-template #imagem64>
-                        <img [src]="foto.imagemBase64" width="50" height="50">
+                        <img [src]="foto.imagemBase64" width="50" height="50" 
+                             style="cursor: pointer;"
+                             (click)="ampliarFoto(foto.imagemBase64)">
                     </ng-template>
                 </td>
                 <td>{{foto.typeDescription}}</td>
@@ -98,5 +101,19 @@
                 [disabled]="!fotosForm.valid">💾 Salvar</button>
             <button class="btn btn-secondary"
                 (click)="fecharModalEdicao()">Fechar</button>
+        </div>
+    </ng-template>
+
+    <ng-template #viewPhotoModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Visualização da Foto</h4>
+            <button type="button" class="btn-close" aria-label="Close"
+                (click)="fecharVisualizacao(modal)"></button>
+        </div>
+        <div class="modal-body text-center">
+            <img [src]="fotoAmpliadaSrc" class="img-fluid" style="max-height: 80vh;">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="fecharVisualizacao(modal)">Fechar</button>
         </div>
     </ng-template>
