@@ -39,7 +39,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
   descargaAtual!: DescargaExportacao;
 
-  
+
   marcante = new Marcante();
   listaMarcantes: Marcante[] = [];
   talieTeste: TalieItem = new TalieItem();
@@ -90,18 +90,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     public messageValidationService: FormValidationService,
     private toggleService: FormControlToggleService) {
-    this.form = this.fb.group({
-      id: new FormControl({ value: '', disabled: false }, Validators.required),
-      inicio: new FormControl({ value: '', disabled: true }),
-      termino: new FormControl({ value: '', disabled: false }),
-      talie: new FormControl({ value: '', disabled: true }),
-      placa: new FormControl({ value: '', disabled: true },),
-      reserva: new FormControl({ value: '', disabled: true },),
-      cliente: new FormControl({ value: '', disabled: true },),
-      conferente: new FormControl({ value: 'Microled', disabled: true }),
-      equipe: new FormControl(null, Validators.required),
-      operacao: new FormControl('', Validators.required),
-    });
+    this.form = this.getMainForm();
 
     this.editItemForm = this.fb.group({
       notaFiscal: ['', Validators.required],
@@ -138,6 +127,21 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       quantidade: [null, [Validators.required]],
       armazem: ['', Validators.required],
       local: ['', Validators.required]
+    });
+  }
+
+  getMainForm(): FormGroup {
+    return this.fb.group({
+      id: new FormControl({ value: '', disabled: false }, Validators.required),
+      inicio: new FormControl({ value: '', disabled: true }),
+      termino: new FormControl({ value: '', disabled: false }),
+      talie: new FormControl({ value: '', disabled: true }),
+      placa: new FormControl({ value: '', disabled: true },),
+      reserva: new FormControl({ value: '', disabled: true },),
+      cliente: new FormControl({ value: '', disabled: true },),
+      conferente: new FormControl({ value: 'Microled', disabled: true }),
+      equipe: new FormControl(null, Validators.required),
+      operacao: new FormControl('', Validators.required),
     });
   }
 
@@ -496,7 +500,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     if (!item) return;
 
     Object.assign(this.talieTeste, item);
-    
+
     this.itemSelecionado = item;
     this.editItemForm.patchValue(item);
 
@@ -510,7 +514,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   fecharTalieItemModal(modal: any) {
     Object.assign(this.itemSelecionado, this.talieTeste);
     modal.close()
-    }
+  }
 
   //#endregion MODAIS
   //#region METODOS SERVICE
@@ -559,7 +563,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
-    console.log('Vai salvar isso: ',this.descargaAtual);
+    console.log('Vai salvar isso: ', this.descargaAtual);
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
@@ -614,8 +618,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       this.marcante.registro = this.descargaAtual.registro;
       this.marcante.talieId = this.descargaAtual.talie?.id ?? 0;
       this.marcante.talieItemId = this.itemSelecionado.id;
-      this.marcante.marcante = this.marcante.marcante.length < 12 ?  this.marcante.marcante.padStart(12, '0') :this.marcante.marcante ;
-      
+      this.marcante.marcante = this.marcante.marcante.length < 12 ? this.marcante.marcante.padStart(12, '0') : this.marcante.marcante;
+
       this.service.saveMarcante(this.marcante).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarMarcantesTalieItem(this.marcante.talieItemId);
@@ -784,7 +788,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   Reset() {
-    this.form.reset();
+    this.form = this.getMainForm(); 
     this.service.deletarDescarga();
     this.form.controls['conferente'].setValue('Microled');
     this.itensList = [];
