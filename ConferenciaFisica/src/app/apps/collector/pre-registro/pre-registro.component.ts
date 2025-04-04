@@ -26,14 +26,10 @@ export class PreRegistroComponent implements OnInit {
   form: FormGroup;
 
   patiosDestino = [
-    { id: 1, name: "BK" },
-    { id: 2, name: "CLIA" },
-    { id: 3, name: "IPA" },
   ];
 
   finalidade = [
-    { id: 1, name: "Importação" },
-    { id: 2, name: "Exportação" },
+   
   ];
   
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {

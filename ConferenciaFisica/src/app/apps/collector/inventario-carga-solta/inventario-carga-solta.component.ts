@@ -17,8 +17,8 @@ export class InventarioCargaSoltaComponent {
   pageTitle: BreadcrumbItem[] = [];
   form: FormGroup;
   arms = [
-    { id: 1, name: "Importação" },
-    { id: 2, name: "Exportação" },
+    // { id: 1, name: "Importação" },
+    // { id: 2, name: "Exportação" },
   ];
 
   get armControl(): FormControl {

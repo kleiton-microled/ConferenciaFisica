@@ -24,6 +24,7 @@ import { EnumValue } from 'src/app/shared/models/enumValue.model';
 import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config';
 import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -47,11 +48,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   // Simulação de dados para o select de armazéns
   armazens: Armazen[] = [];
 
-  listEquipes = [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
-  { id: 2, name: 'EQUIPE TARDE (15h-23h' },
-  { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
+  listEquipes: SelectizeModel[] = [];
+  // [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
+  // { id: 2, name: 'EQUIPE TARDE (15h-23h' },
+  // { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
 
-  listOperacoes = [{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
+  listOperacoes: SelectizeModel[] = [];//[{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
 
   tiposAvarias: TiposAvarias[] = [];
   avariaDescarga!: AvariaDescarga;

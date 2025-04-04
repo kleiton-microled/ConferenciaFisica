@@ -1,6 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+export interface SelectizeModel {
+  id: number | string;
+  label: string;
+}
+
+
 @Component({
   selector: 'app-microled-select',
   templateUrl: './microled-select.component.html',
@@ -8,7 +14,7 @@ import { FormControl } from '@angular/forms';
 })
 export class MicroledSelectComponent {
   @Input() label: string = ''; // Label do select
-  @Input() items: { id: number | string, name: string }[] = []; // Lista de itens do select
+  @Input() items: SelectizeModel[] = [];
   @Input() placeholder: string = 'Selecione uma opção';
   @Input() control!: FormControl; // Control do Form
 
