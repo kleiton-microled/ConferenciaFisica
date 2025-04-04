@@ -92,7 +92,26 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private toggleService: FormControlToggleService) {
     this.form = this.getMainForm();
 
-    this.editItemForm = this.fb.group({
+    this.editItemForm = this.getEditItemForm();
+
+    this.observacaoForm = this.fb.group({
+      observacao: ['', Validators.required]
+    });
+
+    this.marcanteForm = this.getMarcanteForm() ;
+  }
+
+  getMarcanteForm() : FormGroup{
+    return this.fb.group({
+      marcante: ['', Validators.required],
+      quantidade: [null, [Validators.required]],
+      armazem: ['', Validators.required],
+      local: ['', Validators.required]
+    })
+  }
+
+  getEditItemForm() : FormGroup {
+    return this.fb.group({
       notaFiscal: ['', Validators.required],
       quantidadeDescarga: ['', Validators.required],
       codigoEmbalagem: ['', Validators.required],
@@ -116,17 +135,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       fumigacao: [''],
       remonte: [''],
       observacao: ['']
-    });
-
-    this.observacaoForm = this.fb.group({
-      observacao: ['', Validators.required]
-    });
-
-    this.marcanteForm = this.fb.group({
-      marcante: ['', Validators.required],
-      quantidade: [null, [Validators.required]],
-      armazem: ['', Validators.required],
-      local: ['', Validators.required]
     });
   }
 
@@ -788,10 +796,14 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   Reset() {
+    this.isDisabled = false;
     this.form = this.getMainForm(); 
+    this.editItemForm = this.getEditItemForm(); 
+    this.marcanteForm = this.getMarcanteForm() ;
     this.service.deletarDescarga();
     this.form.controls['conferente'].setValue('Microled');
     this.itensList = [];
+    
     this.atualizarBotoes([
       { nome: 'stop', enabled: false, visible: true },
       { nome: 'alert', enabled: false, visible: true },
