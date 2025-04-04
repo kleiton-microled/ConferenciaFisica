@@ -8,6 +8,7 @@ import { NotificationService } from "src/app/shared/services/notification.servic
 import { Planejamento } from "./planejamento.model";
 import { ItensEstufados } from "./itens-estufados.model";
 import { Etiquetas } from "./etiquetas.model";
+import { ConferenteModel } from "../models/conferente.model";
 @Injectable({
     providedIn: 'root'
 })

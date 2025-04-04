@@ -20,8 +20,8 @@ export class MarcanteCargaSoltaComponent {
   pageTitle: BreadcrumbItem[] = [];
   form: FormGroup;
   container = [
-    { id: 1, name: "Importação" },
-    { id: 2, name: "Exportação" },
+    // { id: 1, name: "Importação" },
+    // { id: 2, name: "Exportação" },
   ];
 
   get containerControl(): FormControl {

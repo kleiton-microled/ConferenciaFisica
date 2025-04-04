@@ -13,6 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AdvancedTableModule } from "src/app/shared/advanced-table/advanced-table.module";
 import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
 import { TalieItemColectorDescarga } from '../descarga-armazem/models/talie-item-coletor-descarga.model';
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 // import { TalieItemColectorDescarga } from './models/talie-item-coletor-descarga.model';
 
 
@@ -55,20 +56,23 @@ export class DescargaCdComponent {
     return this.form.get("modo") as FormControl;
   }
 
-  conferentes = [
-    { id: 1, name: "Importação" },
-    { id: 2, name: "Exportação" },
-  ];
+  conferentes: SelectizeModel[] =[]; 
+  // [
+  //   { id: 1, name: "Importação" },
+  //   { id: 2, name: "Exportação" },
+  // ];
 
-  equipes = [
-    { id: 1, name: "Importação" },
-    { id: 2, name: "Exportação" },
-  ];
+  equipes: SelectizeModel[] =[];
+  // [
+  //   { id: 1, name: "Importação" },
+  //   { id: 2, name: "Exportação" },
+  // ];
 
-  modos = [
-    { id: 1, name: "Importação" },
-    { id: 2, name: "Exportação" },
-  ];
+  modos : SelectizeModel[] =[];
+  // [
+  //   { id: 1, name: "Importação" },
+  //   { id: 2, name: "Exportação" },
+  // ];
   /**
    *
    */

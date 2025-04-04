@@ -17,6 +17,8 @@ import { Subscription } from 'rxjs';
 import { ItensEstufados } from './itens-estufados.model';
 import { Etiquetas } from './etiquetas.model';
 import { ConferenteModel } from "../models/conferente.model";
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
+import { ColetorService } from '../collector.service';
 
 @Component({
   selector: 'app-estufagem-container',
@@ -52,24 +54,20 @@ export class EstufagemContainerComponent implements OnInit {
   estufagemList: ItensEstufados[] = [];
   etiquetasList: Etiquetas[] = [];
 
-  conferentes = [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
-    { id: 2, name: 'EQUIPE TARDE (15h-23h' },
-    { id: 3, name: 'EQUIPE NOITE (23h-07h' },];
+  conferentes: SelectizeModel[] = [];
 
-  equipes = [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
-  { id: 2, name: 'EQUIPE TARDE (15h-23h' },
-  { id: 3, name: 'EQUIPE NOITE (23h-07h' },];
+  equipes: SelectizeModel[] = [];
 
-  modos = [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
-  { id: 2, name: 'EQUIPE TARDE (15h-23h' },
-  { id: 3, name: 'EQUIPE NOITE (23h-07h' },];
+  modos: SelectizeModel[] = [];
+
 
 
 
   constructor(private formBuilder: FormBuilder,
     public formValidationService: FormValidationService,
     private modalService: NgbModal,
-    private _service: EstufagemConteinerService) {
+    private _service: EstufagemConteinerService,
+    private coletorService: ColetorService) {
 
     this.form = this.getNewForm();
     this.formFilter = this.formBuilder.group({
@@ -79,6 +77,9 @@ export class EstufagemContainerComponent implements OnInit {
 
   ngOnInit(): void {
     this.initAdvancedTableData();
+    this.listarConferentes();
+    this.listarEquipes();
+    this.listarModos();
 
     this.planejamentoSub = this._service.getPlanejamentoAtual().subscribe(plan => {
       if (plan)
@@ -221,6 +222,37 @@ export class EstufagemContainerComponent implements OnInit {
       }
       this.closeModal();
     });
+  }
+
+  listarConferentes() {
+    this.coletorService.getConferentes().subscribe((ret: ServiceResult<ConferenteModel[]>) => {
+      if (ret.status && ret.result) {
+        this.conferentes = ret.result.map(c => ({
+          id: c.id,
+          label: c.nome
+        }));
+      } else {
+        this.conferentes = [];
+      }
+    });
+  }
+
+  listarEquipes() {
+    this.coletorService.getEquipes().subscribe((ret: ServiceResult<ConferenteModel[]>) => {
+      if (ret.status && ret.result) {
+        this.equipes = ret.result.map(c => ({
+          id: c.id,
+          label: c.nome
+        }));
+      } else {
+        this.equipes = [];
+      }
+    });
+  }
+
+
+  listarModos() {
+    this.modos = [{id:1, label: "Manual"}, {id:1, label: "Automatizado"}]
   }
   //#endregion
 

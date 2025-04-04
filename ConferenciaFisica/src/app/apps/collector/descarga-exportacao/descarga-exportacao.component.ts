@@ -24,6 +24,7 @@ import { EnumValue } from 'src/app/shared/models/enumValue.model';
 import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config';
 import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -39,7 +40,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
   descargaAtual!: DescargaExportacao;
 
-  
+
   marcante = new Marcante();
   listaMarcantes: Marcante[] = [];
   talieTeste: TalieItem = new TalieItem();
@@ -47,11 +48,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   // Simulação de dados para o select de armazéns
   armazens: Armazen[] = [];
 
-  listEquipes = [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
-  { id: 2, name: 'EQUIPE TARDE (15h-23h' },
-  { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
+  listEquipes: SelectizeModel[] = [];
+  // [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
+  // { id: 2, name: 'EQUIPE TARDE (15h-23h' },
+  // { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
 
-  listOperacoes = [{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
+  listOperacoes: SelectizeModel[] = [];//[{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
 
   tiposAvarias: TiposAvarias[] = [];
   avariaDescarga!: AvariaDescarga;
@@ -496,7 +498,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     if (!item) return;
 
     Object.assign(this.talieTeste, item);
-    
+
     this.itemSelecionado = item;
     this.editItemForm.patchValue(item);
 
@@ -510,7 +512,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   fecharTalieItemModal(modal: any) {
     Object.assign(this.itemSelecionado, this.talieTeste);
     modal.close()
-    }
+  }
 
   //#endregion MODAIS
   //#region METODOS SERVICE
@@ -559,7 +561,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
-    console.log('Vai salvar isso: ',this.descargaAtual);
+    console.log('Vai salvar isso: ', this.descargaAtual);
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
@@ -614,8 +616,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       this.marcante.registro = this.descargaAtual.registro;
       this.marcante.talieId = this.descargaAtual.talie?.id ?? 0;
       this.marcante.talieItemId = this.itemSelecionado.id;
-      this.marcante.marcante = this.marcante.marcante.length < 12 ?  this.marcante.marcante.padStart(12, '0') :this.marcante.marcante ;
-      
+      this.marcante.marcante = this.marcante.marcante.length < 12 ? this.marcante.marcante.padStart(12, '0') : this.marcante.marcante;
+
       this.service.saveMarcante(this.marcante).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarMarcantesTalieItem(this.marcante.talieItemId);
