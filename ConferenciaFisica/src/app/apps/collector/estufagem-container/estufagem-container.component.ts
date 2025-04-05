@@ -13,12 +13,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EstufagemConteinerService } from './estufagem-conteiner.service';
 import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { Planejamento } from './planejamento.model';
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { ItensEstufados } from './itens-estufados.model';
 import { Etiquetas } from './etiquetas.model';
 import { ConferenteModel } from "../models/conferente.model";
 import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 import { ColetorService } from '../collector.service';
+import { SaldoCargaMarcante } from './model/saldo-carga-marcante.model';
 
 @Component({
   selector: 'app-estufagem-container',
@@ -39,9 +40,19 @@ export class EstufagemContainerComponent implements OnInit {
   }
   @ViewChild("advancedTable") advancedTable: any;
 
-  onConferenteSelectChange($event: any) {
-    throw new Error('Method not implemented.');
+  onConferenteSelectChange(value: any) {
+    this.form.controls['conferente'].setValue(value);
   }
+
+  onEquipeSelectChange(value: any) {
+    this.form.controls['equipe'].setValue(value);
+  }
+
+  onModoSelectChange(value: any) {
+    this.form.controls['modo'].setValue(value);
+  }
+
+
 
   form: FormGroup;
   formFilter: FormGroup;
@@ -250,9 +261,25 @@ export class EstufagemContainerComponent implements OnInit {
     });
   }
 
-
   listarModos() {
-    this.modos = [{id:1, label: "Manual"}, {id:1, label: "Automatizado"}]
+    this.modos = [{ id: 1, label: "Manual" }, { id: 1, label: "Automatizado" }]
+  }
+
+  buscarMarcantes = (termo: string): Observable<{ value: any; descricao: string }[]> => {
+    return this.coletorService.getMarcantes(termo).pipe(
+      map((res: any[]) => res.map(item => ({
+        value: item.id,
+        descricao: item.numero
+      })))
+    );
+  };
+
+  onMarcanteSelecionado(marcante: { value: any; descricao: string }) {
+    if (marcante) {
+      this._service.getSaldoCargaMarcante(this.planejamentoAtual.autonumRo, marcante.descricao).subscribe((ret: ServiceResult<SaldoCargaMarcante>) => {
+        console.log(ret);
+      });
+    }
   }
   //#endregion
 

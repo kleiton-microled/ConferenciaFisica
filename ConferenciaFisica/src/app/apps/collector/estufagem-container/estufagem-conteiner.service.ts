@@ -9,6 +9,7 @@ import { Planejamento } from "./planejamento.model";
 import { ItensEstufados } from "./itens-estufados.model";
 import { Etiquetas } from "./etiquetas.model";
 import { ConferenteModel } from "../models/conferente.model";
+import { SaldoCargaMarcante } from "./model/saldo-carga-marcante.model";
 @Injectable({
     providedIn: 'root'
 })
@@ -67,7 +68,7 @@ export class EstufagemConteinerService extends BaseService<any> {
                             possuiMarcantes: response.result.possuiMarcantes,
                             qtdePlanejada: response.result.qtdePlanejada,
                             plan: response.result.plan,
-                            ttl: response.result.plan
+                            ttl: response.result.ttl
                         }
                         this.planejamentoSub.next(planejamento);
                     }
@@ -111,6 +112,29 @@ export class EstufagemConteinerService extends BaseService<any> {
      */
     getEtiquetas(planejamento: string): Observable<ServiceResult<Etiquetas[]>> {
         return this.http.get<ServiceResult<Etiquetas[]>>(`${this.apiUrl}/etiquetas?planejamento=${planejamento}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * 
+     * @param planejamento 
+     * @param codigoMarcante 
+     * @returns SaldoCargaMarcante
+     */
+    getSaldoCargaMarcante(planejamento: number, codigoMarcante: string): Observable<ServiceResult<SaldoCargaMarcante>> {
+        return this.http.get<ServiceResult<SaldoCargaMarcante>>(`${this.apiUrl}/saldo-carga-marcante?planejamento=${planejamento}&codigoMarcante=${codigoMarcante}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);

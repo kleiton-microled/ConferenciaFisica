@@ -25,6 +25,8 @@ import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config
 import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
 import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
+import { ColetorService } from '../collector.service';
+import { EquipeModel } from '../models/equipe.model';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -53,7 +55,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   // { id: 2, name: 'EQUIPE TARDE (15h-23h' },
   // { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
 
-  listOperacoes: SelectizeModel[] = [];//[{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
+  listOperacoes: SelectizeModel[] = [{ id: 1, label: 'Manual' }, { id: 2, label: 'Automatizada' }];
 
   tiposAvarias: TiposAvarias[] = [];
   avariaDescarga!: AvariaDescarga;
@@ -91,7 +93,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
     public messageValidationService: FormValidationService,
-    private toggleService: FormControlToggleService) {
+    private toggleService: FormControlToggleService,
+    private coletorService: ColetorService) {
     this.form = this.getMainForm();
 
     this.editItemForm = this.getEditItemForm();
@@ -100,10 +103,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       observacao: ['', Validators.required]
     });
 
-    this.marcanteForm = this.getMarcanteForm() ;
+    this.marcanteForm = this.getMarcanteForm();
   }
 
-  getMarcanteForm() : FormGroup{
+  getMarcanteForm(): FormGroup {
     return this.fb.group({
       marcante: ['', Validators.required],
       quantidade: [null, [Validators.required]],
@@ -112,7 +115,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     })
   }
 
-  getEditItemForm() : FormGroup {
+  getEditItemForm(): FormGroup {
     return this.fb.group({
       notaFiscal: ['', Validators.required],
       quantidadeDescarga: ['', Validators.required],
@@ -157,6 +160,16 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.service.iniciarDescarga();
+    this.coletorService.getEquipes().subscribe((ret: ServiceResult<EquipeModel[]>) => {
+      if (ret.status && ret.result) {
+        this.listEquipes = ret.result.map(c => ({
+          id: c.id,
+          label: c.nome
+        }));
+      } else {
+        this.listEquipes = [];
+      }
+    })
 
     /**
      * Atualiza o form com o resultada da API
@@ -590,6 +603,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    */
   salvarAlteracoes(modal: any): void {
     if (this.editItemForm.valid) {
+      console.log('Item: ', this.itemSelecionado);
       this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarRegistro();
@@ -799,13 +813,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   Reset() {
     this.isDisabled = false;
-    this.form = this.getMainForm(); 
-    this.editItemForm = this.getEditItemForm(); 
-    this.marcanteForm = this.getMarcanteForm() ;
+    this.form = this.getMainForm();
+    this.editItemForm = this.getEditItemForm();
+    this.marcanteForm = this.getMarcanteForm();
     this.service.deletarDescarga();
     this.form.controls['conferente'].setValue('Microled');
     this.itensList = [];
-    
+
     this.atualizarBotoes([
       { nome: 'stop', enabled: false, visible: true },
       { nome: 'alert', enabled: false, visible: true },
