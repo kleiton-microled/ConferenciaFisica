@@ -78,7 +78,8 @@ export class EstufagemContainerComponent implements OnInit {
     public formValidationService: FormValidationService,
     private modalService: NgbModal,
     private _service: EstufagemConteinerService,
-    private coletorService: ColetorService) {
+    private coletorService: ColetorService,
+    public messageValidationService: FormValidationService) {
 
     this.form = this.getNewForm();
     this.formFilter = this.formBuilder.group({
@@ -126,11 +127,11 @@ export class EstufagemContainerComponent implements OnInit {
   }
 
   get equipeControl(): FormControl {
-    return this.form.get('conferente') as FormControl;
+    return this.form.get('equipe') as FormControl;
   }
 
   get modoControl(): FormControl {
-    return this.form.get('conferente') as FormControl;
+    return this.form.get('modo') as FormControl;
   }
 
   //#region TABLE
@@ -199,9 +200,9 @@ export class EstufagemContainerComponent implements OnInit {
       conteiner: [{ value: '', disabled: true }],
       inicio: [''],
       termino: [''],
-      conferente: [''],
-      equipe: [''],
-      modo: [''],
+      conferente: ['', Validators.required],
+      equipe: [null, Validators.required],
+      modo: ['', Validators.required],
       produto: [''],
       plan: [{ value: '', disabled: true }],
       ttl: [{ value: '', disabled: true }],
@@ -225,10 +226,13 @@ export class EstufagemContainerComponent implements OnInit {
             this.estufagemList = ret.result ?? [];
         });
 
-        this._service.getEtiquetas(filter.planejamento).subscribe((ret: ServiceResult<Etiquetas[]>) => {
-          if (ret.status && ret.result)
-            this.etiquetasList = ret.result ?? [];
-        });
+        // this._service.getEtiquetas(filter.planejamento).subscribe((ret: ServiceResult<Etiquetas[]>) => {
+        //   if (ret.status && ret.result)
+        //     this.etiquetasList = ret.result ?? [];
+        // });
+        this.atualizarBotoes([
+          { nome: 'start', enabled: true, visible: true }
+        ]);
 
       }
       this.closeModal();
@@ -265,6 +269,16 @@ export class EstufagemContainerComponent implements OnInit {
     this.modos = [{ id: 1, label: "Manual" }, { id: 1, label: "Automatizado" }]
   }
 
+  iniciarEstufagem(): void {
+    if(!this.form.valid){
+      console
+    }
+    
+  
+    console.log('Formulário válido:', this.form.value);
+  }
+  
+
   buscarMarcantes = (termo: string): Observable<{ value: any; descricao: string }[]> => {
     return this.coletorService.getMarcantes(termo).pipe(
       map((res: any[]) => res.map(item => ({
@@ -285,7 +299,7 @@ export class EstufagemContainerComponent implements OnInit {
 
   //#region HELPER
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
-    start: { enabled: false, visible: false },
+    start: { enabled: false, visible: true },
     stop: { enabled: false, visible: false },
     alert: { enabled: false, visible: false },
     clear: { enabled: true, visible: true },
@@ -296,6 +310,23 @@ export class EstufagemContainerComponent implements OnInit {
     marcante: { enabled: false, visible: false },
     observacao: { enabled: false, visible: false }
   };
+
+  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
+
+    botoes.forEach(botao => {
+      if (novoEstado[botao.nome]) {
+        if (botao.enabled !== undefined) {
+          novoEstado[botao.nome].enabled = botao.enabled;
+        }
+        if (botao.visible !== undefined) {
+          novoEstado[botao.nome].visible = botao.visible;
+        }
+      }
+    });
+
+    this.footerButtonsState = novoEstado;
+  }
 
   private formatarDataString(isoDate: Date): string | null {
     if (!isoDate) return null;

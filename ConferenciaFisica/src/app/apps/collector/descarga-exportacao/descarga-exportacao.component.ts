@@ -126,17 +126,17 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       altura: [''],
       madeira: [false],
       fragil: [false],
-      numerada: [false],
+      cargaNumerada: [false],
       carimbo: [false],
       peso: [''],
       imo: ['', Validators.maxLength(3)],
-      imo2: ['', Validators.maxLength(3)],
-      imo3: ['', Validators.maxLength(3)],
-      imo4: ['', Validators.maxLength(3)],
+      imO2: ['', Validators.maxLength(3)],
+      imO3: ['', Validators.maxLength(3)],
+      imO4: ['', Validators.maxLength(3)],
       uno: ['', Validators.maxLength(4)],
-      uno2: ['', Validators.maxLength(4)],
-      uno3: ['', Validators.maxLength(4)],
-      uno4: ['', Validators.maxLength(4)],
+      unO2: ['', Validators.maxLength(4)],
+      unO3: ['', Validators.maxLength(4)],
+      unO4: ['', Validators.maxLength(4)],
       fumigacao: [''],
       remonte: [''],
       observacao: ['']
@@ -152,7 +152,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       placa: new FormControl({ value: '', disabled: true },),
       reserva: new FormControl({ value: '', disabled: true },),
       cliente: new FormControl({ value: '', disabled: true },),
-      isCrossDocking:  new FormControl({ value: false, disabled: true },),
+      isCrossDocking: new FormControl({ value: false, disabled: true },),
       conferente: new FormControl({ value: 'Microled', disabled: true }),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
@@ -193,8 +193,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      * Atualiza a descargaatual em tempo real
      */
     this.form.valueChanges.subscribe((values) => {
-      console.log(values, this.descargaAtual);
-
       if (!this.descargaAtual) return;
 
       // Atualiza normalmente os valores
@@ -205,7 +203,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.descargaAtual.talie.termino = values.termino;//;
       }
 
-      console.log(this.descargaAtual, 'Values Termino', values.termino);
     });
 
     this.marcanteForm.valueChanges.subscribe((values) => {
@@ -374,7 +371,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      */
   getModalAvaria() {
     this.avariaDescarga = new AvariaDescarga();
-    console.log(this.avariaDescarga);
     this.abrirModalAvarias<AvariaDescarga>(this.avariaDescarga);
   }
 
@@ -442,7 +438,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
-      console.log(ret.result)
       if (ret.status) {
         modalRef.componentInstance.fotos = ret.result;
       } else { }
@@ -511,7 +506,20 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     if (!id) return;
 
     if (target.classList.contains('edit-btn')) {
+      let registro = this.form.controls['id'].value;
       this.abrirModalEditarItem(id);
+
+      // this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>)=>{
+      //   if(ret.status && ret.result){
+      //     const item = ret.result.talie?.talieItem.find(i => i.id == id);
+      //     if (!item) return;
+
+      //     this.editItemForm.patchValue(item);
+      //     this.abrirModalEditarItem(id);
+      //   }
+
+      // });
+
     } else if (target.classList.contains('delete-btn')) {
       this.deletarItem(id);
     } else if (target.classList.contains('view-btn')) {
@@ -521,19 +529,33 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   abrirModalEditarItem(id: any): void {
     const item = this.descargaAtual.talie?.talieItem.find(i => i.id == id);
+    console.log('Item Atual: ', item);
     if (!item) return;
 
-    Object.assign(this.talieTeste, item);
-
-    this.itemSelecionado = item;
+    //Object.assign(this.talieTeste, item);
+    //this.itemSelecionado = item;
     this.editItemForm.patchValue(item);
+    this.editItemForm.controls['imo'].setValue(item?.imo ?? '');
+    this.editItemForm.controls['imO2'].setValue(item?.imO2 ?? '');
+    this.editItemForm.controls['imO3'].setValue(item?.imO3 ?? '');
+    this.editItemForm.controls['imO4'].setValue(item?.imO4 ?? '');
+    this.editItemForm.controls['uno'].setValue(item?.uno ?? '');
+    this.editItemForm.controls['unO2'].setValue(item?.unO2 ?? '');
+    this.editItemForm.controls['unO3'].setValue(item?.unO3 ?? '');
+    this.editItemForm.controls['unO4'].setValue(item?.unO4 ?? '');
+    this.editItemForm.controls['fumigacao'].setValue(item?.fumigacao ?? '');
+    this.editItemForm.controls['comprimento'].setValue(item?.comprimento ?? '');
+    this.editItemForm.controls['largura'].setValue(item?.largura ?? '');
+    this.editItemForm.controls['altura'].setValue(item?.altura ?? '');
+    this.editItemForm.controls['observacao'].setValue(item?.observacao ?? '');
 
     this.editItemForm.valueChanges.subscribe(updatedValues => {
-      Object.assign(this.itemSelecionado, updatedValues);
+      Object.assign(item, updatedValues);
     });
 
     this.modalService.open(this.editItemModal, { size: 'xl', backdrop: 'static', centered: false });
   }
+
 
   fecharTalieItemModal(modal: any) {
     Object.assign(this.itemSelecionado, this.talieTeste);
@@ -551,7 +573,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
-        
+        //const descargaNormalizada = this.normalizarDescarga(ret.result ?? {});
+        //this.service.updateDescarga(descargaNormalizada);
+
         const terminoVazio = ret.result?.talie?.termino == null;
         this.form.get('isCrossDocking')?.[terminoVazio ? 'enable' : 'disable']();
         this.atualizarBotoes([
@@ -586,11 +610,33 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
   }
 
+  private normalizarDescarga(data: Partial<DescargaExportacao>): DescargaExportacao {
+    return {
+      registro: data.registro ?? 0,
+      placa: data.placa ?? '',
+      reserva: data.reserva ?? '',
+      cliente: data.cliente ?? '',
+      nomeConferente: data.nomeConferente ?? 'Microled',
+      conferente: data.conferente ?? 1,
+      equipe: data.equipe ?? 0,
+
+      talie: data.talie ? {
+        id: data.talie.id ?? 0,
+        inicio: data.talie.inicio ?? '',
+        termino: data.talie.termino ?? '',
+        conferente: data.talie.conferente ?? 'Microled',
+        equipe: data.talie.equipe ?? 0,
+        operacao: data.talie.operacao ?? 0,
+        observacao: data.talie.observacao ?? '',
+        talieItem: data.talie.talieItem ?? []
+      } : null
+    };
+  }
+
   /**
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
-    console.log('Vai salvar isso: ', this.descargaAtual);
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
@@ -607,7 +653,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    */
   salvarAlteracoes(modal: any): void {
     if (this.editItemForm.valid) {
-      console.log('Item: ', this.itemSelecionado);
       this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarRegistro();
