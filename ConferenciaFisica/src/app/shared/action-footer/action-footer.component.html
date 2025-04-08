@@ -78,4 +78,12 @@
           [ngClass]="{'disabled-btn': !buttonsState['exit'].enabled}">
     <i class="fas fa-sign-out-alt"></i> Sair
   </button>
+
+  <button *ngIf="buttonsState['estufar'].visible"
+          class="win10-tile estufar" 
+          (click)="estufar()" 
+          [disabled]="!buttonsState['estufar'].enabled"
+          [ngClass]="{'disabled-btn': !buttonsState['estufar'].enabled}">
+    <i class="fas fa-sign-out-alt"></i> Estufar
+  </button>
 </div>

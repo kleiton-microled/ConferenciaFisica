@@ -20,6 +20,8 @@ import { ConferenteModel } from "../models/conferente.model";
 import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 import { ColetorService } from '../collector.service';
 import { SaldoCargaMarcante } from './model/saldo-carga-marcante.model';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
 
 @Component({
   selector: 'app-estufagem-container',
@@ -42,14 +44,17 @@ export class EstufagemContainerComponent implements OnInit {
 
   onConferenteSelectChange(value: any) {
     this.form.controls['conferente'].setValue(value);
+    this.planejamentoAtual.conferente = value;
   }
 
   onEquipeSelectChange(value: any) {
     this.form.controls['equipe'].setValue(value);
+    this.planejamentoAtual.equipe = value;
   }
 
   onModoSelectChange(value: any) {
     this.form.controls['modo'].setValue(value);
+    this.planejamentoAtual.operacao = value;
   }
 
 
@@ -58,6 +63,7 @@ export class EstufagemContainerComponent implements OnInit {
   formFilter: FormGroup;
   private planejamentoSub!: Subscription;
 
+  isDisabled: boolean = false;
   planejamentoAtual!: Planejamento;
 
   pageTitle: BreadcrumbItem[] = [];
@@ -70,16 +76,16 @@ export class EstufagemContainerComponent implements OnInit {
   equipes: SelectizeModel[] = [];
 
   modos: SelectizeModel[] = [];
-
-
-
+  quantidade: number = 0;
 
   constructor(private formBuilder: FormBuilder,
     public formValidationService: FormValidationService,
     private modalService: NgbModal,
     private _service: EstufagemConteinerService,
     private coletorService: ColetorService,
-    public messageValidationService: FormValidationService) {
+    public messageValidationService: FormValidationService,
+    private notificationService: NotificationService,
+    private toggleService: FormControlToggleService) {
 
     this.form = this.getNewForm();
     this.formFilter = this.formBuilder.group({
@@ -122,6 +128,25 @@ export class EstufagemContainerComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
+  //#region  FORM
+  getNewForm(): FormGroup {
+    return this.formBuilder.group({
+      planejamento: [{ value: '', disabled: true }],
+      reserva: [{ value: '', disabled: true }],
+      cliente: [{ value: '', disabled: true }],
+      conteiner: [{ value: '', disabled: true }],
+      inicio: [''],
+      termino: [''],
+      conferente: ['', Validators.required],
+      equipe: ['', Validators.required],
+      modo: ['', Validators.required],
+      produto: [''],
+      plan: [{ value: '', disabled: true }],
+      ttl: [{ value: '', disabled: true }],
+      lote: [''],
+    });
+  }
+
   get conferenteControl(): FormControl {
     return this.form.get('conferente') as FormControl;
   }
@@ -133,6 +158,7 @@ export class EstufagemContainerComponent implements OnInit {
   get modoControl(): FormControl {
     return this.form.get('modo') as FormControl;
   }
+  //#endregion
 
   //#region TABLE
   initAdvancedTableData(): void {
@@ -189,25 +215,12 @@ export class EstufagemContainerComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'SIM',
       cancelButtonText: 'NÃO',
-    }).then((result) => { if (result.isConfirmed) { this.form.reset(); } })
-  }
-
-  getNewForm(): FormGroup {
-    return this.formBuilder.group({
-      planejamento: [{ value: '', disabled: true }],
-      reserva: [{ value: '', disabled: true }],
-      cliente: [{ value: '', disabled: true }],
-      conteiner: [{ value: '', disabled: true }],
-      inicio: [''],
-      termino: [''],
-      conferente: ['', Validators.required],
-      equipe: [null, Validators.required],
-      modo: ['', Validators.required],
-      produto: [''],
-      plan: [{ value: '', disabled: true }],
-      ttl: [{ value: '', disabled: true }],
-      lote: [''],
-    });
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.form.reset();
+        this.estufagemList = [];
+      }
+    })
   }
 
   isFieldInvalid(field: string): boolean {
@@ -231,8 +244,17 @@ export class EstufagemContainerComponent implements OnInit {
         //     this.etiquetasList = ret.result ?? [];
         // });
         this.atualizarBotoes([
-          { nome: 'start', enabled: true, visible: true }
+          { nome: 'start', enabled: ret.result?.inicio ? false : true, visible: true },
+          { nome: 'stop', enabled: ret.result?.termino ? false : true, visible: true },
+          { nome: 'clear', enabled: true, visible: true }
+
         ]);
+
+        if (ret.result?.termino) {
+          this.toggleService.toggleFormControls(this.form, true);
+          this.isDisabled = true;
+        }
+
 
       }
       this.closeModal();
@@ -270,14 +292,50 @@ export class EstufagemContainerComponent implements OnInit {
   }
 
   iniciarEstufagem(): void {
-    if(!this.form.valid){
-      console
+    const filter = {
+      planejamento: this.formFilter.get('planejamento')?.value || undefined,
+    };
+    if (this.form.get('equipe')?.value == 0)
+      this.notificationService.showMessage('Campo Equipe é obrigatório!', 'Alert');
+
+    if (this.form.get('conferente')?.value == 0)
+      this.notificationService.showMessage('Campo Conferente é obrigatório!', 'Alert');
+
+    if (this.form.get('modo')?.value == 0)
+      this.notificationService.showMessage('Campo Modo é obrigatório!', 'Alert');
+
+    if (this.form.valid) {
+      this._service.postIniciarEstufagem(this.planejamentoAtual).subscribe((ret: ServiceResult<boolean>) => {
+        console.log(ret);
+        if (ret.status && ret.result) {
+          this.buscarPlanejamento(filter);
+        }
+      });
     }
-    
-  
-    console.log('Formulário válido:', this.form.value);
   }
-  
+
+  estufar() {
+    //TODO verificar com Valdemir
+    this._service.getEstufar().subscribe((ret: ServiceResult<boolean>) => {
+      console.log(ret);
+      this.notificationService.showMessage('Carga estufada com sucesso!', 'Sucesso');
+    });
+  }
+
+  finalizar() {
+    const filter = {
+      planejamento: this.formFilter.get('planejamento')?.value || undefined,
+    };
+
+    this._service.postFinalizar(this.planejamentoAtual).subscribe((ret: ServiceResult<boolean>) => {
+      if (ret.status && ret.result) {
+        this.notificationService.showSuccess(ret);
+        this.buscarPlanejamento(filter);
+
+        this.toggleService.toggleFormControls(this.form, true);
+      }
+    });
+  }
 
   buscarMarcantes = (termo: string): Observable<{ value: any; descricao: string }[]> => {
     return this.coletorService.getMarcantes(termo).pipe(
@@ -292,6 +350,10 @@ export class EstufagemContainerComponent implements OnInit {
     if (marcante) {
       this._service.getSaldoCargaMarcante(this.planejamentoAtual.autonumRo, marcante.descricao).subscribe((ret: ServiceResult<SaldoCargaMarcante>) => {
         console.log(ret);
+        this.quantidade = ret.result?.saldo ?? 0;
+        this.atualizarBotoes([
+          { nome: 'estufar', enabled: true, visible: true }
+        ]);
       });
     }
   }
@@ -302,13 +364,14 @@ export class EstufagemContainerComponent implements OnInit {
     start: { enabled: false, visible: true },
     stop: { enabled: false, visible: false },
     alert: { enabled: false, visible: false },
-    clear: { enabled: true, visible: true },
+    clear: { enabled: false, visible: true },
     exit: { enabled: true, visible: true },
-    save: { enabled: true, visible: true },
+    save: { enabled: false, visible: true },
     delete: { enabled: false, visible: false },
-    photo: { enabled: true, visible: true },
+    photo: { enabled: false, visible: false },
     marcante: { enabled: false, visible: false },
-    observacao: { enabled: false, visible: false }
+    observacao: { enabled: false, visible: false },
+    estufar: { enabled: false, visible: true }
   };
 
   atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {

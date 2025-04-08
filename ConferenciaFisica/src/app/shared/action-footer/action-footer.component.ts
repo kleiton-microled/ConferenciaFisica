@@ -19,6 +19,7 @@ export class ActionFooterComponent {
   @Output() photoEvent = new EventEmitter<void>();
   @Output() exitEvent = new EventEmitter<void>();
   @Output() finalizarEvent = new EventEmitter<void>();
+  @Output() estufarEvent = new EventEmitter<void>();
 
   iniciar(): void {
     if (this.buttonsState['start']?.enabled) {
@@ -86,6 +87,13 @@ export class ActionFooterComponent {
     if (this.buttonsState['observacao']?.enabled) {
       console.log('Observação acionado');
       this.observacaoEvent.emit();
+    }
+  }
+
+  estufar(): void {
+    if (this.buttonsState['estufar']?.enabled) {
+      console.log('Estufar acionado');
+      this.estufarEvent.emit();
     }
   }
 }

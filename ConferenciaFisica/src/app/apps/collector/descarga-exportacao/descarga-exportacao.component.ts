@@ -70,7 +70,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     delete: { enabled: false, visible: true },
     photo: { enabled: false, visible: true },
     marcante: { enabled: false, visible: true },
-    observacao: { enabled: false, visible: true }
+    observacao: { enabled: false, visible: true },
+    estufar: { enabled: false, visible: true }
   };
 
   columns: Column[] = [];
@@ -153,8 +154,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       reserva: new FormControl({ value: '', disabled: true },),
       cliente: new FormControl({ value: '', disabled: true },),
       isCrossDocking: new FormControl({ value: false, disabled: true },),
-      conferente: new FormControl({ value: 'Microled', disabled: true }),
-      equipe: new FormControl(null, Validators.required),
+      conferente: new FormControl({ value: '', disabled: true }),
+      equipe: new FormControl('', Validators.required),
       operacao: new FormControl('', Validators.required),
     });
   }
@@ -573,6 +574,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
+        this.form.controls['equipe'].setValue(ret.result?.talie?.equipe.toString());
+        this.form.controls['operacao'].setValue(ret.result?.talie?.operacao);
         //const descargaNormalizada = this.normalizarDescarga(ret.result ?? {});
         //this.service.updateDescarga(descargaNormalizada);
 
@@ -885,8 +888,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.form.controls[campo].setValue(null);
   }
 
-  onSelectChange(value: any) {
+  onEquipeSelectChange(value: any) {
+    console.log(value);
     this.form.controls['equipe'].setValue(value);
+  }
+
+  onOperacaoSelectChange(value: any) {
+    this.form.controls['operacao'].setValue(value);
   }
 
   validarDataTermino(value: any): void {

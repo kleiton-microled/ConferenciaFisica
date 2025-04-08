@@ -10,6 +10,7 @@ import { ItensEstufados } from "./itens-estufados.model";
 import { Etiquetas } from "./etiquetas.model";
 import { ConferenteModel } from "../models/conferente.model";
 import { SaldoCargaMarcante } from "./model/saldo-carga-marcante.model";
+import { Talie } from "../models/talie.model";
 @Injectable({
     providedIn: 'root'
 })
@@ -68,7 +69,10 @@ export class EstufagemConteinerService extends BaseService<any> {
                             possuiMarcantes: response.result.possuiMarcantes,
                             qtdePlanejada: response.result.qtdePlanejada,
                             plan: response.result.plan,
-                            ttl: response.result.ttl
+                            ttl: response.result.ttl,
+                            talieItem: [],
+                            id: 0,
+                            observacao: ''
                         }
                         this.planejamentoSub.next(planejamento);
                     }
@@ -138,6 +142,71 @@ export class EstufagemConteinerService extends BaseService<any> {
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * 
+     * @param data Talie
+     * @returns boolean
+     */
+    postIniciarEstufagem(data: Talie): Observable<ServiceResult<boolean>> {
+        return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/iniciar-estufagem`, data).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * TODO - Preciso entender como estufar uma carga
+     * @returns boolean
+     */
+    getEstufar(): Observable<ServiceResult<boolean>> {
+        return this.http.get<ServiceResult<boolean>>(`${this.apiUrl}/estufar`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    /**
+     * 
+     * @param data Talie
+     * @returns boolean
+     */
+    postFinalizar(data: Talie): Observable<ServiceResult<boolean>> {
+        return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/finalizar`, data).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
                     throw new Error(response.error || 'Erro desconhecido');
                 }
                 return response;

@@ -53,13 +53,13 @@
                         </div>
                         <div class="col-3">
                             <label for="equipe">equipe</label>
-                            <app-microled-select [items]="equipes" [control]="conferenteControl"
+                            <app-microled-select [items]="equipes" [control]="equipeControl"
                                 (selectionChange)="onEquipeSelectChange($event)">
                             </app-microled-select>
                         </div>
                         <div class="col-3">
                             <label for="modo">modo</label>
-                            <app-microled-select [items]="modos" [control]="conferenteControl"
+                            <app-microled-select [items]="modos" [control]="modoControl"
                                 (selectionChange)="onModoSelectChange($event)">
                             </app-microled-select>
                         </div>
@@ -82,17 +82,20 @@
                             <input id="lote" type="text" class="form-control" formControlName="lote">
                         </div> -->
                     </div>
+                    <div class="mt-4">
+                        <h4 class="blockquote">Informe o Marcante, defina a quantidade e clique em Estufar</h4>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-4">
                             <label for="local" class="form-label">Buscar Marcante</label>
-                            <microled-input-with-select [disabled]="false"
+                            <microled-input-with-select [disabled]="isDisabled"
                                 [placeholder]="'Digite o numero do marcante...'"
                                 [fetchData]="buscarMarcantes.bind(this)" (selectedItem)="onMarcanteSelecionado($event)">
                             </microled-input-with-select>
                         </div>
                         <div class="col-3">
                             <label for="quantidade" class="form-label">Quantidade</label>
-                            <input id="quantidade" type="text" class="form-control" formControlName="quantidade">
+                            <input id="quantidade" [disabled]="isDisabled" type="text" class="form-control" [(value)]="quantidade">
                         </div>
                     </div>
                 </form>
@@ -125,9 +128,17 @@
 
                 </div> -->
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="onSubmit()"
-                (startEvent)="iniciarEstufagem()" (cleanupEvent)="clearFomulario()" (avariasEvent)="''"
-                (observacaoEvent)="''" (exitEvent)="''" (marcanteEvent)="''"></app-action-footer>
+            <app-action-footer [buttonsState]="footerButtonsState" 
+                               (saveEvent)="onSubmit()"
+                               (startEvent)="iniciarEstufagem()" 
+                               (cleanupEvent)="clearFomulario()" 
+                               (avariasEvent)="''"
+                               (observacaoEvent)="''" 
+                               (exitEvent)="''" 
+                               (marcanteEvent)="''" 
+                               (estufarEvent)="estufar()"
+                               (finalizarEvent)="finalizar()">
+            </app-action-footer>
         </div>
     </div>
 </div>

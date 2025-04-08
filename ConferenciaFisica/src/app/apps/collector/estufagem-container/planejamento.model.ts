@@ -1,12 +1,9 @@
-export interface Planejamento{
+import { Talie } from "../models/talie.model";
+
+export interface Planejamento extends Talie{
     cliente: string;
     reserva: string;
     conteiner: string;
-    inicio: string,
-    termino: string,
-    conferente: number;
-    equipe: number;
-    operacao: number;
     autonumRo: number;
     autonumBoo: number;
     autonumPatio: number;

@@ -7,7 +7,7 @@ export class DescargaExportacao {
     reserva!: string;
     cliente!: string;
     nomeConferente: string = "Microled";
-    conferente: number = 1;
+    conferente!: number;
     equipe: number = 0;
 
     constructor(init?: Partial<DescargaExportacao>) {
