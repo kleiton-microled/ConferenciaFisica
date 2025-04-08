@@ -299,8 +299,15 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @param data 
      * @returns 
      */
-    getFinalizarProcesso(talieId: number, crossdock: boolean): Observable<ServiceResult<boolean>> {
-        return this.http.get<ServiceResult<boolean>>(`${this.urlApi}/finalizar-processo?id=${talieId}&crossdock=${crossdock}`).pipe(
+    getFinalizarProcesso(talieId: number, crossdock: boolean, usuario: string = '', container: number | null = null): Observable<ServiceResult<boolean>> {
+        return this.http.get<ServiceResult<boolean>>(`${this.urlApi}/finalizar-processo`, {
+            params: {
+                id: talieId.toString(),
+                crossdock: crossdock.toString(),
+                usuario: usuario,
+                container: container ?? 0
+            }
+        }).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
