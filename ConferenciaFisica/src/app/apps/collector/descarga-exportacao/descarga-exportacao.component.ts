@@ -25,6 +25,8 @@ import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config
 import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
 import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
+import { ColetorService } from '../collector.service';
+import { EquipeModel } from '../models/equipe.model';
 import { AuthenticationService } from 'src/app/core/service/auth.service';
 
 @Component({
@@ -54,7 +56,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   // { id: 2, name: 'EQUIPE TARDE (15h-23h' },
   // { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
 
-  listOperacoes: SelectizeModel[] = [];//[{ id: 1, name: 'Manual' }, { id: 2, name: 'Automatizada' }];
+  listOperacoes: SelectizeModel[] = [{ id: 1, label: 'Manual' }, { id: 2, label: 'Automatizada' }];
 
   tiposAvarias: TiposAvarias[] = [];
   avariaDescarga!: AvariaDescarga;
@@ -93,6 +95,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     public messageValidationService: FormValidationService,
     private toggleService: FormControlToggleService,
+    private coletorService: ColetorService,
     private authenticationService: AuthenticationService ) {
     this.form = this.getMainForm();
 
@@ -102,10 +105,10 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       observacao: ['', Validators.required]
     });
 
-    this.marcanteForm = this.getMarcanteForm() ;
+    this.marcanteForm = this.getMarcanteForm();
   }
 
-  getMarcanteForm() : FormGroup{
+  getMarcanteForm(): FormGroup {
     return this.fb.group({
       marcante: ['', Validators.required],
       quantidade: [null, [Validators.required]],
@@ -114,7 +117,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     })
   }
 
-  getEditItemForm() : FormGroup {
+  getEditItemForm(): FormGroup {
     return this.fb.group({
       notaFiscal: ['', Validators.required],
       quantidadeDescarga: ['', Validators.required],
@@ -125,17 +128,17 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       altura: [''],
       madeira: [false],
       fragil: [false],
-      numerada: [false],
+      cargaNumerada: [false],
       carimbo: [false],
       peso: [''],
       imo: ['', Validators.maxLength(3)],
-      imo2: ['', Validators.maxLength(3)],
-      imo3: ['', Validators.maxLength(3)],
-      imo4: ['', Validators.maxLength(3)],
+      imO2: ['', Validators.maxLength(3)],
+      imO3: ['', Validators.maxLength(3)],
+      imO4: ['', Validators.maxLength(3)],
       uno: ['', Validators.maxLength(4)],
-      uno2: ['', Validators.maxLength(4)],
-      uno3: ['', Validators.maxLength(4)],
-      uno4: ['', Validators.maxLength(4)],
+      unO2: ['', Validators.maxLength(4)],
+      unO3: ['', Validators.maxLength(4)],
+      unO4: ['', Validators.maxLength(4)],
       fumigacao: [''],
       remonte: [''],
       observacao: ['']
@@ -151,8 +154,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       placa: new FormControl({ value: '', disabled: true },),
       reserva: new FormControl({ value: '', disabled: true },),
       cliente: new FormControl({ value: '', disabled: true },),
-      container: new FormControl({ value: null, disabled: false },),
       isCrossDocking:  new FormControl({ value: false, disabled: true },),
+      container: new FormControl({ value: null, disabled: false },),
       conferente: new FormControl({ value: 'Microled', disabled: true }),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
@@ -161,6 +164,16 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.service.iniciarDescarga();
+    this.coletorService.getEquipes().subscribe((ret: ServiceResult<EquipeModel[]>) => {
+      if (ret.status && ret.result) {
+        this.listEquipes = ret.result.map(c => ({
+          id: c.id,
+          label: c.nome
+        }));
+      } else {
+        this.listEquipes = [];
+      }
+    })
 
     /**
      * Atualiza o form com o resultada da API
@@ -183,8 +196,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      * Atualiza a descargaatual em tempo real
      */
     this.form.valueChanges.subscribe((values) => {
-      console.log(values, this.descargaAtual);
-
       if (!this.descargaAtual) return;
 
       // Atualiza normalmente os valores
@@ -195,7 +206,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.descargaAtual.talie.termino = values.termino;//;
       }
 
-      console.log(this.descargaAtual, 'Values Termino', values.termino);
     });
 
     this.marcanteForm.valueChanges.subscribe((values) => {
@@ -364,7 +374,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
      */
   getModalAvaria() {
     this.avariaDescarga = new AvariaDescarga();
-    console.log(this.avariaDescarga);
     this.abrirModalAvarias<AvariaDescarga>(this.avariaDescarga);
   }
 
@@ -432,7 +441,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
-      console.log(ret.result)
       if (ret.status) {
         modalRef.componentInstance.fotos = ret.result;
       } else { }
@@ -501,7 +509,20 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     if (!id) return;
 
     if (target.classList.contains('edit-btn')) {
+      let registro = this.form.controls['id'].value;
       this.abrirModalEditarItem(id);
+
+      // this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>)=>{
+      //   if(ret.status && ret.result){
+      //     const item = ret.result.talie?.talieItem.find(i => i.id == id);
+      //     if (!item) return;
+
+      //     this.editItemForm.patchValue(item);
+      //     this.abrirModalEditarItem(id);
+      //   }
+
+      // });
+
     } else if (target.classList.contains('delete-btn')) {
       this.deletarItem(id);
     } else if (target.classList.contains('view-btn')) {
@@ -511,19 +532,33 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   abrirModalEditarItem(id: any): void {
     const item = this.descargaAtual.talie?.talieItem.find(i => i.id == id);
+    console.log('Item Atual: ', item);
     if (!item) return;
 
-    Object.assign(this.talieTeste, item);
-
-    this.itemSelecionado = item;
+    //Object.assign(this.talieTeste, item);
+    //this.itemSelecionado = item;
     this.editItemForm.patchValue(item);
+    this.editItemForm.controls['imo'].setValue(item?.imo ?? '');
+    this.editItemForm.controls['imO2'].setValue(item?.imO2 ?? '');
+    this.editItemForm.controls['imO3'].setValue(item?.imO3 ?? '');
+    this.editItemForm.controls['imO4'].setValue(item?.imO4 ?? '');
+    this.editItemForm.controls['uno'].setValue(item?.uno ?? '');
+    this.editItemForm.controls['unO2'].setValue(item?.unO2 ?? '');
+    this.editItemForm.controls['unO3'].setValue(item?.unO3 ?? '');
+    this.editItemForm.controls['unO4'].setValue(item?.unO4 ?? '');
+    this.editItemForm.controls['fumigacao'].setValue(item?.fumigacao ?? '');
+    this.editItemForm.controls['comprimento'].setValue(item?.comprimento ?? '');
+    this.editItemForm.controls['largura'].setValue(item?.largura ?? '');
+    this.editItemForm.controls['altura'].setValue(item?.altura ?? '');
+    this.editItemForm.controls['observacao'].setValue(item?.observacao ?? '');
 
     this.editItemForm.valueChanges.subscribe(updatedValues => {
-      Object.assign(this.itemSelecionado, updatedValues);
+      Object.assign(item, updatedValues);
     });
 
     this.modalService.open(this.editItemModal, { size: 'xl', backdrop: 'static', centered: false });
   }
+
 
   fecharTalieItemModal(modal: any) {
     Object.assign(this.itemSelecionado, this.talieTeste);
@@ -541,7 +576,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
-        
+        //const descargaNormalizada = this.normalizarDescarga(ret.result ?? {});
+        //this.service.updateDescarga(descargaNormalizada);
+
         const terminoVazio = ret.result?.talie?.termino == null;
         this.form.get('isCrossDocking')?.[terminoVazio ? 'enable' : 'disable']();
         this.atualizarBotoes([
@@ -576,11 +613,33 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
   }
 
+  private normalizarDescarga(data: Partial<DescargaExportacao>): DescargaExportacao {
+    return {
+      registro: data.registro ?? 0,
+      placa: data.placa ?? '',
+      reserva: data.reserva ?? '',
+      cliente: data.cliente ?? '',
+      nomeConferente: data.nomeConferente ?? 'Microled',
+      conferente: data.conferente ?? 1,
+      equipe: data.equipe ?? 0,
+
+      talie: data.talie ? {
+        id: data.talie.id ?? 0,
+        inicio: data.talie.inicio ?? '',
+        termino: data.talie.termino ?? '',
+        conferente: data.talie.conferente ?? 'Microled',
+        equipe: data.talie.equipe ?? 0,
+        operacao: data.talie.operacao ?? 0,
+        observacao: data.talie.observacao ?? '',
+        talieItem: data.talie.talieItem ?? []
+      } : null
+    };
+  }
+
   /**
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
-    console.log('Vai salvar isso: ', this.descargaAtual);
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
@@ -806,13 +865,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   Reset() {
     this.isDisabled = false;
-    this.form = this.getMainForm(); 
-    this.editItemForm = this.getEditItemForm(); 
-    this.marcanteForm = this.getMarcanteForm() ;
+    this.form = this.getMainForm();
+    this.editItemForm = this.getEditItemForm();
+    this.marcanteForm = this.getMarcanteForm();
     this.service.deletarDescarga();
     this.form.controls['conferente'].setValue('Microled');
     this.itensList = [];
-    
+
     this.atualizarBotoes([
       { nome: 'stop', enabled: false, visible: true },
       { nome: 'alert', enabled: false, visible: true },

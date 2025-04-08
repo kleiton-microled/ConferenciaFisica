@@ -54,21 +54,21 @@
                         <div class="col-3">
                             <label for="equipe">equipe</label>
                             <app-microled-select [items]="equipes" [control]="conferenteControl"
-                                (selectionChange)="onConferenteSelectChange($event)">
+                                (selectionChange)="onEquipeSelectChange($event)">
                             </app-microled-select>
                         </div>
                         <div class="col-3">
                             <label for="modo">modo</label>
                             <app-microled-select [items]="modos" [control]="conferenteControl"
-                                (selectionChange)="onConferenteSelectChange($event)">
+                                (selectionChange)="onModoSelectChange($event)">
                             </app-microled-select>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <label for="produto">produto</label>
                             <input id="produto" type="text" class="form-control" formControlName="produto">
-                        </div>
+                        </div> -->
                         <div class="col-3">
                             <label for="plan">plan</label>
                             <input id="plan" type="text" class="form-control" formControlName="plan">
@@ -77,9 +77,22 @@
                             <label for="ttl">ttl</label>
                             <input id="ttl" type="text" class="form-control" formControlName="ttl">
                         </div>
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <label for="lote">lote</label>
                             <input id="lote" type="text" class="form-control" formControlName="lote">
+                        </div> -->
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="local" class="form-label">Buscar Marcante</label>
+                            <microled-input-with-select [disabled]="false"
+                                [placeholder]="'Digite o numero do marcante...'"
+                                [fetchData]="buscarMarcantes.bind(this)" (selectedItem)="onMarcanteSelecionado($event)">
+                            </microled-input-with-select>
+                        </div>
+                        <div class="col-3">
+                            <label for="quantidade" class="form-label">Quantidade</label>
+                            <input id="quantidade" type="text" class="form-control" formControlName="quantidade">
                         </div>
                     </div>
                 </form>
@@ -97,7 +110,7 @@
                     </div>
                 </div>
 
-                <div class="row mt-4">
+                <!-- <div class="row mt-4">
                     <h4>Etiquetas</h4>
                     <div *ngIf="this.etiquetasList.length == 0">
                         <p>Nenhuma etiqueta disponível</p>
@@ -110,11 +123,11 @@
                         </app-advanced-table>
                     </div>
 
-                </div>
+                </div> -->
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="onSubmit()" (startEvent)="''"
-                (cleanupEvent)="clearFomulario()" (avariasEvent)="''" (observacaoEvent)="''" (exitEvent)="''"
-                (marcanteEvent)="''"></app-action-footer>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="onSubmit()"
+                (startEvent)="iniciarEstufagem()" (cleanupEvent)="clearFomulario()" (avariasEvent)="''"
+                (observacaoEvent)="''" (exitEvent)="''" (marcanteEvent)="''"></app-action-footer>
         </div>
     </div>
 </div>
