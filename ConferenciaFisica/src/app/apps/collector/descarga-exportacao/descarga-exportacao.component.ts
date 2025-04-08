@@ -25,6 +25,7 @@ import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config
 import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
 import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
 import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
+import { AuthenticationService } from 'src/app/core/service/auth.service';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -91,7 +92,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
     public messageValidationService: FormValidationService,
-    private toggleService: FormControlToggleService) {
+    private toggleService: FormControlToggleService,
+    private authenticationService: AuthenticationService ) {
     this.form = this.getMainForm();
 
     this.editItemForm = this.getEditItemForm();
@@ -149,6 +151,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       placa: new FormControl({ value: '', disabled: true },),
       reserva: new FormControl({ value: '', disabled: true },),
       cliente: new FormControl({ value: '', disabled: true },),
+      container: new FormControl({ value: null, disabled: false },),
       isCrossDocking:  new FormControl({ value: false, disabled: true },),
       conferente: new FormControl({ value: 'Microled', disabled: true }),
       equipe: new FormControl(null, Validators.required),
@@ -733,7 +736,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    */
   finalizarProcessoDescarga() {
     if (this.descargaAtual.talie?.id) {
-      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, false).subscribe((ret: ServiceResult<boolean>) => {
+      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, this.form.get('isCrossDocking')?.value, this.authenticationService.currentUser()?.email, this.form.get('container')?.value ).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
           this.buscarRegistro();
