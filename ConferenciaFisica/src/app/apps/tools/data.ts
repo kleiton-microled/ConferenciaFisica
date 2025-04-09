@@ -88,5 +88,13 @@ export const TOOLS: ToolsModel[] = [
       "Modulo para Descarga CD",
     version: 1,
     link: "apps/collector/descarga-cd",
+  },
+  {
+    id: 12,
+    title: "Carregamento Carga Solta",
+    description:
+      "Modulo para Carregamento Carga Solta",
+    version: 1,
+    link: "apps/collector/carregamento-carga-solta",
   }
 ];
