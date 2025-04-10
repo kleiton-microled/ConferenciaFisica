@@ -60,13 +60,11 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
         return this.http.get<ServiceResult<EnumValue[]>>(`${this.urlApi}/veiculos?patio=${patio}`).pipe(
             map(response => {
                 if (!response.status) {
-                    this.notificationService.showAlert(response);
                     throw new Error(response.error || 'Erro desconhecido');
                 }
                 return response;
             }),
             catchError((error: HttpErrorResponse) => {
-                this.notificationService.showError(error);
                 return throwError(() => error);
             }),
             finalize(() => this.notificationService.hideLoading())
