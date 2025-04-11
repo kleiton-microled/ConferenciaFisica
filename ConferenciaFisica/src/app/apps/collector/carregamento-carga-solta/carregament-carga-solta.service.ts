@@ -38,8 +38,45 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
         return this.descargaSubject.asObservable();
     }
 
-    getByMarcante(marcante: string): Observable<ServiceResult<ItensCargaModel>> {
-        return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/ordens?patio=${marcante}`).pipe(
+    getByMarcante(marcante: string, local: string, placa:string): Observable<ServiceResult<any>> {
+        let patio = 7;
+        return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/buscar?marcante=${marcante}&patio=${patio}&local=${local}&placa=${placa}`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    getOrdensByMarcante( local: string, placa:string): Observable<ServiceResult<ItensCargaModel>> {
+        let patio = 7;
+        return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/ordens?patio=${patio}&veiculo=${placa}&local=${local}&inicio=${Date.now()}&tipo=I'`).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showAlert(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    postByMarcante(marcante: string, local: string, placa:string): Observable<ServiceResult<ItensCargaModel>> {
+        let patio = 7;
+        return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/buscar?marcante=${marcante}&patio=${patio}&local=${local}&placa=${placa}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);

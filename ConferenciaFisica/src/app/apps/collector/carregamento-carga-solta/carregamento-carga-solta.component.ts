@@ -112,18 +112,18 @@ export class CarregamentoCargaSoltaComponent {
 
   getNewForm(): FormGroup {
     let result = this.formBuilder.group({
-      marcante: ['', Validators.required],
-      local: ['',],
-      inicio: [''],
-      lote: [''],
-      veiculo: [''],
-      quantidade: [''],
-      container: [''],
-      reserva: [''],
-      conferente: [''],
-      modo: [''],
-      talieCompleto: [false],
-      estufagemCompleta: [false],
+      marcante: new FormControl({ value: '', disabled: false }, Validators.required),
+      local: new FormControl({ value: '', disabled: true }),
+      inicio: new FormControl({ value: '', disabled: true }),
+      lote: new FormControl({ value: '', disabled: true }),
+      veiculo: new FormControl({ value: '', disabled: false }),
+      quantidade: new FormControl({ value: '', disabled: true }),
+      container: new FormControl({ value: '', disabled: true }),
+      reserva: new FormControl({ value: '', disabled: true }),
+      conferente: new FormControl({ value: '', disabled: true }),
+      modo: new FormControl({ value: '', disabled: true }),
+      talieCompleto: new FormControl({ value: false, disabled: true }),
+      estufagemCompleta: new FormControl({ value: false, disabled: true }),
     });
 
 
@@ -142,7 +142,7 @@ export class CarregamentoCargaSoltaComponent {
     };
   }
 
-  buscar() {
+  async buscar() {
     console.log(this.form.get("marcante")?.value)
     if (!this.form.valid) {
       this.form.markAllAsTouched();
@@ -150,11 +150,13 @@ export class CarregamentoCargaSoltaComponent {
       return;
     };
 
-    console.log(this.form.get("marcante")?.value)
-    console.log('eeee')
 
-    this.service.getByMarcante(this.form.get("marcante")?.value).subscribe((response: ServiceResult<ItensCargaModel>) => {
-console.log(response.result?.carregamento)
+    await this.service.getByMarcante(this.form.get("marcante")?.value, this.form.get("local")?.value, this.form.get("placa")?.value).subscribe(async (response: ServiceResult<any>) => {
+      console.log(response.result?.carregamento)
+
+      await this.service.getOrdensByMarcante(response.result?.local,response.result?.placa).subscribe((response: ServiceResult<ItensCargaModel>) => {
+
+      });
     });
 
 
