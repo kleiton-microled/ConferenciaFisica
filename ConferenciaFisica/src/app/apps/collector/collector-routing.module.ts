@@ -13,6 +13,7 @@ import { InventarioCargaSoltaComponent } from "./inventario-carga-solta/inventar
 import { RegistrarSaidaCaminhaoComponent } from "./registrar-saida-caminhao/registrar-saida-caminhao.component";
 import { DescargaArmazemComponent } from "./descarga-armazem/descarga-armazem.component";
 import { DescargaCdComponent } from "./descarga-cd/descarga-cd.component";
+import { CarregamentoCargaSoltaComponent } from "./carregamento-carga-solta/carregamento-carga-solta.component";
 
 const routes: Routes = [{
   path: '',
@@ -82,6 +83,12 @@ const routes: Routes = [{
 {
   path: 'descarga-cd',
   component: DescargaCdComponent,
+  canActivate:[AuthGuard],
+  data: {roles: ['TODAS']}
+},
+{
+  path: 'carregamento-carga-solta',
+  component: CarregamentoCargaSoltaComponent,
   canActivate:[AuthGuard],
   data: {roles: ['TODAS']}
 }];
