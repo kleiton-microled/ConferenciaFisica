@@ -9,7 +9,7 @@
   "BASE_IMAGES": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br",
   "DESCARGA_EXPORTACAO_URL": "https://localhost:5000/api/descarga-exportacao",
   "SAIDA_CAMINHAO_URL": "https://localhost:5000/api/saida-caminhao",
-  "CONFERENCIA_FISICA_URL": "https://localhost:5000/api",
+  "CONFERENCIA_FISICA_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api",
   "PRE_REGISTRO_URL": "https://localhost:5000/api/pre-registro",
   "COLETOR_URL_SERVICE": "https://localhost:5000/api/coletor",
   "MOVIMENTACAO_CARGA_SOLTA_URL":"https://localhost:5000/api/movimentacao-carga-solta",

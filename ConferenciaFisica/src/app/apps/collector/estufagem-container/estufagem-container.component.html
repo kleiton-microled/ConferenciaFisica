@@ -75,7 +75,8 @@
                         </div>
                         <div class="col-3">
                             <label for="ttl">ttl</label>
-                            <input id="ttl" type="text" class="form-control" formControlName="ttl">
+                            <!-- <input id="ttl" type="text" class="form-control" formControlName="ttl"> -->
+                            <p><span style="font-weight: bold; font-size: large;">{{ttl}}</span></p>
                         </div>
                         <!-- <div class="col-3">
                             <label for="lote">lote</label>
@@ -95,7 +96,14 @@
                         </div>
                         <div class="col-3">
                             <label for="quantidade" class="form-label">Quantidade</label>
-                            <input id="quantidade" [disabled]="isDisabled" type="text" class="form-control" [(value)]="quantidade">
+                            <input id="quantidade" [disabled]="isDisabled" type="text" class="form-control"
+                                formControlName="quantidade">
+                            <div *ngIf="form.get('quantidade')?.errors && form.get('quantidade')?.touched"
+                                class="invalid-feedback d-block">
+                                <span *ngIf="form.get('quantidade')?.errors?.required">Campo obrigatório.</span>
+                                <span *ngIf="form.get('quantidade')?.errors?.min">Valor mínimo é 1.</span>
+                                <span *ngIf="form.get('quantidade')?.errors?.max">Valor máximo permitido: {{ saldo }}.</span>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -128,16 +136,10 @@
 
                 </div> -->
             </div>
-            <app-action-footer [buttonsState]="footerButtonsState" 
-                               (saveEvent)="onSubmit()"
-                               (startEvent)="iniciarEstufagem()" 
-                               (cleanupEvent)="clearFomulario()" 
-                               (avariasEvent)="''"
-                               (observacaoEvent)="''" 
-                               (exitEvent)="''" 
-                               (marcanteEvent)="''" 
-                               (estufarEvent)="estufar()"
-                               (finalizarEvent)="finalizar()">
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="onSubmit()"
+                (startEvent)="iniciarEstufagem()" (cleanupEvent)="clearFomulario()" (avariasEvent)="''"
+                (observacaoEvent)="''" (exitEvent)="''" (marcanteEvent)="''" (estufarEvent)="estufar()"
+                (finalizarEvent)="finalizar()">
             </app-action-footer>
         </div>
     </div>

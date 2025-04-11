@@ -140,10 +140,6 @@ export class EstufagemConteinerService extends BaseService<any> {
     getSaldoCargaMarcante(planejamento: number, codigoMarcante: string): Observable<ServiceResult<SaldoCargaMarcante>> {
         return this.http.get<ServiceResult<SaldoCargaMarcante>>(`${this.apiUrl}/saldo-carga-marcante?planejamento=${planejamento}&codigoMarcante=${codigoMarcante}`).pipe(
             map(response => {
-                if (!response.status) {
-                    this.notificationService.showAlert(response);
-                    throw new Error(response.error || 'Erro desconhecido');
-                }
                 return response;
             }),
             catchError((error: HttpErrorResponse) => {
@@ -180,11 +176,11 @@ export class EstufagemConteinerService extends BaseService<any> {
      * TODO - Preciso entender como estufar uma carga
      * @returns boolean
      */
-    getEstufar(): Observable<ServiceResult<boolean>> {
-        return this.http.get<ServiceResult<boolean>>(`${this.apiUrl}/estufar`).pipe(
+    getEstufar(data: SaldoCargaMarcante): Observable<ServiceResult<boolean>> {
+        return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/estufar`, data).pipe(
             map(response => {
                 if (!response.status) {
-                    this.notificationService.showAlert(response);
+                    this.notificationService.showError(response);
                     throw new Error(response.error || 'Erro desconhecido');
                 }
                 return response;

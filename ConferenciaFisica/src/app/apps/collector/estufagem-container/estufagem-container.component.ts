@@ -23,6 +23,8 @@ import { SaldoCargaMarcante } from './model/saldo-carga-marcante.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
 
+
+
 @Component({
   selector: 'app-estufagem-container',
   standalone: true,
@@ -57,14 +59,14 @@ export class EstufagemContainerComponent implements OnInit {
     this.planejamentoAtual.operacao = value;
   }
 
-
-
   form: FormGroup;
   formFilter: FormGroup;
   private planejamentoSub!: Subscription;
 
   isDisabled: boolean = false;
   planejamentoAtual!: Planejamento;
+
+  modelEstufar!: SaldoCargaMarcante;
 
   pageTitle: BreadcrumbItem[] = [];
   columns: Column[] = [];
@@ -77,6 +79,9 @@ export class EstufagemContainerComponent implements OnInit {
 
   modos: SelectizeModel[] = [];
   quantidade: number = 0;
+  saldo: number = 0;
+
+  ttl: number = 0;
 
   constructor(private formBuilder: FormBuilder,
     public formValidationService: FormValidationService,
@@ -102,6 +107,14 @@ export class EstufagemContainerComponent implements OnInit {
     this.planejamentoSub = this._service.getPlanejamentoAtual().subscribe(plan => {
       if (plan)
         this.planejamentoAtual = plan;
+    });
+
+    this.form.controls['quantidade'].valueChanges.subscribe(value => {
+      if (value > this.saldo) {
+        this.atualizarBotoes([{ nome: 'estufar', enabled: false, visible: true }]);
+      } else {
+        this.atualizarBotoes([{ nome: 'estufar', enabled: true, visible: true }]);
+      }
     });
   }
 
@@ -144,6 +157,7 @@ export class EstufagemContainerComponent implements OnInit {
       plan: [{ value: '', disabled: true }],
       ttl: [{ value: '', disabled: true }],
       lote: [''],
+      quantidade: [0, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -234,11 +248,9 @@ export class EstufagemContainerComponent implements OnInit {
       this.form.patchValue(this.planejamentoAtual);
 
       if (this.planejamentoAtual.autonumPatio) {
-        this._service.getItensEstufados(this.planejamentoAtual.autonumPatio).subscribe((ret: ServiceResult<ItensEstufados[]>) => {
-          if (ret.status && ret.result)
-            this.estufagemList = ret.result ?? [];
-        });
 
+        this.ttl = 0;
+        this.listarItensEstufados();
         // this._service.getEtiquetas(filter.planejamento).subscribe((ret: ServiceResult<Etiquetas[]>) => {
         //   if (ret.status && ret.result)
         //     this.etiquetasList = ret.result ?? [];
@@ -258,6 +270,22 @@ export class EstufagemContainerComponent implements OnInit {
 
       }
       this.closeModal();
+    });
+  }
+
+  listarItensEstufados() {
+    this._service.getItensEstufados(this.planejamentoAtual.autonumPatio).subscribe((ret: ServiceResult<ItensEstufados[]>) => {
+      if (ret.status && ret.result) {
+        this.ttl = 0;
+        this.estufagemList = ret.result ?? [];
+
+        this.estufagemList.forEach(item => {
+          this.ttl += item.qtdeSaida;
+        });
+      }
+
+
+      this.form.get('quantidade')?.reset();
     });
   }
 
@@ -315,9 +343,8 @@ export class EstufagemContainerComponent implements OnInit {
   }
 
   estufar() {
-    //TODO verificar com Valdemir
-    this._service.getEstufar().subscribe((ret: ServiceResult<boolean>) => {
-      console.log(ret);
+    this._service.getEstufar(this.modelEstufar).subscribe((ret: ServiceResult<boolean>) => {
+      this.listarItensEstufados();
       this.notificationService.showMessage('Carga estufada com sucesso!', 'Sucesso');
     });
   }
@@ -347,13 +374,47 @@ export class EstufagemContainerComponent implements OnInit {
   };
 
   onMarcanteSelecionado(marcante: { value: any; descricao: string }) {
-    if (marcante) {
+    if (marcante && marcante.descricao != '') {
       this._service.getSaldoCargaMarcante(this.planejamentoAtual.autonumRo, marcante.descricao).subscribe((ret: ServiceResult<SaldoCargaMarcante>) => {
-        console.log(ret);
-        this.quantidade = ret.result?.saldo ?? 0;
-        this.atualizarBotoes([
-          { nome: 'estufar', enabled: true, visible: true }
-        ]);
+        if (ret.status && ret.result) {
+          this.modelEstufar = {
+            autonumRo: this.planejamentoAtual.autonumRo,
+            autonumRcs: ret.result?.autonumRcs ?? 0,
+            autonumPcs: ret.result?.autonumPcs ?? 0,
+            autonumBoo: ret.result?.autonumBoo ?? 0,
+            reservaCarga: ret.result?.reservaCarga ?? '',
+            numNf: ret.result?.numNf ?? '',
+            autonumNf: ret.result?.autonumNf ?? 0,
+            qtde: this.quantidade,
+            saldo: ret.result?.saldo ?? 0,
+            marcante: marcante.descricao,
+            autonumPatio: ret.result?.autonumPatio ?? 0,
+            AutonumEmb: ret.result?.AutonumEmb ?? 0,
+            bruto: ret.result?.bruto ?? 0,
+            comprimento: ret.result?.comprimento ?? 0,
+            largura: ret.result?.largura ?? 0,
+            altura: ret.result?.altura ?? 0,
+            autonumPro: ret.result?.autonumPro ?? 0,
+            conteiner: this.planejamentoAtual.conteiner,
+            idMarcante: marcante.value
+          };
+
+          this.form.get('quantidade')?.setValidators([
+            Validators.required,
+            Validators.min(1),
+            Validators.max(ret.result?.saldo ?? 0)
+          ]);
+
+          this.form.get('quantidade')?.setValue(ret.result?.saldo ?? 0);
+          this.form.get('quantidade')?.updateValueAndValidity();
+          this.saldo = ret.result?.saldo ?? 0;
+
+          this.atualizarBotoes([
+            { nome: 'estufar', enabled: true, visible: true }
+          ]);
+        } else {
+          this.notificationService.showMessage("Marcante não encontrado para esse planejamento", "Tet");
+        }
       });
     }
   }
@@ -373,6 +434,7 @@ export class EstufagemContainerComponent implements OnInit {
     observacao: { enabled: false, visible: false },
     estufar: { enabled: false, visible: true }
   };
+
 
   atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
     const novoEstado = { ...this.footerButtonsState };

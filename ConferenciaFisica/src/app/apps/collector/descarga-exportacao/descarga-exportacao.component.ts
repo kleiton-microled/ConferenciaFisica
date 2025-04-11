@@ -97,7 +97,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     public messageValidationService: FormValidationService,
     private toggleService: FormControlToggleService,
     private coletorService: ColetorService,
-    private authenticationService: AuthenticationService ) {
+    private authenticationService: AuthenticationService) {
     this.form = this.getMainForm();
 
     this.editItemForm = this.getEditItemForm();
@@ -155,7 +155,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       placa: new FormControl({ value: '', disabled: true },),
       reserva: new FormControl({ value: '', disabled: true },),
       cliente: new FormControl({ value: '', disabled: true },),
-      isCrossDocking:  new FormControl({ value: false, disabled: true },),
+      isCrossDocking: new FormControl({ value: false, disabled: true },),
       container: new FormControl({ value: null, disabled: false },),
       conferente: new FormControl({ value: 'Microled', disabled: true }),
       equipe: new FormControl(null, Validators.required),
@@ -643,6 +643,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
+    console.log(this.descargaAtual);
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
@@ -798,7 +799,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    */
   finalizarProcessoDescarga() {
     if (this.descargaAtual.talie?.id) {
-      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, this.form.get('isCrossDocking')?.value, this.authenticationService.currentUser()?.email, this.form.get('container')?.value ).subscribe((ret: ServiceResult<boolean>) => {
+      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, this.form.get('isCrossDocking')?.value, this.authenticationService.currentUser()?.email, this.form.get('container')?.value).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
           this.buscarRegistro();

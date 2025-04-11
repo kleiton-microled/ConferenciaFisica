@@ -62,7 +62,9 @@ export class PhysicalConferenceHeaderComponent {
     delete: { enabled: false, visible: true },
     photo: { enabled: false, visible: true },
     marcante: { enabled: false, visible: false },
-    observacao: { enabled: false, visible: false }
+    observacao: { enabled: false, visible: false },
+    estufar: { enabled: false, visible: false }
+
   };
 
 
