@@ -447,6 +447,10 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
+    /**
+     * Realiza o download de todas as fotos de um processo.
+     * @param talieId 
+     */
     downloadZipFotos(talieId: number) {
         this.http.get(`${this.urlApi}/processo/${talieId}/zip`, { responseType: 'blob' }).subscribe(blob => {
           const link = document.createElement('a');

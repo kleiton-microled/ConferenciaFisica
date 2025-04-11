@@ -20,15 +20,15 @@ export class CardComponent implements OnInit {
   }
 
   loadToolsCard(): void {
-    this.service.getModules().subscribe((result) => {
-      if (result.statusCode == 200) {
-        console.log(result);
-        this.tools = result.content;
-        console.log(this.tools);
-      } else {
-        console.error(result.message);
-      }
-    })
+    // this.service.getModules().subscribe((result) => {
+    //   if (result.statusCode == 200) {
+    //     console.log(result);
+    //     this.tools = result.content;
+    //     console.log(this.tools);
+    //   } else {
+    //     console.error(result.message);
+    //   }
+    // })
   }
 
 }

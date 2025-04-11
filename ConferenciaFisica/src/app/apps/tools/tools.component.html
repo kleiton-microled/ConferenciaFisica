@@ -7,6 +7,14 @@
                     <div class="col-lg-12">
                         <h3 style="font-weight: 100;">FERRAMENTAS DE APOIO BAND DEICMAR</h3>
                     </div>
+                    <div class="col-3 mt-3">
+                        <app-microled-select 
+                                label="Selecione um Patio para liberar as ferramentas" 
+                                [items]="listaDePatios"
+                                [control]="patioControl" 
+                                (selectionChange)="onSelectChange($event)">
+                        </app-microled-select>
+                    </div>
                     <div class="row">
                         <app-card></app-card>
                     </div>
