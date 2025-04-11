@@ -24,14 +24,14 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     private descargaSubject = new BehaviorSubject<DescargaExportacao | null>(null);
     private urlApi = "";
 
-    
+
     constructor(http: HttpClient, private configService: ConfigService, private notificationService: NotificationService) {
         super(http, configService.getConfig('DESCARGA_EXPORTACAO_URL'));
 
         this.urlApi = configService.getConfig('DESCARGA_EXPORTACAO_URL');
     }
 
-    
+
 
     // Obtém o estado atual da DescargaExportacao
     getCurrentDescarga(): Observable<DescargaExportacao | null> {
@@ -68,7 +68,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         this.descargaSubject.next(null);
     }
 
- 
+
 
 
     /**
@@ -373,8 +373,8 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
             finalize(() => this.notificationService.hideLoading())
         );
     }
-    
-    postProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
+
+    postProcessoFoto(data: Foto): Observable<ServiceResult<boolean>> {
         return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/processo`, data).pipe(
             map(response => {
                 if (!response.status) {
@@ -391,7 +391,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
-    putProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
+    putProcessoFoto(data: Foto): Observable<ServiceResult<boolean>> {
         return this.http.put<ServiceResult<boolean>>(`${this.urlApi}/processo`, data).pipe(
             map(response => {
                 if (!response.status) {
@@ -408,7 +408,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
-    deleteProcessoFoto(data:Foto): Observable<ServiceResult<boolean>> {
+    deleteProcessoFoto(data: Foto): Observable<ServiceResult<boolean>> {
         return this.http.delete<ServiceResult<boolean>>(`${this.urlApi}/processo/${data.id}`).pipe(
             map(response => {
                 if (!response.status) {
@@ -425,6 +425,11 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
+    /**
+     * 
+     * @param data 
+     * @returns boolean
+     */
     saveFotos(data: Marcante): Observable<ServiceResult<boolean>> {
         return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/salvar-fotos`, data).pipe(
             map(response => {
@@ -442,4 +447,13 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
+    downloadZipFotos(talieId: number) {
+        this.http.get(`${this.urlApi}/processo/${talieId}/zip`, { responseType: 'blob' }).subscribe(blob => {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = `fotos-processo-${talieId}.zip`;
+          link.click();
+          URL.revokeObjectURL(link.href);
+        });
+      }
 }

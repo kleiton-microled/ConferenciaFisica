@@ -31,8 +31,10 @@ export class MicroledPhotosComponent implements OnInit {
   @Output() salvarFotoEmitter = new EventEmitter<Foto>();
   @Output() salvarAlteracaoFotoEmitter = new EventEmitter<Foto>();
   @Output() excluirFotoEmitter = new EventEmitter<Foto>();
+  @Output() downloadFotosEmitter = new EventEmitter<void>();
+
   fotos: Foto[] = [];
-  urlBasePhotos: string ='';
+  urlBasePhotos: string = '';
   fotosForm: FormGroup;
   fotoEditando!: Foto | null;
 
@@ -42,7 +44,7 @@ export class MicroledPhotosComponent implements OnInit {
   @ViewChild('editPhotoModal') editPhotoModal!: any;
 
   @ViewChild('viewPhotoModal') viewPhotoModal: any;
-fotoAmpliadaSrc: string = '';
+  fotoAmpliadaSrc: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -69,14 +71,14 @@ fotoAmpliadaSrc: string = '';
   ampliarFoto(src: string) {
     this.fotoAmpliadaSrc = src;
     this.modalService.open(this.viewPhotoModal, { size: 'lg' });
-}
+  }
 
-fecharVisualizacao(modal: any) {
-  modal.close()
-}
+  fecharVisualizacao(modal: any) {
+    modal.close()
+  }
 
   adicionarFoto(resultado: FotoCapturada) {
-    let ultimaFoto = this.fotos.length > 0 ? this.fotos[this.fotos.length - 1]: null;
+    let ultimaFoto = this.fotos.length > 0 ? this.fotos[this.fotos.length - 1] : null;
     let id = ultimaFoto?.id ?? this.nextId++;
     const novaFoto: Foto = {
       id: id,
@@ -90,9 +92,9 @@ fecharVisualizacao(modal: any) {
       idTipoProcesso: resultado.tipoProcesso,
       containerId: null
     };
-    
+
     this.fotos.push(novaFoto);
-    
+
     this.salvarFotoEmitter.emit(novaFoto);
   }
 
@@ -102,7 +104,7 @@ fecharVisualizacao(modal: any) {
       this.excluirFotoEmitter.emit(foto);
       this.fotos = this.fotos.filter(foto => foto.id !== id);
     }
-   
+
   }
 
   fecharModal(): void {
@@ -128,9 +130,14 @@ fecharVisualizacao(modal: any) {
     this.fecharModalEdicao();
   }
 
-  salvarFotos() : void {
+  salvarFotos(): void {
     // this.salvarFotosEmitter.emit(this.fotos);
   }
+
+  baixarFotosZip(): void {
+    this.downloadFotosEmitter.emit(); // Apenas notifica o pai
+  }
+  
 
   fecharModalEdicao() {
     if (this.modalRef) {

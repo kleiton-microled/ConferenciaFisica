@@ -495,6 +495,15 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       });
     });
 
+    modalRef.componentInstance.downloadFotosEmitter.subscribe(() => {
+      const talieId = this.descargaAtual.talie?.id;
+      if (!talieId) return;
+    
+      this.service.downloadZipFotos(talieId);
+    
+      // ou se quiser usar HttpClient:
+      // this.service.downloadZip(talieId);
+    });
 
   }
 
