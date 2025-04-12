@@ -30,11 +30,10 @@ import { EnumValue } from 'src/app/shared/models/enumValue.model';
 })
 export class CarregamentoCargaSoltaComponent {
 
-
   pageTitle: BreadcrumbItem[] = [];
   form: FormGroup;
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
-    start: { enabled: false, visible: false },
+    start: { enabled: true, visible: true },
     stop: { enabled: true, visible: true },
     alert: { enabled: false, visible: false },
     clear: { enabled: true, visible: true },
@@ -97,9 +96,9 @@ export class CarregamentoCargaSoltaComponent {
 
   getVeiculos() {
     this.service.getVeiculos().subscribe((response: ServiceResult<EnumValue[]>) => {
-      this.veiculos = response.result?.map(item => ({
-        id: item.id,
-        label: item.descricao
+      this.veiculos = response.result?.map(c => ({
+        id: c.id,
+        label: c.descricao
       })) || [];
     });
   }
@@ -108,7 +107,16 @@ export class CarregamentoCargaSoltaComponent {
     this.router.navigate(['/apps/tools']);
   }
 
-  limpar() { this.form.reset(); }
+  limpar() { this.form.reset(); this.itensList = []; this.ordensList = []; }
+
+  iniciar() {
+    let data = new Date();
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    const ano = data.getFullYear();
+    
+    this.form.get("inicio")?.setValue( `${dia}/${mes}/${ano}`);
+  }
 
   getNewForm(): FormGroup {
     let result = this.formBuilder.group({
@@ -130,7 +138,7 @@ export class CarregamentoCargaSoltaComponent {
     return result;
   }
 
-  onSelectChange($event: any) {
+  onSelectVeiculoChange($event: any) {
     console.log($event)
   }
 
@@ -144,19 +152,32 @@ export class CarregamentoCargaSoltaComponent {
 
   async buscar() {
     console.log(this.form.get("marcante")?.value)
-    if (!this.form.valid) {
-      this.form.markAllAsTouched();
+    // if (!this.form.valid) {
+    //   this.form.markAllAsTouched();
 
-      return;
-    };
+    //   return;
+    // };
 
+    let placa = this.veiculos[this.form.get("veiculo")?.value].label.split(" ")[0].trim();
+
+    await this.service.getOrdensByMarcante(placa).subscribe((response: ServiceResult<ItensCargaModel>) => {
+
+      this.itensList = response.result?.ordens?.map(c => {
+        var model = new CarregamentoCargaSoltaModel();
+        model.id = c.id;
+        model.numOc = c.ordemCarreg;
+        model.lote = c.lote;
+        model.quantidade = c.quantidade;
+        model.carregado = c.qtdeCarregada;
+        model.embalagem = c.embalagem;
+
+        return model;
+      }) ?? [];
+    });
 
     await this.service.getByMarcante(this.form.get("marcante")?.value, this.form.get("local")?.value, this.form.get("placa")?.value).subscribe(async (response: ServiceResult<any>) => {
-      console.log(response.result?.carregamento)
-
-      await this.service.getOrdensByMarcante(response.result?.local,response.result?.placa).subscribe((response: ServiceResult<ItensCargaModel>) => {
-
-      });
+      this.form.get("lote")?.setValue(response.result.os);
+      this.form.get("quantidade")?.setValue(response.result.volumes);
     });
 
 
@@ -196,7 +217,7 @@ export class CarregamentoCargaSoltaComponent {
       {
         name: "marcante",
         label: "marcante",
-        formatter: (item: ItensCarregadosModel) => item.marcante
+        formatter: (item: ItensCarregadosModel) => item.ordemCarreg
       },
       {
         name: "lote",

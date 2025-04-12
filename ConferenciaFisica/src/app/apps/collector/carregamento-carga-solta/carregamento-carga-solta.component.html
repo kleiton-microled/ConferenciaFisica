@@ -62,7 +62,7 @@
                                 placeholder="Selecione o Veiculo"
                                 [items]="veiculos"
                                 [control]="veiculosControl"
-                                (selectionChange)="onSelectChange($event)">
+                                (selectionChange)="onSelectVeiculoChange($event)">
                             </app-microled-select>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                 <app-action-footer
                     [buttonsState]="footerButtonsState"
                     (saveEvent)="gravar()"
-                    (startEvent)="''"
+                    (startEvent)="iniciar()"
                     (cleanupEvent)="limpar()"
                     (avariasEvent)="''"
                     (observacaoEvent)="''"
