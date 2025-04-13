@@ -43,22 +43,22 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
         return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/buscar?marcante=${marcante}&patio=${patio}&local=${local}&placa=${placa}`).pipe(
             map(response => {
                 if (!response.status) {
-                    this.notificationService.showAlert(response);
+                    // this.notificationService.showAlert(response);
                     throw new Error(response.error || 'Erro desconhecido');
                 }
                 return response;
             }),
             catchError((error: HttpErrorResponse) => {
-                this.notificationService.showError(error);
+                // this.notificationService.showError(error);
                 return throwError(() => error);
             }),
             finalize(() => this.notificationService.hideLoading())
         );
     }
 
-    getOrdensByMarcante( local: string, placa:string): Observable<ServiceResult<ItensCargaModel>> {
+    getOrdensByMarcante( placa:string): Observable<ServiceResult<ItensCargaModel>> {
         let patio = 7;
-        return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/ordens?patio=${patio}&veiculo=${placa}&local=${local}&inicio=${Date.now()}&tipo=I'`).pipe(
+        return this.http.get<ServiceResult<ItensCargaModel>>(`${this.urlApi}/ordens?patio=${patio}&veiculo=${placa}'`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);
@@ -93,7 +93,7 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
     }
 
     getVeiculos(): Observable<ServiceResult<EnumValue[]>> {
-        let patio = 7;
+        let patio = 2;
         return this.http.get<ServiceResult<EnumValue[]>>(`${this.urlApi}/veiculos?patio=${patio}`).pipe(
             map(response => {
                 if (!response.status) {
@@ -107,7 +107,22 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
             finalize(() => this.notificationService.hideLoading())
         );    }
 
-
+        postInico(veiculo: string): Observable<ServiceResult<Date>> {
+            return  this.http.post<ServiceResult<Date>>(`${this.urlApi}/iniciar?veiculo=${veiculo}`, null).pipe(
+                map(response => {
+                    if (!response.status) {
+                        this.notificationService.showError(response);
+                        throw new Error(response.error || 'Erro desconhecido');
+                    }
+                    return response;
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    this.notificationService.showError(error);
+                    return throwError(() => error);
+                }),
+                finalize(() => this.notificationService.hideLoading())
+            );
+        }
 
     // Atualiza o objeto no Subject
     updateDescarga(descarga: CarregamentoCargaSoltaModel | null): void {

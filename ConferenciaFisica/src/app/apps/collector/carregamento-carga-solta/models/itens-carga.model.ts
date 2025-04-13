@@ -3,8 +3,8 @@ import { ItensCarregadosModel } from "./itens-carregados.model";
 
 export class ItensCargaModel{
     
-    carregamento: CarregamentoCargaSoltaModel[]|null = null;
-    carregados: ItensCarregadosModel[]|null = null;
+    itensCarregados: CarregamentoCargaSoltaModel[]|null = null;
+    ordens: ItensCarregadosModel[]|null = null;
 
     constructor(init?: Partial<ItensCargaModel>) {
         Object.assign(this, init);
