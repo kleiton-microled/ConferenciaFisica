@@ -13,7 +13,7 @@
         </div>
     </div>
 </div> -->
-<div class="row">
+<!-- <div class="row">
     <div *ngFor="let tool of tools" class="col-md-4 mt-3">
         <a *ngIf="tool.link" [href]="tool.link" target="_self" class="tool-card metro-tile">
             <h4>{{ tool.title }}</h4>
@@ -24,5 +24,29 @@
             </div>
         </a>
     </div>
-</div>
+</div> -->
+<div class="row">
+    <div *ngFor="let tool of tools" class="col-md-4 mt-3">
 
+        <!-- Link ativo -->
+        <a *ngIf="tool.link && !tool.isDisabled" [href]="tool.link" target="_self" class="tool-card metro-tile">
+            <h4>{{ tool.title }}</h4>
+            <p>{{ tool.description }}</p>
+            <div class="tool-card-footer">
+                <span class="tool-version"><strong>Versão:</strong> {{ tool.version }}</span>
+                <span class="tool-access"><i class="fas fa-external-link-alt"></i> Acessar</span>
+            </div>
+        </a>
+
+        <!-- Card desabilitado (visual alternativo) -->
+        <div *ngIf="tool.isDisabled" class="tool-card metro-tile disabled-tile">
+            <h4>{{ tool.title }}</h4>
+            <p>{{ tool.description }}</p>
+            <div class="tool-card-footer">
+                <span class="tool-version"><strong>Versão:</strong> {{ tool.version }}</span>
+                <span class="tool-access text-muted"><i class="fas fa-lock"></i> Indisponível</span>
+            </div>
+        </div>
+
+    </div>
+</div>

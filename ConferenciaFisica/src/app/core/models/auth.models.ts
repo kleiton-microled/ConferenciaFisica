@@ -1,3 +1,5 @@
+import { Patio } from "src/app/apps/tools/model/patio.model";
+
 export class User {
     id?: number;
     username?: string;
@@ -13,4 +15,5 @@ export class User {
 
     roles?: string[];
     permissions?: string[];
+    patio?: Patio;
 }

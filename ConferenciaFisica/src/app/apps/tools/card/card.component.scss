@@ -115,3 +115,12 @@
   opacity: 0.8;
 }
 
+.disabled-tile {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: #f0f0f0;
+  border: 1px dashed #999;
+  color: #999;
+}
+

@@ -8,6 +8,7 @@ import { SelectizeModel } from "src/app/shared/microled-select/microled-select.c
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ServiceResult } from "src/app/shared/models/serviceresult.model";
 import { Patio } from "./model/patio.model";
+import { AuthenticationService } from "src/app/core/service/auth.service";
 
 @Component({
   selector: "app-tools",
@@ -18,10 +19,11 @@ export class ToolsComponent implements OnInit {
   pageTitle: BreadcrumbItem[] = [];
   tools: ToolsModel[] = [];
   listaDePatios: SelectizeModel[] = [];
+  toolsDisabled: boolean = true;
 
   form: FormGroup;
 
-  constructor(private service: ToolsService, private fb: FormBuilder) {
+  constructor(private service: ToolsService, private fb: FormBuilder, private userService: AuthenticationService) {
     this.form = this.fb.group({
       patio: ['', Validators.required]
     })
@@ -30,20 +32,14 @@ export class ToolsComponent implements OnInit {
   ngOnInit(): void {
     this.pageTitle = [{ label: "Home", path: "/", active: true }];
 
-    //this.tools = TOOLS;
-    //this.loadToolsCard();
-  }
-
-  loadToolsCard(): void {
-    // this.service.getModules().subscribe((result) => {
-    //   if (result.statusCode == 200) {
-    //     console.log(result);
-    //     this.tools = result.content;
-    //     console.log(this.tools);
-    //   } else {
-    //     console.error(result.message);
-    //   }
-    // })
+    this.carregarPatios();
+    this.form.controls['patio'].valueChanges.subscribe(value => {
+      if (value != '') {
+        this.toolsDisabled = false;
+      } else {
+        this.toolsDisabled = true;
+      }
+    })
   }
 
   get patioControl(): FormControl {
@@ -65,6 +61,14 @@ export class ToolsComponent implements OnInit {
   }
 
   onSelectChange(value: any) {
+    const filtro = this.listaDePatios.find(p => +p.id == +value); 
+    if (!filtro) return;
+  
+    const patio = Patio.New(+filtro.id, filtro.label); 
+  
     this.form.controls['patio'].setValue(value);
+    this.userService.setPatio(patio);
   }
-}
+  
+
+}  
