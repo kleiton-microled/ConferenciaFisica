@@ -33,6 +33,7 @@ export class ToolsComponent implements OnInit {
     this.pageTitle = [{ label: "Home", path: "/", active: true }];
 
     this.carregarPatios();
+
     this.form.controls['patio'].valueChanges.subscribe(value => {
       if (value != '') {
         this.toolsDisabled = false;
@@ -53,6 +54,11 @@ export class ToolsComponent implements OnInit {
           id: p.id,
           label: p.descricao
         }));
+        
+        var user = this.userService.currentUser();
+        if (user?.patio?.id && user.patio.id > 0) {
+          this.form.controls['patio'].setValue(user.patio.id);
+        }
       } else {
         this.listaDePatios = [];
       }
@@ -61,14 +67,14 @@ export class ToolsComponent implements OnInit {
   }
 
   onSelectChange(value: any) {
-    const filtro = this.listaDePatios.find(p => +p.id == +value); 
+    const filtro = this.listaDePatios.find(p => +p.id == +value);
     if (!filtro) return;
-  
-    const patio = Patio.New(+filtro.id, filtro.label); 
-  
+
+    const patio = Patio.New(+filtro.id, filtro.label);
+
     this.form.controls['patio'].setValue(value);
     this.userService.setPatio(patio);
   }
-  
+
 
 }  
