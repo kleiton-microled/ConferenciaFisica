@@ -107,7 +107,22 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
             finalize(() => this.notificationService.hideLoading())
         );    }
 
-
+        postInico(veiculo: string): Observable<ServiceResult<Date>> {
+            return  this.http.post<ServiceResult<Date>>(`${this.urlApi}/iniciar?veiculo=${veiculo}`, null).pipe(
+                map(response => {
+                    if (!response.status) {
+                        this.notificationService.showError(response);
+                        throw new Error(response.error || 'Erro desconhecido');
+                    }
+                    return response;
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    this.notificationService.showError(error);
+                    return throwError(() => error);
+                }),
+                finalize(() => this.notificationService.hideLoading())
+            );
+        }
 
     // Atualiza o objeto no Subject
     updateDescarga(descarga: CarregamentoCargaSoltaModel | null): void {

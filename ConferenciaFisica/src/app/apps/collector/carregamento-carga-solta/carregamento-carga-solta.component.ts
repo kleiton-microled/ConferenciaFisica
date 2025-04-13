@@ -33,12 +33,12 @@ export class CarregamentoCargaSoltaComponent {
   pageTitle: BreadcrumbItem[] = [];
   form: FormGroup;
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
-    start: { enabled: true, visible: true },
-    stop: { enabled: true, visible: true },
+    start: { enabled: false, visible: true },
+    stop: { enabled: false, visible: true },
     alert: { enabled: false, visible: false },
     clear: { enabled: true, visible: true },
     exit: { enabled: true, visible: true },
-    save: { enabled: true, visible: true },
+    save: { enabled: false, visible: false },
     delete: { enabled: false, visible: false },
     photo: { enabled: false, visible: false },
     marcante: { enabled: false, visible: false },
@@ -87,7 +87,8 @@ export class CarregamentoCargaSoltaComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private sanitizer: DomSanitizer,
-    private service: CarregamentoCargaSoltaService
+    private service: CarregamentoCargaSoltaService,
+    private notificationService: NotificationService
   ) {
     this.form = this.getNewForm();
     this.getVeiculos();
@@ -110,12 +111,16 @@ export class CarregamentoCargaSoltaComponent {
   limpar() { this.form.reset(); this.itensList = []; this.ordensList = []; }
 
   iniciar() {
+    let placa = this.veiculos[this.form.get("veiculo")?.value].label.split(" ")[0].trim();
     let data = new Date();
     const dia = data.getDate().toString().padStart(2, '0');
     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
     const ano = data.getFullYear();
+    this.service.postInico(placa).subscribe((response: ServiceResult<Date>) => {
+      if(response.result == null) return;
+      this.form.get("inicio")?.setValue(response.result);
+    });
     
-    this.form.get("inicio")?.setValue( `${dia}/${mes}/${ano}`);
   }
 
   getNewForm(): FormGroup {
@@ -124,7 +129,7 @@ export class CarregamentoCargaSoltaComponent {
       local: new FormControl({ value: '', disabled: true }),
       inicio: new FormControl({ value: '', disabled: true }),
       lote: new FormControl({ value: '', disabled: true }),
-      veiculo: new FormControl({ value: '', disabled: false }),
+      veiculo: new FormControl({ value: '', disabled: false }, Validators.required),
       quantidade: new FormControl({ value: '', disabled: true }),
       container: new FormControl({ value: '', disabled: true }),
       reserva: new FormControl({ value: '', disabled: true }),
@@ -151,12 +156,18 @@ export class CarregamentoCargaSoltaComponent {
   }
 
   async buscar() {
-    console.log(this.form.get("marcante")?.value)
-    // if (!this.form.valid) {
-    //   this.form.markAllAsTouched();
+    if (!this.form.valid) {
+      this.form.markAllAsTouched();
 
-    //   return;
-    // };
+      return;
+    };
+
+    if(this.form.get("veiculo")?.valid) {
+      
+      this.notificationService.showMessage("Selecione um veículo", "info");
+
+      return;
+    }
 
     let placa = this.veiculos[this.form.get("veiculo")?.value].label.split(" ")[0].trim();
 
