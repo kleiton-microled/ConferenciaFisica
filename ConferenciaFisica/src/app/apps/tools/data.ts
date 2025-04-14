@@ -8,6 +8,7 @@ export const TOOLS: ToolsModel[] = [
       "Descarga de exportação.",
     version: 1,
     link: "apps/collector/descarga-exportacao",
+    isDisabled: true
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const TOOLS: ToolsModel[] = [
       "Conferência física",
     version: 1,
     link: "apps/collector/physical-conference",
+    isDisabled: true
   },
   // {
   //   id: 3,
@@ -32,6 +34,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de estufagem container",
     version: 1,
     link: "apps/collector/estufagem-container",
+    isDisabled: true
   },
   {
     id: 5,
@@ -40,6 +43,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de movimentação carga solta",
     version: 1,
     link: "apps/collector/movimentaca-carga-solta",
+    isDisabled: true
   },
   {
     id: 6,
@@ -48,6 +52,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de Marcantes carga solta",
     version: 1,
     link: "apps/collector/marcante-carga-solta",
+    isDisabled: true
   },
   {
     id: 7,
@@ -56,6 +61,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de Movimentação de conteiner",
     version: 1,
     link: "apps/collector/movimentacao-container",
+    isDisabled: true
   },
   {
     id: 8,
@@ -64,6 +70,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo de Inventario Carga Solta",
     version: 1,
     link: "apps/collector/inventario-carga-solta",
+    isDisabled: true
   },
   {
     id: 9,
@@ -72,6 +79,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo para Registrar Saida Caminhão",
     version: 1,
     link: "apps/collector/registrar-saida-caminhao",
+    isDisabled: true
   },
   {
     id: 10,
@@ -80,14 +88,7 @@ export const TOOLS: ToolsModel[] = [
       "Modulo para Descarga Armazem",
     version: 1,
     link: "apps/collector/descarga-armazem",
-  },
-  {
-    id: 11,
-    title: "Descarga CD",
-    description:
-      "Modulo para Descarga CD",
-    version: 1,
-    link: "apps/collector/descarga-cd",
+    isDisabled: true
   },
   {
     id: 12,
@@ -96,5 +97,6 @@ export const TOOLS: ToolsModel[] = [
       "Modulo para Carregamento Carga Solta",
     version: 1,
     link: "apps/collector/carregamento-carga-solta",
+    isDisabled: true
   }
 ];

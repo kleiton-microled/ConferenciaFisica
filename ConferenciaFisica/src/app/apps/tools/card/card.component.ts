@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ToolsModel } from '../tools.model';
 import { TOOLS } from '../data';
 import { ToolsService } from '../tools.service';
@@ -8,27 +8,33 @@ import { ToolsService } from '../tools.service';
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss'
 })
-export class CardComponent implements OnInit {
+export class CardComponent implements OnInit, OnChanges {
 
   tools: ToolsModel[] = TOOLS;
+  @Input() isDisabled: boolean = true;
+
 
   constructor(private service: ToolsService) { }
 
   ngOnInit(): void {
     this.tools;
-    //this.loadToolsCard();
+    // if (this.isDisabled) {
+    //   console.log('Filho: ', this.isDisabled);
+    //   this.tools = this.tools.map(tool => ({ ...tool, isDisabled: true }));
+    // }
   }
 
-  loadToolsCard(): void {
-    // this.service.getModules().subscribe((result) => {
-    //   if (result.statusCode == 200) {
-    //     console.log(result);
-    //     this.tools = result.content;
-    //     console.log(this.tools);
-    //   } else {
-    //     console.error(result.message);
-    //   }
-    // })
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isDisabled']) {
+      this.applyDisableState();
+    }
+  }
+
+  applyDisableState(): void {
+    this.tools = TOOLS.map(tool => ({
+      ...tool,
+      isDisabled: this.isDisabled
+    }));
   }
 
 }
