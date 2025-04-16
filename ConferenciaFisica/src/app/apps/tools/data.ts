@@ -19,14 +19,15 @@ export const TOOLS: ToolsModel[] = [
     link: "apps/collector/physical-conference",
     isDisabled: true
   },
-  // {
-  //   id: 3,
-  //   title: "Pré Registro",
-  //   description:
-  //     "Modulo de pré registro",
-  //   version: 1,
-  //   link: "apps/collector/pre-registro",
-  // },
+  {
+    id: 3,
+    title: "Pré Registro",
+    description:
+      "Modulo de pré registro",
+    version: 1,
+    link: "apps/collector/pre-registro",
+    isDisabled: true
+  },
   {
     id: 4,
     title: "Estufagem Container",

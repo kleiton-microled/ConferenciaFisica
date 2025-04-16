@@ -20,6 +20,8 @@ export class BaseService<T> {
         return this.http.get<ServiceResult<Patio[]>>(`${this.baseUrl}/patios`);
     }
 
+
+
     // //Buscar todos os modulos - Futuramente vamos tratar as permissoes
     // getModules(): Observable<GetAllResponse<T>> {
     //     return this.http.get<GetAllResponse<T>>(`${this.baseUrl}/GetModules`);

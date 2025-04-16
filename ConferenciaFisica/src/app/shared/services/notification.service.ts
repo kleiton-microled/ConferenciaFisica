@@ -39,14 +39,15 @@ export class NotificationService {
     this.hideLoading();
 
     let errorMessage = '';
-    console.log(errorMessage);
     if (errorResponse?.error) {
+     
       const serviceResult = errorResponse.error as ServiceResult<any>;
 
+      console.log(serviceResult);
       if (serviceResult.mensagens && serviceResult.mensagens.length > 0) {
         errorMessage = serviceResult.mensagens.join('\n'); // Junta mensagens de erro
-      } else if (serviceResult.error) {
-        errorMessage = serviceResult.error; // Usa a propriedade `error` se presente
+      } else if (serviceResult) {
+        errorMessage =  errorResponse.error; // Usa a propriedade `error` se presente
       }
     }
 
