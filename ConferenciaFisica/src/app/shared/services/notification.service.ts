@@ -89,4 +89,27 @@ export class NotificationService {
       confirmButtonText: 'OK'
     });
   }
+
+  showToast(message: string, icon: 'success' | 'error' | 'info' | 'warning' = 'success') {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon,
+      title: message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      backdrop: false,
+      background: '#fff',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      stopKeydownPropagation: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+  }
+  
 }
