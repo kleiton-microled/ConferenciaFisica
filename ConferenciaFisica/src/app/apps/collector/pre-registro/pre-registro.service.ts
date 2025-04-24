@@ -21,20 +21,37 @@ export class PreRegistroService extends BaseService<Patio> {
     }
 
 
-    postBuscarRegistro(input: any): Observable<ServiceResult<any>>  {
-            return this.http.post<ServiceResult<any>>(`${PRE_REGISTRO_URL}/dados-agendamento`,input).pipe(
-                map(response => {
-                    if (response && !response.status) {
-                        this.notificationService.showError(response);
-                    }
-                    return response;
-                }),
-                catchError((error: Error) => {
-                    this.notificationService.showError(error);
-                    return throwError(() => error);
-                }),
-                finalize(() => this.notificationService.hideLoading())
-            );
-        }
+    postBuscarRegistro(input: any): Observable<ServiceResult<any>> {
+        return this.http.post<ServiceResult<any>>(`${PRE_REGISTRO_URL}/dados-agendamento`, input).pipe(
+            map(response => {
+                if (response && !response.status) {
+                    this.notificationService.showError(response);
+                }
+                return response;
+            }),
+            catchError((error: Error) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
+    postRegistrarSaida(input: any): Observable<ServiceResult<any>> {
+        console.log(input);
+        return this.http.post<ServiceResult<any>>(`${PRE_REGISTRO_URL}/registrar-sem-agendamento`, input).pipe(
+            map(response => {
+                if (response && !response.status) {
+                    this.notificationService.showError(response);
+                }
+                return response;
+            }),
+            catchError((error: Error) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
 
 }

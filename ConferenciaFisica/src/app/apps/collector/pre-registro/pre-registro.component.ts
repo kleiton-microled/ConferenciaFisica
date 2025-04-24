@@ -32,12 +32,14 @@ export class PreRegistroComponent implements OnInit {
 
   pageTitle: BreadcrumbItem[] = [];
   form: FormGroup;
+  formModal: FormGroup;
+formValue: any = null;
 
   patiosDestino: SelectizeModel[] = [];
 
   finalidade: SelectizeModel[] = [{ id: 1, label: "Importarcao" }, { id: 2, label: "Exportacao" }];
 
-  formModal: FormGroup;
+
   @ViewChild('cargaModal') cargaModal!: TemplateRef<any>;
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
     start: { enabled: false, visible: false },
@@ -65,19 +67,20 @@ export class PreRegistroComponent implements OnInit {
     this.form = this.formBuilder.group({
       finalidade: new FormControl("", Validators.required),
       patioDestino: new FormControl(""),
-      placa: new FormControl(""),
+      placa:new FormControl("", Validators.required),
       placaCarreta: new FormControl("", Validators.required),
       ticket: new FormControl("", Validators.required),
     });
+
     this.formModal = this.formBuilder.group({
-      preRegistroId: [''],
-      protocolo: [''],
-      placa: [''],
-      placaCarreta: [''],
-      ticketEntrada: [''],
-      pesoBruto: [''],
-      gateIn: [''],
-      gateOut: ['']
+      protocolo: new FormControl({ value: '', disabled: true }),
+      periodo: new FormControl({ value: '', disabled: true }),
+      periodoInicial: new FormControl({ value: '', disabled: true }),
+      periodoFinal: new FormControl({ value: '', disabled: true }),
+      placa: new FormControl({ value: '', disabled: true }),
+      placaCarreta: new FormControl({ value: '', disabled: true }),
+      motorista: new FormControl({ value: '', disabled: true }),
+      cnh: new FormControl({ value: '', disabled: true })
     });
   }
 
@@ -87,7 +90,9 @@ export class PreRegistroComponent implements OnInit {
   }
 
   RegitrarSaida() {
-    throw new Error('Method not implemented.');
+    this.service.postRegistrarSaida(this.formModal.value).subscribe((response: ServiceResult<any>) => {
+      if (!response || response.result == null || !response.status || response.error) return;
+    });
   }
 
   async carregarPatios(): Promise<void> {
@@ -115,6 +120,10 @@ export class PreRegistroComponent implements OnInit {
   }
 
   buscarRegistro() {
+    if(!this.form.valid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     const filter = {
       finalidade: this.form.get("finalidade")?.value,
       patioDestino: this.form.get("patioDestino")?.value,
@@ -125,9 +134,20 @@ export class PreRegistroComponent implements OnInit {
     };
 
     this.service.postBuscarRegistro(filter).subscribe((response: ServiceResult<any>) => {
-      this.modalService.open(this.cargaModal, { size: 'xl', backdrop: 'static', centered: false });
-      if (!response || response.result == null) return;
-      console.log(response)
+      if (!response || response.result == null || !response.status || response.error) return;
+     
+      this.formValue = response.result;
+      this.formModal.patchValue({
+        protocolo: response.result.protocolo,
+        periodo: response.result.periodo,
+        periodoInicial: response.result.periodoInicial,
+        periodoFinal: response.result.periodoFinal,
+        placa: response.result.placa,
+        placaCarreta: response.result.placaCarreta,
+        motorista: response.result.motorista,
+        cnh: response.result.cnh
+      });
+
       this.modalService.open(this.cargaModal, { size: 'xl', backdrop: 'static', centered: false });
     });
   }
