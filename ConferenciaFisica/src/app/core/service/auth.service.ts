@@ -22,11 +22,11 @@ export interface DecodedToken {
 export class AuthenticationService {
   user: User | null = null;
 
-  urlAuth: string = "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login";
+  urlAuth: string ="";// "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login";
   //urlAuth: string = "https://localhost:7167/api/Auth/login";
 
-  constructor(private http: HttpClient, configService: ConfigService) {
-    //this.urlAuth = configService.getConfig('AUTH');
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    
   }
 
   /**
@@ -46,6 +46,9 @@ export class AuthenticationService {
    * @returns 
    */
   login(usuario: string, senha: string): any {
+    this.urlAuth = this.configService.getConfig('AUTH_URL');
+    
+    console.log('URL Auth: ', this.urlAuth);
     return this.http.post<User>(this.urlAuth, { usuario, senha }).pipe(
       map(user => {
         if (user && user.token) {

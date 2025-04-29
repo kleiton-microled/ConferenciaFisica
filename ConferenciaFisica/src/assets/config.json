@@ -5,7 +5,7 @@
   "SERVICES_URL": "https://api.conferencia-fisica.com.br/api/Service",
   "TOOLS_URL": "https://api.conferencia-fisica.com.br/api/Bootstrap",
   "ORDERS_URL": "https://api.conferencia-fisica.com.br/api/orders",
-  "AUTH_URL": "https://api.conferencia-fisica.com.br/api/auth",
+  "AUTH_URL": "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login",
   "BASE_IMAGES": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br",
   "DESCARGA_EXPORTACAO_URL": "https://localhost:5000/api/descarga-exportacao",
   "DESCARGA_CARGA_SOLTA_URL": "https://localhost:5000/api/carregamento-carga-solta",
