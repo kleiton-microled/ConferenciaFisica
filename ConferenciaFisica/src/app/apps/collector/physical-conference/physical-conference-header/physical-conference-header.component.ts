@@ -39,6 +39,7 @@ import { Foto, MicroledPhotosComponent } from "src/app/shared/microled-photos/mi
 import { DescargaExportacaoService } from "../../descarga-exportacao/descarga-exportacao.service";
 import { EnumValue } from "src/app/shared/models/enumValue.model";
 import { ConfigService } from "src/app/shared/services/config.service";
+import { FormControlToggleService } from "src/app/core/services/form-control-toggle.service";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -131,7 +132,8 @@ export class PhysicalConferenceHeaderComponent {
     private storageService: PhysicalConferenceStorageService,
     private notificationService: NotificationService,
     private router: Router,
-    private config: ConfigService
+    private config: ConfigService,
+    private toggleService: FormControlToggleService,
   ) { }
 
   ngOnInit(): void {
@@ -301,6 +303,10 @@ export class PhysicalConferenceHeaderComponent {
             this.avariasConferencia = new AvariaConferencia({ idConferencia: this.conference.id });
           }
         });
+
+      if (conference.termino) {
+        this.bloquearForm();
+      }
     }
 
   }
@@ -558,7 +564,7 @@ export class PhysicalConferenceHeaderComponent {
       .updatePhysicalConference(this.conference)
       .subscribe((ret: ServiceResult<boolean>) => {
         if (ret.result) {
-          this.notificationService.showSuccess(ret);
+          this.notificationService.showToast("Conferência atualizada com sucesso.", "success");
         } else {
           this.notificationService.showError(ret);
         }
@@ -1111,6 +1117,16 @@ export class PhysicalConferenceHeaderComponent {
     }
   }
 
+  bloquearForm() {
+    //bloquear form principal
+    this.toggleService.toggleFormControls(this.form, true);
+  }
+
+  desbloquearForm() {
+    //bloquear form principal
+    this.toggleService.toggleFormControls(this.form, false);
+
+  }
 
 
   sair() {
