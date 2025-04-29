@@ -348,7 +348,7 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
     }
 
     getListarTiposProcessos(nomeProcesso: string): Observable<ServiceResult<EnumValue[]>> {
-        return this.http.get<ServiceResult<EnumValue[]>>(`${DESCARGA_UTIL_URL}/processo/${nomeProcesso}`).pipe(
+        return this.http.get<ServiceResult<EnumValue[]>>(`${this.configService.getConfig('DESCARGA_UTIL_URL')}/processo/${nomeProcesso}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);

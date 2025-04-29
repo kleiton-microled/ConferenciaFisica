@@ -41,15 +41,21 @@
             </div>
             <div class="col-2">
               <label for="embalagem">EMBALAGEM</label>
-              <select id="embalagem" class="form-select" formControlName="embalagem">
+              <select class="form-select" id="embalagem" formControlName="embalagem">
+                <option value="0">Selecione uma embalagem</option>
+                <option *ngFor="let embalagem of tiposEmbalagens" [value]="embalagem.id">
+                  {{ embalagem.descricao }}
+                </option>
+              </select>
+              <!-- <select id="embalagem" class="form-select" formControlName="embalagem">
                 <option value="0">Selecione</option>
                 <option value="1">Caixa</option>
                 <option value="2">Saco</option>
-              </select>
+              </select> -->
             </div>
             <div class="col-2">
               <label for="quantidade">QUANTIDADE</label>
-              <input id="quantidade" type="text" class="form-control" formControlName="quantidade" />
+              <input id="quantidade" type="number" class="form-control" formControlName="quantidade" />
             </div>
           </div>
 
@@ -114,11 +120,7 @@
               </div>
               <div class="col-2">
                 <label for="qtdDocumento">Qtd. Documento</label>
-                <input id="qtdDocumento" type="text" class="form-control" formControlName="qtdDocumento" />
-              </div>
-              <div class="col-2">
-                <label for="nomeCliente">Nome Cliente</label>
-                <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente" />
+                <input id="qtdDocumento" type="text" class="form-control" [value]="documentos.length" formControlName="qtdDocumento" />
               </div>
             </div>
             <div class="row mt-3">

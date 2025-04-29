@@ -27,7 +27,6 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
 
     constructor(http: HttpClient, private configService: ConfigService, private notificationService: NotificationService) {
         super(http, configService.getConfig('DESCARGA_EXPORTACAO_URL'));
-
         this.urlApi = configService.getConfig('DESCARGA_EXPORTACAO_URL');
     }
 
@@ -53,7 +52,9 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
             cliente: '',
             conferente: 1,
             nomeConferente: "Microled",
-            equipe: 0
+            equipe: 0,
+            isCrossDocking: false,
+            conteiner: ''
         };
         this.descargaSubject.next(novaDescarga);
     }
@@ -324,7 +325,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     getListarTiposProcessos(nomeProcesso: string): Observable<ServiceResult<EnumValue[]>> {
-        return this.http.get<ServiceResult<EnumValue[]>>(`${DESCARGA_UTIL_URL}/processo/${nomeProcesso}`).pipe(
+        return this.http.get<ServiceResult<EnumValue[]>>(`${this.configService.getConfig('DESCARGA_UTIL_URL')}/processo/${nomeProcesso}`).pipe(
             map(response => {
                 if (!response.status) {
                     this.notificationService.showAlert(response);

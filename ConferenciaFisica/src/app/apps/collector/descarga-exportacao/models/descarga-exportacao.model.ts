@@ -9,6 +9,8 @@ export class DescargaExportacao {
     nomeConferente: string = "Microled";
     conferente!: number;
     equipe: number = 0;
+    isCrossDocking: boolean = false;
+    conteiner: string = '';
 
     constructor(init?: Partial<DescargaExportacao>) {
         Object.assign(this, init);

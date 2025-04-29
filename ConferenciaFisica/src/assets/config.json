@@ -6,13 +6,14 @@
   "TOOLS_URL": "https://api.conferencia-fisica.com.br/api/Bootstrap",
   "ORDERS_URL": "https://api.conferencia-fisica.com.br/api/orders",
   "AUTH_URL": "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login",
-  "BASE_IMAGES": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br",
-  "DESCARGA_EXPORTACAO_URL": "https://localhost:5000/api/descarga-exportacao",
-  "DESCARGA_CARGA_SOLTA_URL": "https://localhost:5000/api/carregamento-carga-solta",
+  "BASE_IMAGES": "https://localhost:5000",
+  "DESCARGA_EXPORTACAO_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api/descarga-exportacao",
+  "DESCARGA_CARGA_SOLTA_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api/carregamento-carga-solta",
   "SAIDA_CAMINHAO_URL": "https://localhost:5000/api/saida-caminhao",
-  "CONFERENCIA_FISICA_URL": "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/api",
+  "CONFERENCIA_FISICA_URL": "https://localhost:5000/api",
   "PRE_REGISTRO_URL": "https://localhost:5000/api/pre-registro",
   "COLETOR_URL_SERVICE": "https://localhost:5000/api/coletor",
   "MOVIMENTACAO_CARGA_SOLTA_URL":"https://localhost:5000/api/movimentacao-carga-solta",
-  "ESTUFAGEM_CONTEINER_URL":"https://localhost:5000/api/estufagem-conteiner"
+  "ESTUFAGEM_CONTEINER_URL":"https://localhost:5000/api/estufagem-conteiner",
+  "DESCARGA_UTIL_URL" : "https://api-conferenciafisicadev.bandeirantesdeicmar.com.br/tipos-processo-foto"
 }

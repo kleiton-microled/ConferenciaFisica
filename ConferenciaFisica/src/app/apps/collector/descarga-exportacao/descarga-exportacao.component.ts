@@ -43,7 +43,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
   descargaAtual!: DescargaExportacao;
 
-
+  gravarIsDisabled: boolean = true;
   marcante = new Marcante();
   listaMarcantes: Marcante[] = [];
   talieTeste: TalieItem = new TalieItem();
@@ -152,11 +152,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       inicio: new FormControl({ value: '', disabled: true }),
       termino: new FormControl({ value: '', disabled: false }),
       talie: new FormControl({ value: '', disabled: true }),
-      placa: new FormControl({ value: '', disabled: true },),
-      reserva: new FormControl({ value: '', disabled: true },),
-      cliente: new FormControl({ value: '', disabled: true },),
-      isCrossDocking: new FormControl({ value: false, disabled: true },),
-      container: new FormControl({ value: null, disabled: false },),
+      placa: new FormControl({ value: '', disabled: true }),
+      reserva: new FormControl({ value: '', disabled: true }),
+      cliente: new FormControl({ value: '', disabled: true }),
+      isCrossDocking: new FormControl({ value: false, disabled: true }),
+      conteiner: new FormControl({ value: "", disabled: false }, Validators.required),
       conferente: new FormControl({ value: 'Microled', disabled: true }),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
@@ -207,6 +207,19 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.descargaAtual.talie.termino = values.termino;//;
       }
 
+      //Verifica se há algum campo sujo que NÃO seja o 'registro'
+      const algumCampoAlterado = Object.keys(this.form.controls).some(key =>
+        key !== 'id' && this.form.get(key)?.dirty
+      );
+
+      if (algumCampoAlterado) {
+        this.atualizarBotoes([{ nome: 'save', enabled: true, visible: true }]);
+      }
+
+      if (this.form.pristine) {
+        this.atualizarBotoes([{ nome: 'save', enabled: false, visible: true }]);
+      }
+
     });
 
     this.marcanteForm.valueChanges.subscribe((values) => {
@@ -225,6 +238,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.marcanteForm.controls['quantidade'].reset();
       }
 
+    });
+
+    this.form.controls['isCrossDocking'].valueChanges.subscribe(value => {
+      if (!value)
+        this.form.controls['conteiner'].reset();
     });
 
     this.initAdvancedTableData();
@@ -498,9 +516,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.downloadFotosEmitter.subscribe(() => {
       const talieId = this.descargaAtual.talie?.id;
       if (!talieId) return;
-    
+
       this.service.downloadZipFotos(talieId);
-    
+
       // ou se quiser usar HttpClient:
       // this.service.downloadZip(talieId);
     });
@@ -588,14 +606,13 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.service.updateDescarga(ret.result);
         this.form.controls['equipe'].setValue(ret.result?.talie?.equipe.toString());
         this.form.controls['operacao'].setValue(ret.result?.talie?.operacao);
-        //const descargaNormalizada = this.normalizarDescarga(ret.result ?? {});
-        //this.service.updateDescarga(descargaNormalizada);
 
         const terminoVazio = ret.result?.talie?.termino == null;
         this.form.get('isCrossDocking')?.[terminoVazio ? 'enable' : 'disable']();
+
         this.atualizarBotoes([
           { nome: 'stop', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
-          { nome: 'save', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          // { nome: 'save', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
           { nome: 'alert', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
           { nome: 'clear', enabled: true, visible: true },
           { nome: 'delete', enabled: false, visible: true },
@@ -606,7 +623,6 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         if (!terminoVazio) {
           this.bloquearForm();
         }
-
 
         this.observacaoForm.controls['observacao'].setValue(this.descargaAtual.talie?.observacao);
 
@@ -623,44 +639,29 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         this.notificationService.showAlert(ret);
       }
     });
-  }
 
-  private normalizarDescarga(data: Partial<DescargaExportacao>): DescargaExportacao {
-    return {
-      registro: data.registro ?? 0,
-      placa: data.placa ?? '',
-      reserva: data.reserva ?? '',
-      cliente: data.cliente ?? '',
-      nomeConferente: data.nomeConferente ?? 'Microled',
-      conferente: data.conferente ?? 1,
-      equipe: data.equipe ?? 0,
-
-      talie: data.talie ? {
-        id: data.talie.id ?? 0,
-        inicio: data.talie.inicio ?? '',
-        termino: data.talie.termino ?? '',
-        conferente: data.talie.conferente ?? 'Microled',
-        equipe: data.talie.equipe ?? 0,
-        operacao: data.talie.operacao ?? 0,
-        observacao: data.talie.observacao ?? '',
-        talieItem: data.talie.talieItem ?? []
-      } : null
-    };
+    this.form.markAsPristine();
   }
 
   /**
    * Executa o metodo de gravacao da descarga
    */
   gravarDescarga() {
-    console.log(this.descargaAtual);
+    if (this.form.get('isCrossDocking')?.value && this.form.get('conteiner')?.invalid) {
+      this.notificationService.showMessage('Para descarga Crossdocking por favor informa o numero do conteiner!!!', 'Info');
+      return;
+    }
+    
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
-        this.notificationService.showSuccess(ret);
+        // Primeiro mostra o toast
+        this.notificationService.showToast('Descarga gravada com sucesso!', 'success');
         this.buscarRegistro();
       } else {
         this.notificationService.showAlert(ret);
       }
     });
+
   }
 
   /**
@@ -807,15 +808,22 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    * Chama o servico de finaliziar processo
    */
   finalizarProcessoDescarga() {
+    if (this.form.get('isCrossDocking')?.value && this.form.get('conteiner')?.invalid) {
+      this.notificationService.showMessage('Para descarga Crossdocking por favor informa o numero do conteiner!!!', 'Info');
+      return;
+    }
+
     if (this.descargaAtual.talie?.id) {
-      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, this.form.get('isCrossDocking')?.value, this.authenticationService.currentUser()?.email, this.form.get('container')?.value).subscribe((ret: ServiceResult<boolean>) => {
-        if (ret.status) {
-          this.notificationService.showSuccess(ret);
-          this.buscarRegistro();
-        } else {
-          this.notificationService.showAlert(ret);
-        }
-      });
+      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, this.form.get('isCrossDocking')?.value,
+        this.authenticationService.currentUser()?.email,
+        this.form.get('conteiner')?.value).subscribe((ret: ServiceResult<boolean>) => {
+          if (ret.status) {
+            this.notificationService.showSuccess(ret);
+            this.buscarRegistro();
+          } else {
+            this.notificationService.showAlert(ret);
+          }
+        });
     }
   }
 

@@ -554,8 +554,6 @@ export class PhysicalConferenceService {
    * @returns TiposAvarias[]
    */
   getTiposAvarias(): Observable<ServiceResult<TiposAvarias[]>> {
-    this.notificationService.showLoading();
-
     return this.http.get<ServiceResult<TiposAvarias[]>>(`${this.apiUrl}/avarias/tipos-listar`).pipe(
       map(response => {
         if (!response.status) {

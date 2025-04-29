@@ -38,6 +38,7 @@ import { BASE_IMAGES } from "src/app/Http/Config/config";
 import { Foto, MicroledPhotosComponent } from "src/app/shared/microled-photos/microled-photos.component";
 import { DescargaExportacaoService } from "../../descarga-exportacao/descarga-exportacao.service";
 import { EnumValue } from "src/app/shared/models/enumValue.model";
+import { ConfigService } from "src/app/shared/services/config.service";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -129,8 +130,9 @@ export class PhysicalConferenceHeaderComponent {
     private conferenceService: PhysicalConferenceService,
     private storageService: PhysicalConferenceStorageService,
     private notificationService: NotificationService,
-    private router: Router
-   ) { }
+    private router: Router,
+    private config: ConfigService
+  ) { }
 
   ngOnInit(): void {
     //this.loadConferences();
@@ -172,6 +174,14 @@ export class PhysicalConferenceHeaderComponent {
     );
 
     this.loadTiposLAcres();
+
+    this.conferenceService
+      .getTiposEmbalagens()
+      .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
+        if (ret.status) {
+          this.tiposEmbalagens = ret.result ?? [];
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -206,7 +216,7 @@ export class PhysicalConferenceHeaderComponent {
       retiradaAmostra: [{ value: "", disabled: false }],
       cpfConferente: [{ value: "", disabled: false }],
       nomeConferente: [{ value: "", disabled: false }],
-      qtdDocumento: [{ value: "", disabled: false }],
+      qtdDocumento: [{ value: "", disabled: true }],
       dataPrevista: [{ value: "", disabled: true }],
       quantidadeDivergente: [{ value: "", disabled: false }],
       qtdVolumesDivergentes: [{ value: "", disabled: true }],
@@ -317,14 +327,14 @@ export class PhysicalConferenceHeaderComponent {
         if (response.status) {
           this.containers = response.result;
         } else {
-          if(!response.status && response.error != ""){
+          if (!response.status && response.error != "") {
             Swal.fire({
               title: "Atenção",
               text: response.error ?? "Erro desconhecido",
               icon: "error",
               confirmButtonText: "Fechar",
             });
-          }else{
+          } else {
             Swal.fire({
               title: "Info",
               text: response.mensagens[0],
@@ -332,7 +342,7 @@ export class PhysicalConferenceHeaderComponent {
               confirmButtonText: "Fechar",
             });
           }
-          
+
         }
       },
       //error: (err) => console.error('Erro na requisição:', err)
@@ -343,6 +353,17 @@ export class PhysicalConferenceHeaderComponent {
    * Carregar os lotes
    */
   loadLotes() {
+    this.conferenceService.getLotes().subscribe({
+      next: (response: ServiceResult<LotesAgendamentoModel[]>) => {
+        if (response.status) {
+          this.lotes = response.result ?? [];
+        }
+      },
+      error: (err) => console.error("Erro na requisição:", err),
+    });
+  }
+
+  loadEmbalagens() {
     this.conferenceService.getLotes().subscribe({
       next: (response: ServiceResult<LotesAgendamentoModel[]>) => {
         if (response.status) {
@@ -533,7 +554,6 @@ export class PhysicalConferenceHeaderComponent {
 
   updatePhysicalConference() {
     let conference = this.conferenceService.getCurrentConference();
-
     this.conferenceService
       .updatePhysicalConference(this.conference)
       .subscribe((ret: ServiceResult<boolean>) => {
@@ -959,7 +979,9 @@ export class PhysicalConferenceHeaderComponent {
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.conteiner = 'CONT-1234';
-    modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
+    modalRef.componentInstance.urlBasePhotos = this.config.getConfig('BASE_IMAGES');
+    console.log('BASE_IMAGE: ', this.config.getConfig('BASE_IMAGES'));
+
     this.service.getListarTiposProcessos('app-physical-conference-header').subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {
         modalRef.componentInstance.photosTypes = ret.result;
@@ -1068,19 +1090,19 @@ export class PhysicalConferenceHeaderComponent {
 
   private formatarDataString(isoDate: Date): string | null {
     if (!isoDate) return null;
-  
+
     const data = new Date(isoDate);
     const dia = String(data.getDate()).padStart(2, '0');
     const mes = String(data.getMonth() + 1).padStart(2, '0');
     const ano = data.getFullYear();
-  
+
     const horas = String(data.getHours()).padStart(2, '0');
     const minutos = String(data.getMinutes()).padStart(2, '0');
     const segundos = String(data.getSeconds()).padStart(2, '0');
-  
+
     return `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
   }
-  
+
 
   private formatarData(isoDate: Date, controlName: string): void {
     const dataFormatada = this.formatarDataString(isoDate);
