@@ -61,6 +61,7 @@ export class CarregamentoCargaSoltaComponent {
 
   columns: Column[] = [];
   columnsOrdens: Column[] = [];
+  startDate: Date | null = null;
 
   conferentes: SelectizeModel[] = [];
   // [
@@ -112,13 +113,24 @@ export class CarregamentoCargaSoltaComponent {
 
   iniciar() {
     let placa = this.veiculos[this.form.get("veiculo")?.value].label.split(" ")[0].trim();
-    let data = new Date();
-    const dia = data.getDate().toString().padStart(2, '0');
-    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-    const ano = data.getFullYear();
+    
     this.service.postInico(placa).subscribe((response: ServiceResult<Date>) => {
       if(response.result == null) return;
-      this.form.get("inicio")?.setValue(response.result);
+
+      let data = new Date(response.result);
+      let day = data.getDate().toString().padStart(2, '0');
+      let month = (data.getMonth() + 1).toString().padStart(2, '0');
+      let year =data.getFullYear();
+      let hour =data.getHours();
+      let minutes =data.getMinutes();
+
+      this.form.get("inicio")?.setValue(`${day}/${month}/${year} ${hour}:${minutes}`);
+
+      this.atualizarBotoes([
+        { nome: 'stop', enabled: response.status, visible: true }
+  
+      ]);
+      this.startDate = data;
     });
     
   }
@@ -153,6 +165,17 @@ export class CarregamentoCargaSoltaComponent {
 
       return;
     };
+
+    let placa = this.veiculos[this.form.get("veiculo")?.value].label.split(" ")[0].trim();
+    this.service.postFinalizar(placa, 0, this.startDate ?? new Date()).subscribe((response: ServiceResult<object>) => {
+      if(response.result == null) return;
+
+      this.atualizarBotoes([
+        { nome: 'stop', enabled: !response.status, visible: true },
+        { nome: 'start', enabled: !response.status, visible: true }
+  
+      ]);
+    });
   }
 
   async buscar() {
@@ -161,8 +184,8 @@ export class CarregamentoCargaSoltaComponent {
 
       return;
     };
-
-    if(this.form.get("veiculo")?.valid) {
+    
+    if(!this.form.get("veiculo")?.valid) {
       
       this.notificationService.showMessage("Selecione um veículo", "info");
 
@@ -184,16 +207,39 @@ export class CarregamentoCargaSoltaComponent {
 
         return model;
       }) ?? [];
+
+    
     });
 
     await this.service.getByMarcante(this.form.get("marcante")?.value, this.form.get("local")?.value, this.form.get("placa")?.value).subscribe(async (response: ServiceResult<any>) => {
       this.form.get("lote")?.setValue(response.result.os);
       this.form.get("quantidade")?.setValue(response.result.volumes);
+      this.atualizarBotoes([
+        { nome: 'start', enabled: response.status, visible: true },
+       
+  
+      ]);
     });
 
 
   }
 
+  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
+
+    botoes.forEach(botao => {
+      if (novoEstado[botao.nome]) {
+        if (botao.enabled !== undefined) {
+          novoEstado[botao.nome].enabled = botao.enabled;
+        }
+        if (botao.visible !== undefined) {
+          novoEstado[botao.nome].visible = botao.visible;
+        }
+      }
+    });
+
+    this.footerButtonsState = novoEstado;
+  }
   initAdvancedTableData(): void {
     this.columns = [
       {

@@ -38,28 +38,17 @@
                             </div>
                         </div>
                         <div class="col-3">
-                            <label for="placa" class="required">Placa</label>
+                            <label for="placa" >Placa</label>
                             <input id="placa" type="text" class="form-control"
-                                formControlName="placa"
-                                [ngClass]="{'is-invalid': form.get('placa')?.invalid && form.get('placa')?.touched}">
+                                formControlName="placa">
 
-                            <div
-                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('placa'),
-                                'Placa')}}
-                            </div>
                         </div>
                         <div class="col-3">
-                            <label for="placaCarreta" class="required">Placa
-                                Carreta</label>
+                            <label for="placaCarreta">Placa Carreta</label>
                             <input id="placaCarreta" type="text"
                                 class="form-control"
-                                formControlName="placaCarreta"
-                                [ngClass]="{'is-invalid': form.get('placaCarreta')?.invalid && form.get('placaCarreta')?.touched}">
+                                formControlName="placaCarreta">
 
-                            <div
-                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('placaCarreta'),
-                                'Placa Carreta')}}
-                            </div>
                         </div>
                     </div>
 

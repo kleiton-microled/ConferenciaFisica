@@ -296,6 +296,29 @@ export class CarregamentoCargaSoltaService extends BaseService<CarregamentoCarga
         );
     }
 
+    postFinalizar(placa: string, usuario: number, inico: Date): Observable<ServiceResult<object>> {
+        return this.http.post<ServiceResult<object>>(`${this.urlApi}/finalizar`, 
+            {
+                placa: placa, 
+                usuario: usuario,
+                inico
+            }
+        ).pipe(
+            map(response => {
+                if (!response.status) {
+                    this.notificationService.showError(response);
+                    throw new Error(response.error || 'Erro desconhecido');
+                }
+                return response;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                this.notificationService.showError(error);
+                return throwError(() => error);
+            }),
+            finalize(() => this.notificationService.hideLoading())
+        );
+    }
+
     /**
      * Retira a associacao do Marcante dentro do talie item
      * @param id 

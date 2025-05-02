@@ -37,7 +37,8 @@ export class RegistrarSaidaCaminhaoComponent {
     delete: { enabled: false, visible: false },
     photo: { enabled: false, visible: false },
     marcante: { enabled: false, visible: false },
-    observacao: { enabled: false, visible: false }
+    observacao: { enabled: false, visible: false },
+    estufar: { enabled: false, visible: false }
   };
   @ViewChild('cargaModal') cargaModal!: TemplateRef<any>;
 
@@ -84,7 +85,6 @@ export class RegistrarSaidaCaminhaoComponent {
     .subscribe((ret: ServiceResult<RegistrarSaidaCaminhaoInfoCaminhao>) => {
       if (ret.status) {
         console.log(ret);
-
         if (!ret.result) {
           
           this.notificationService.showError(ret.error);
@@ -137,8 +137,8 @@ let input = new RegistrarSaidaCaminhao({
     return this.formBuilder.group({
       numeroProtocolo: ['', Validators.required],
       anoProtocolo: ['', Validators.required],
-      placa: ['', Validators.required],
-      placaCarreta: ['', Validators.required],
+      placa: [''],
+      placaCarreta: [''],
     });
   }
 }

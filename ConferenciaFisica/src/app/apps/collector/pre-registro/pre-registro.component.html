@@ -21,8 +21,17 @@
                             </app-microled-select>
                         </div>
                         <div class="col-3">
-                            <label for="placa">Placa</label>
-                            <input id="placa" type="text" class="form-control" formControlName="placa">
+                            <label for="placa"
+                                class="required">Placa</label>
+                            <input id="placa" type="text"
+                                class="form-control"
+                                formControlName="placa"
+                                [ngClass]="{'is-invalid': form.get('placa')?.invalid && form.get('placa')?.touched}">
+
+                            <div
+                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('placa'),
+                                'placa')}}
+                            </div>
                         </div>
                     </div>
 
@@ -56,3 +65,73 @@
         </div>
     </div>
 </div>
+
+
+<ng-template #cargaModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Registrar Saida Caminhão</h4>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="formModal">
+            <div class="row justify-content-center mb-3">
+                <div class="col-md-5 col-10">
+                    <label for="protocolo">Protocolo</label>
+                    <input id="protocolo" type="text" class="form-control"
+                        formControlName="protocolo">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="periodo">periodo</label>
+                    <input id="periodo" type="text" class="form-control"
+                        formControlName="periodo">
+                </div>
+            </div>
+            <div class="row justify-content-center mb-3">
+                <div class="col-md-5 col-10">
+                    <label for="periodoInicial">Periodo Inicial</label>
+                    <input id="periodoInicial" type="text" class="form-control"
+                        formControlName="periodoInicial">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="periodoFinal">Período Final</label>
+                    <input id="periodoFinal" type="text" class="form-control"
+                        formControlName="periodoFinal">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="placa">Placa</label>
+                    <input id="placa" type="text" class="form-control"
+                        formControlName="placa">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="placaCarreta">Placa Carreta</label>
+                    <input id="placaCarreta" type="text" class="form-control"
+                        formControlName="placaCarreta">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="motorista">motorista</label>
+                    <input id="motorista" type="text" class="form-control"
+                        formControlName="motorista">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="cnh">cnh</label>
+                    <input id="cnh" type="text" class="form-control"
+                        formControlName="cnh">
+                </div>
+               
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-between">
+        
+        <button type="button" class="btn btn-primary" (click)="RegitrarSaida()">
+            Registrar Saída
+        </button>
+
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
+            Fechar
+        </button>
+    </div>
+</ng-template>
