@@ -16,7 +16,7 @@ export class TalieItem {
     comprimento!: number;
     largura!: number;
     altura!: number;
-    peso!:number;
+    peso:number = 0;
     fragil!: boolean;
     madeira!: boolean;
     codigoEmbalagem!: string;

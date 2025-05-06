@@ -69,9 +69,6 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         this.descargaSubject.next(null);
     }
 
-
-
-
     /**
      * CAdastro de avaria 
      * @param data 
@@ -122,6 +119,9 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      * @returns bool
      */
     saveTalieItem(data: TalieItem, registro: number): Observable<ServiceResult<boolean>> {
+        if (!data.peso) {
+            data.peso = 0;
+        }
         return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/salvar-talie-item?registro=${registro}`, data).pipe(
             map(response => {
                 if (!response.status) {
@@ -454,11 +454,11 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
      */
     downloadZipFotos(talieId: number) {
         this.http.get(`${this.urlApi}/processo/${talieId}/zip`, { responseType: 'blob' }).subscribe(blob => {
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = `fotos-processo-${talieId}.zip`;
-          link.click();
-          URL.revokeObjectURL(link.href);
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `fotos-processo-${talieId}.zip`;
+            link.click();
+            URL.revokeObjectURL(link.href);
         });
-      }
+    }
 }

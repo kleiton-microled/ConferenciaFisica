@@ -113,10 +113,18 @@
                             </app-microled-select>
                         </div>
                     </div>
-                    <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
-                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="false"
-                        [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false"
-                        tableClasses="table-centered" theadClasses="table-light" [singleRowSelection]="true">
+                    <app-advanced-table #advancedTable 
+                                        (handleTableLoad)="handleTableLoad($event)"
+                                        [tableData]="itensList" 
+                                        [columns]="columns" 
+                                        [pagination]="true" 
+                                        [hasRowSelection]="false"
+                                        [isSearchable]="false" 
+                                        (rowSelected)="onRowSelected($event)" 
+                                        (search)="''" [isSortable]="false"
+                                        tableClasses="table-centered" 
+                                        theadClasses="table-light" 
+                                        [singleRowSelection]="true">
                     </app-advanced-table>
 
                     <!-- Botões -->
@@ -286,15 +294,15 @@
             <div class="row mt-3">
                 <div class="col-2">
                     <label>Comprimento</label>
-                    <input type="text" class="form-control" formControlName="comprimento">
+                    <input type="text" class="form-control" formControlName="comprimento" appDecimalInput>
                 </div>
                 <div class="col-2">
                     <label>Largura</label>
-                    <input type="text" class="form-control" formControlName="largura">
+                    <input type="text" class="form-control" formControlName="largura" appDecimalInput>
                 </div>
                 <div class="col-2">
                     <label>Altura</label>
-                    <input type="text" class="form-control" formControlName="altura">
+                    <input type="text" class="form-control" formControlName="altura" appDecimalInput>
                 </div>
                 <div class="col-1 form-check">
                     <input type="checkbox" class="form-check-input" formControlName="madeira">

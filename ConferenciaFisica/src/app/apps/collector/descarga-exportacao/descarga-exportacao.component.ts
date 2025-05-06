@@ -131,7 +131,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       fragil: [false],
       cargaNumerada: [false],
       carimbo: [false],
-      peso: [''],
+      peso: [0],
       imo: ['', Validators.maxLength(3)],
       imO2: ['', Validators.maxLength(3)],
       imO3: ['', Validators.maxLength(3)],
