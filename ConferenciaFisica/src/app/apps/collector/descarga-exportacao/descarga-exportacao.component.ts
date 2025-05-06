@@ -471,6 +471,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       await this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
+          this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+            if (ret.status) {
+              modalRef.componentInstance.fotos = ret.result;
+            } else { }
+          });
         } else {
           this.notificationService.showAlert(ret);
         }
@@ -651,7 +656,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       this.notificationService.showMessage('Para descarga Crossdocking por favor informa o numero do conteiner!!!', 'Info');
       return;
     }
-    
+
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         // Primeiro mostra o toast
