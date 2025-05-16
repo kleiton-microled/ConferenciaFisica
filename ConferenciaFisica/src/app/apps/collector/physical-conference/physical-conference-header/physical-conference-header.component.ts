@@ -243,7 +243,7 @@ export class PhysicalConferenceHeaderComponent {
         id: conference?.id,
         tipo: conference?.tipo,
         bl: conference?.bl,
-        numeroConteiner: conference?.cntr,
+        numeroConteiner: conference?.numeroConteiner,
         conteiner: conference?.cntr,
         tipoCarga: conference?.tipoCarga,
         viagem: conference?.viagem,
@@ -306,6 +306,20 @@ export class PhysicalConferenceHeaderComponent {
 
       if (conference.termino) {
         this.bloquearForm();
+        this.atualizarBotoes([
+          { nome: 'stop', enabled: false, visible: true },
+          { nome: 'alert', enabled: true, visible: true },
+          { nome: 'start', enabled: false, visible: true },
+          { nome: 'clear', enabled: true, visible: true },
+          { nome: 'exit', enabled: true, visible: true },
+          { nome: 'delete', enabled: false, visible: true },
+          { nome: 'save', enabled: false, visible: true },
+          { nome: 'observacao', enabled: false, visible: false },
+          { nome: 'photo', enabled: true, visible: true },
+          { nome: 'marcante', enabled: false, visible: false }
+        ]);
+      }else{
+        this.desbloquearForm();
       }
     }
 
@@ -516,8 +530,33 @@ export class PhysicalConferenceHeaderComponent {
                 }
               });
             }, 200);
-          } else {
-            let infoResponse = "Conferência encontrada, abrindo para edição?";
+          } else if(response.status && response.result?.termino) {
+            let infoResponse = "Conferência já finalizada, abrindo para visualização!";
+            this.atualizarBotoes([
+              { nome: 'stop', enabled: true, visible: true },
+              { nome: 'alert', enabled: true, visible: true },
+              { nome: 'start', enabled: false, visible: true },
+              { nome: 'clear', enabled: true, visible: true },
+              { nome: 'exit', enabled: true, visible: true },
+              { nome: 'delete', enabled: false, visible: true },
+              { nome: 'save', enabled: true, visible: true },
+              { nome: 'observacao', enabled: false, visible: false },
+              { nome: 'photo', enabled: true, visible: true },
+              { nome: 'marcante', enabled: false, visible: false }
+            ]);
+
+            this.isDisableBtnModal = false;
+            this.modalService.dismissAll();
+            setTimeout(() => {
+              Swal.fire({
+                title: "Conferência Finalizada!!!",
+                text: infoResponse,
+                icon: "success",
+                confirmButtonText: "OK",
+              });
+            }, 200);
+          }else if(response.status && !response.result?.termino) {
+            let infoResponse = "Conferência encontrada, abrindo para edição!";
             this.atualizarBotoes([
               { nome: 'stop', enabled: true, visible: true },
               { nome: 'alert', enabled: true, visible: true },
@@ -965,12 +1004,15 @@ export class PhysicalConferenceHeaderComponent {
     this.conferenceService.getFinalizarConferencia(this.conference.id).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         this.notificationService.showSuccess(ret);
-        this.conferenceService.getConferencePorId(this.conference.id).subscribe((ret: ServiceResult<PhysicalConferenceModel>) => {
-          if (ret.status && ret.result) {
-            this.conferenceService.updateConference(ret.result);
-            this.atualizarFormulario(ret.result);
-          }
-        });
+        setTimeout(() => {
+          this.conferenceService.getConferencePorId(this.conference.id).subscribe((ret: ServiceResult<PhysicalConferenceModel>) => {
+            if (ret.status && ret.result) {
+              this.conferenceService.updateConference(ret.result);
+              this.atualizarFormulario(ret.result);
+            }
+          });
+        }, 1000);
+        
       }
     });
   }

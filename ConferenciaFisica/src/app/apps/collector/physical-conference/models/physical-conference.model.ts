@@ -4,6 +4,7 @@ export class PhysicalConferenceModel {
     id: number = 0;
     tipo: number = 0;
     cntr: string = "";
+    numeroConteiner: string = "";
     bl: string = "";
     operacao: string = "";
     tipoCarga: string = "";
