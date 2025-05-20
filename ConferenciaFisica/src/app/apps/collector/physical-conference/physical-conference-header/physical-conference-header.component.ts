@@ -278,6 +278,8 @@ export class PhysicalConferenceHeaderComponent {
 
       this.loadDocumentosConferencia(conference?.id || 0);
 
+      
+
       this.conferenceService
         .getTiposAvarias()
         .subscribe((ret: ServiceResult<TiposAvarias[]>) => {

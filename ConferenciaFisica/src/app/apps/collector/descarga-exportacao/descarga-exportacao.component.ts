@@ -451,7 +451,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
-    modalRef.componentInstance.isDisabled = this.descargaAtual.talie?.termino != null;
+    modalRef.componentInstance.isDisabled = false;//this.descargaAtual.talie?.termino != null;
 
     this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {
       if (ret.status) {

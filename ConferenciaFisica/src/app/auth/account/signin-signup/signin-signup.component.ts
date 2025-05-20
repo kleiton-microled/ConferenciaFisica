@@ -25,7 +25,7 @@ export class SigninSignupComponent implements OnInit {
   signupError: string = '';
 
 
-  constructor (
+  constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
@@ -36,8 +36,9 @@ export class SigninSignupComponent implements OnInit {
     this.currentYear = Date.now();
 
     this.loginForm2 = this.fb.group({
-      email: ['conferencia-fisica@coderthemes.com', [Validators.required, Validators.email]],
-      password: ['test', Validators.required]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['test', Validators.required],
+      terminal: [null, Validators.required]
     });
 
     this.signUpForm2 = this.fb.group({
@@ -73,7 +74,7 @@ export class SigninSignupComponent implements OnInit {
     this.loginFormSubmitted = true;
     if (this.loginForm2.valid) {
       this.loading = true;
-      this.authenticationService.login(this.loginFormFields.email?.value, this.loginFormFields.password?.value)
+      this.authenticationService.login(this.loginFormFields.email?.value, this.loginFormFields.password?.value, this.loginFormFields.terminal?.value)
         .pipe(first())
         .subscribe(
           (data: any) => {

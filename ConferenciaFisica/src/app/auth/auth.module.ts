@@ -10,6 +10,7 @@ import { NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { UiModule } from '../shared/ui/ui.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WidgetModule } from '../shared/widget/widget.module';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -22,6 +23,7 @@ import { WidgetModule } from '../shared/widget/widget.module';
   ],
   imports: [
     CommonModule,
+    SharedModule,
     ReactiveFormsModule,
     NgbAlertModule,
     NgbNavModule,

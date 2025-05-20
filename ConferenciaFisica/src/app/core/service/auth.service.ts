@@ -22,11 +22,11 @@ export interface DecodedToken {
 export class AuthenticationService {
   user: User | null = null;
 
-  urlAuth: string ="";// "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login";
+  urlAuth: string = "";// "https://api-usuariosdev.bandeirantesdeicmar.com.br/api/Auth/login";
   //urlAuth: string = "https://localhost:7167/api/Auth/login";
 
   constructor(private http: HttpClient, private configService: ConfigService) {
-    
+
   }
 
   /**
@@ -43,13 +43,14 @@ export class AuthenticationService {
    * Metodo que retonar o token e suas claims para o usuario
    * @param usuario 
    * @param senha 
+   * @param terminal 
    * @returns 
    */
-  login(usuario: string, senha: string): any {
+  login(usuario: string, senha: string, terminal: number): any {
     this.urlAuth = this.configService.getConfig('AUTH_URL');
-    
+
     console.log('URL Auth: ', this.urlAuth);
-    return this.http.post<User>(this.urlAuth, { usuario, senha }).pipe(
+    return this.http.post<User>(this.urlAuth, { usuario, senha, terminal }).pipe(
       map(user => {
         if (user && user.token) {
           const decoded = jwtDecode<any>(user.token);
