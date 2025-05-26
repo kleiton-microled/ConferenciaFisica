@@ -28,22 +28,10 @@ export class MovimentaCargaComponent implements OnInit {
   motivos = ['Transferência', 'Ajuste de estoque'];
 
   cargaSelecionada: MovimentacaoCargaSolta = new MovimentacaoCargaSolta();
-  footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
-    start: { enabled: false, visible: false },
-    stop: { enabled: false, visible: false },
-    alert: { enabled: false, visible: false },
-    clear: { enabled: false, visible: false },
-    exit: { enabled: true, visible: true },
-    save: { enabled: true, visible: true },
-    delete: { enabled: false, visible: false },
-    photo: { enabled: false, visible: false },
-    marcante: { enabled: false, visible: false },
-    observacao: { enabled: false, visible: false }
-  };
 
   constructor(private fb: FormBuilder,
     private modalService: NgbModal,
-     private router: Router,
+    private router: Router,
     private service: MovimentacaoCargaSoltaService,
     private descargaService: DescargaExportacaoService,
     private notificationService: NotificationService) { }
@@ -72,13 +60,15 @@ export class MovimentaCargaComponent implements OnInit {
     });
 
     this.modalForm = this.fb.group({
-      idMarcante:[''],
+      idMarcante: [''],
       local: [''],
       armazem: [''],
       motivo: ['']
     });
 
     this.buscarArmazens();
+
+    this.atualizarBotoes([{ nome: 'save', enabled: true, visible: true }]);
   }
 
   openModal(): void {
@@ -96,7 +86,7 @@ export class MovimentaCargaComponent implements OnInit {
 
   submitMovimentacao(modalRef: any): void {
     if (this.modalForm.valid) {
-      
+
       this.modalForm.get('idMarcante')?.setValue(this.cargaSelecionada.idMarcante);
       const dados = this.modalForm.value;
 
@@ -105,8 +95,8 @@ export class MovimentaCargaComponent implements OnInit {
       this.service.movimentarCargaSolta(dados).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.notificationService.showSuccess(ret);
-          this.service.getCargaParaMovimentacao(this.cargaSelecionada.idMarcante).subscribe((ret: ServiceResult<MovimentacaoCargaSolta>)=>{
-            if(ret.status && ret.result){
+          this.service.getCargaParaMovimentacao(this.cargaSelecionada.idMarcante).subscribe((ret: ServiceResult<MovimentacaoCargaSolta>) => {
+            if (ret.status && ret.result) {
               this.cargaSelecionada = ret.result;
             }
           });
@@ -156,9 +146,45 @@ export class MovimentaCargaComponent implements OnInit {
   buscarArmazens() {
     this.descargaService.getArmazens(2).subscribe((ret: ServiceResult<Armazen[]>) => {
       if (ret.status) {
-        console.log('buscarArmazens: ', ret);
         this.armazens = ret.result ?? [];
       }
     });
   }
+
+  //#region HELPERS
+  /**
+   * Atualiza o estado dos botoes do action footer
+   * @param botoes 
+   */
+  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
+
+    botoes.forEach(botao => {
+      if (novoEstado[botao.nome]) {
+        if (botao.enabled !== undefined) {
+          novoEstado[botao.nome].enabled = botao.enabled;
+        }
+        if (botao.visible !== undefined) {
+          novoEstado[botao.nome].visible = botao.visible;
+        }
+      }
+    });
+
+    this.footerButtonsState = novoEstado;
+  }
+
+  footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
+    start: { enabled: false, visible: false },
+    stop: { enabled: false, visible: false },
+    alert: { enabled: false, visible: false },
+    clear: { enabled: false, visible: false },
+    exit: { enabled: true, visible: true },
+    save: { enabled: false, visible: true },
+    delete: { enabled: false, visible: false },
+    photo: { enabled: false, visible: false },
+    marcante: { enabled: false, visible: false },
+    observacao: { enabled: false, visible: false },
+    estufar: { enabled: false, visible: false }
+  };
+  //#endregion
 }

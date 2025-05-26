@@ -218,6 +218,7 @@ export class PhysicalConferenceHeaderComponent {
       retiradaAmostra: [{ value: "", disabled: false }],
       cpfConferente: [{ value: "", disabled: false }],
       nomeConferente: [{ value: "", disabled: false }],
+      telefoneConferente: [{ value: "", disabled: false }],
       qtdDocumento: [{ value: "", disabled: true }],
       dataPrevista: [{ value: "", disabled: true }],
       quantidadeDivergente: [{ value: "", disabled: false }],
@@ -258,6 +259,7 @@ export class PhysicalConferenceHeaderComponent {
         retiradaAmostra: conference?.retiradaAmostra,
         cpfConferente: "457.244.118-32",
         nomeConferente: "Microled",
+        telefoneConferente: conference?.telefoneConferente,
         qtdDocumento: conference?.qtdDocumento,
         dataPrevista: conference?.dataPrevista,
         quantidadeDivergente: conference?.quantidadeDivergente,
@@ -278,7 +280,7 @@ export class PhysicalConferenceHeaderComponent {
 
       this.loadDocumentosConferencia(conference?.id || 0);
 
-      
+
 
       this.conferenceService
         .getTiposAvarias()
@@ -320,7 +322,7 @@ export class PhysicalConferenceHeaderComponent {
           { nome: 'photo', enabled: true, visible: true },
           { nome: 'marcante', enabled: false, visible: false }
         ]);
-      }else{
+      } else {
         this.desbloquearForm();
       }
     }
@@ -462,7 +464,7 @@ export class PhysicalConferenceHeaderComponent {
       const cntr = this.selectedContainer;
       const bl = this.selectedLote;
 
-      let filter = { conteiner: cntr ?? "", lote: bl ?? "" };
+      let filter = { conteiner: cntr ?? this.conference.cntr, lote: bl ?? this.conference.bl };
 
       this.conferenceService.updateConference({ inicio, cntr, bl });
       this.conferenceService.startConference(this.conference).subscribe((ret: ServiceResult<boolean>) => {
@@ -470,6 +472,7 @@ export class PhysicalConferenceHeaderComponent {
           this.conferenceService.getConference(filter).subscribe((ret: ServiceResult<PhysicalConferenceModel>) => {
             if (ret.status && ret.result) {
               this.conferenceService.updateConference(ret.result);
+              this.selectedContainer = ret.result.cntr;
               this.atualizarFormulario(this.conference);
               this.atualizarBotoes([
                 { nome: 'stop', enabled: true, visible: true },
@@ -491,7 +494,7 @@ export class PhysicalConferenceHeaderComponent {
       });
     }
 
-    console.log('Conferencia Atualizada', this.conference);
+    console.log('Conferencia', this.conference);
 
   }
 
@@ -508,7 +511,6 @@ export class PhysicalConferenceHeaderComponent {
     };
 
     //this.conferences = await this.storageService.searchConferences(filtro);
-    console.log('filterConferences');
     this.conferenceService.getConference(filter).subscribe({
       next: (response: ServiceResult<PhysicalConferenceModel>) => {
         if (response.status) {
@@ -526,13 +528,12 @@ export class PhysicalConferenceHeaderComponent {
                 cancelButtonText: "NÃO",
               }).then((result) => {
                 if (result.isConfirmed) {
-                  console.log('Iniciou uma nova conferencia: ', this.conference);
                   this.startPhysicalConference();
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                 }
               });
             }, 200);
-          } else if(response.status && response.result?.termino) {
+          } else if (response.status && response.result?.termino) {
             let infoResponse = "Conferência já finalizada, abrindo para visualização!";
             this.atualizarBotoes([
               { nome: 'stop', enabled: true, visible: true },
@@ -557,7 +558,7 @@ export class PhysicalConferenceHeaderComponent {
                 confirmButtonText: "OK",
               });
             }, 200);
-          }else if(response.status && !response.result?.termino) {
+          } else if (response.status && !response.result?.termino) {
             let infoResponse = "Conferência encontrada, abrindo para edição!";
             this.atualizarBotoes([
               { nome: 'stop', enabled: true, visible: true },
@@ -1014,7 +1015,7 @@ export class PhysicalConferenceHeaderComponent {
             }
           });
         }, 1000);
-        
+
       }
     });
   }

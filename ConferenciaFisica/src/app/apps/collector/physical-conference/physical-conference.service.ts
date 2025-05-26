@@ -218,10 +218,10 @@ export class PhysicalConferenceService {
 
     return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/iniciar-conferencia`, conference).pipe(
       map(response => {
-        if (!response.status) {
-          this.notificationService.showError(response);
-          throw new Error(response.error || 'Erro desconhecido');
-        }
+        // if (!response.status) {
+        //   this.notificationService.showError(response);
+        //   throw new Error(response.error || 'Erro desconhecido');
+        // }
         return response;
       }),
       catchError((error: HttpErrorResponse) => {

@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FotoCapturada } from './foto-capturada.model';
 import { EnumValue } from '../../models/enumValue.model';
-import { co } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-camera-modal',
@@ -21,9 +20,7 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
 
   constructor(public activeModal: NgbActiveModal, private renderer: Renderer2) {}
 
-  ngOnInit(): void {
-    console.log(this.types + 'eee')
-    
+  ngOnInit(): void {    
     this.abrirCamera();
   }
 

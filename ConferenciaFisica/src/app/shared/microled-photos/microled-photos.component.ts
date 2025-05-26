@@ -16,6 +16,7 @@ export interface Foto {
   observacao: string;
   typeDescription: string;
   imagemBase64: string;
+  nomeProcesso: string;
 }
 
 @Component({
@@ -90,7 +91,8 @@ export class MicroledPhotosComponent implements OnInit {
       talieId: null,
       imagemPath: null,
       idTipoProcesso: resultado.tipoProcesso,
-      containerId: null
+      containerId: null,
+      nomeProcesso: ""
     };
 
     this.fotos.push(novaFoto);

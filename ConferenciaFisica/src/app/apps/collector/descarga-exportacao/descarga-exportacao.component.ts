@@ -28,6 +28,7 @@ import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.c
 import { ColetorService } from '../collector.service';
 import { EquipeModel } from '../models/equipe.model';
 import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { ConfigService } from 'src/app/shared/services/config.service';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -97,7 +98,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     public messageValidationService: FormValidationService,
     private toggleService: FormControlToggleService,
     private coletorService: ColetorService,
-    private authenticationService: AuthenticationService) {
+    private authenticationService: AuthenticationService,
+    private configService: ConfigService) {
     this.form = this.getMainForm();
 
     this.editItemForm = this.getEditItemForm();
@@ -450,7 +452,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
-    modalRef.componentInstance.urlBasePhotos = BASE_IMAGES;
+    modalRef.componentInstance.urlBasePhotos = this.configService.getConfig('BASE_IMAGES');
+    
     modalRef.componentInstance.isDisabled = false;//this.descargaAtual.talie?.termino != null;
 
     this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {

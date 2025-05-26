@@ -72,8 +72,8 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
   }
 
   openModalMovimentacao() {
-  //  this.modalService. openModal();
-    }
+    //  this.modalService. openModal();
+  }
 
   redirecionarHome() {
     this.router.navigate(['/apps/tools']);
@@ -90,7 +90,6 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
 
   buscarMarcantes = (termo: string): Observable<{ value: any; descricao: string }[]> => {
     return this.service.getMarcantes(termo).pipe(
-      // Transforma o retorno em { value, descricao }
       map((res: any[]) => res.map(item => ({
         value: item.id,           // ou o campo correto da sua API
         descricao: item.numero // ou nome, label, etc
@@ -100,14 +99,14 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
 
   onMarcanteSelecionado(marcante: { value: any; descricao: string }) {
     if (marcante) {
-      console.log(marcante);
       this.movimentacaoCargaService.getCargaParaMovimentacao(marcante.value).subscribe((ret: ServiceResult<MovimentacaoCargaSolta>) => {
         if (ret.status && ret.result) {
           this.movimentacaoCargaService.updateCarga(ret.result);
-          this.movimentacaoCargaService.getCargaAtual().subscribe((ret: MovimentacaoCargaSolta | null)=>{
-            console.log('Atualizado: ', ret);
+          this.movimentacaoCargaService.getCargaAtual().subscribe((ret: MovimentacaoCargaSolta | null) => {
           });
-         
+        } else if (!ret.status) {
+          let msg = ret.mensagens[0];
+          this.notificationService.showMessage(msg, "info");
         }
       });
     }

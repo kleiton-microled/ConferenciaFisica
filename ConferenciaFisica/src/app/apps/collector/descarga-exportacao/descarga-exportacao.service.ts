@@ -376,6 +376,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
     }
 
     postProcessoFoto(data: Foto): Observable<ServiceResult<boolean>> {
+        data.nomeProcesso = "descarga-exportacao"
         return this.http.post<ServiceResult<boolean>>(`${this.urlApi}/processo`, data).pipe(
             map(response => {
                 if (!response.status) {

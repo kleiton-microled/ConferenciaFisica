@@ -22,6 +22,7 @@ export class PhysicalConferenceModel {
     cpfConferente: string = "";
     nomeConferente: string = "";
     qtdDocumento: number = 0;
+    telefoneConferente: number = 0;
     quantidadeDivergente: number = 0;
     quantidadeVolumesDivergentes: number = 0;
     quantidadeRepresentantes: number = 0;

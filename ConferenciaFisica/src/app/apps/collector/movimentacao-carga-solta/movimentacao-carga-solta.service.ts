@@ -71,10 +71,10 @@ export class MovimentacaoCargaSoltaService extends BaseService<any> {
     getCargaParaMovimentacao(talieItemId: number): Observable<ServiceResult<MovimentacaoCargaSolta>> {
         return this.http.get<ServiceResult<MovimentacaoCargaSolta>>(`${this.urlApi}?idMarcante=${talieItemId}`).pipe(
             map(response => {
-                if (!response.status) {
-                    this.notificationService.showAlert(response);
-                    throw new Error(response.error || 'Erro desconhecido');
-                }
+                // if (!response.status) {
+                //     this.notificationService.showAlert(response);
+                //     //throw new Error(response.error || 'Erro desconhecido');
+                // }
                 return response;
             }),
             catchError((error: HttpErrorResponse) => {
