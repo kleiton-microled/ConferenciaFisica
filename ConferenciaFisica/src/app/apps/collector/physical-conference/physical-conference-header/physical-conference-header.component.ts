@@ -40,6 +40,7 @@ import { DescargaExportacaoService } from "../../descarga-exportacao/descarga-ex
 import { EnumValue } from "src/app/shared/models/enumValue.model";
 import { ConfigService } from "src/app/shared/services/config.service";
 import { FormControlToggleService } from "src/app/core/services/form-control-toggle.service";
+import { ContainerAgendamentoModel } from "../models/conteiner.model";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -48,7 +49,7 @@ import { FormControlToggleService } from "src/app/core/services/form-control-tog
 })
 export class PhysicalConferenceHeaderComponent {
   form!: FormGroup;
-  containers: ConferenceContainer[] = [];
+  containers: ContainerAgendamentoModel[] = [];
   lotes: LotesAgendamentoModel[] = [];
   tipolacres: TipoLacre[] = [];
   lacresConferencia: LacresModel[] = [];
@@ -96,9 +97,10 @@ export class PhysicalConferenceHeaderComponent {
   private formSubscription!: Subscription;
 
   //Filtro
-  selectedContainer: string = ""; // Variável para armazenar a seleção do container
-  selectedLote: string = ""; // Variável para armazenar a seleção do lote
+  selectedContainer!: ContainerAgendamentoModel; // Variável para armazenar a seleção do container
+  selectedLote!: LotesAgendamentoModel; // Variável para armazenar a seleção do lote
   selectedNumero: string = ""; // Variável para armazenar a pesquisa por número
+  selectedAutonumAgendaPosicao: number = 0;
 
   conference: PhysicalConferenceModel = new PhysicalConferenceModel();
 
@@ -212,7 +214,7 @@ export class PhysicalConferenceHeaderComponent {
       quantidade: [{ value: "", disabled: true }],
       tipoConferencia: [{ value: "", disabled: false }],
       inicioConferencia: [{ value: "", disabled: false }],
-      termino: [{ value: "", disabled: false }],
+      termino: [{ value: "", disabled: true }],
       cpfCliente: [{ value: "", disabled: false }],
       nomeCliente: [{ value: "", disabled: false }],
       retiradaAmostra: [{ value: "", disabled: false }],
@@ -229,6 +231,7 @@ export class PhysicalConferenceHeaderComponent {
       divergenciaQualificacao: [{ value: '', disabled: false }],
       movimentacao: [{ value: "", disabled: false }],
       desunitizacao: [{ value: "", disabled: false }],
+      autonumAgendaPosicao: [{ value: 0 }]
     });
   }
 
@@ -270,6 +273,7 @@ export class PhysicalConferenceHeaderComponent {
         divergenciaQualificacao: conference?.divergenciaQualificacao,
         movimentacao: conference?.movimentacao,
         desunitizacao: conference?.desunitizacao,
+        autonumAgendaPosicao: conference?.autonumAgendaPosicao
       });
 
       this.conferenceService.updateConference(conference);
@@ -324,6 +328,13 @@ export class PhysicalConferenceHeaderComponent {
         ]);
       } else {
         this.desbloquearForm();
+        this.form.get('termino')?.disable();
+        this.form.get('quantidade')?.disable();
+        this.form.get('numeroConteiner')?.disable();
+        this.form.get('qtdDocumento')?.disable();
+        this.form.get('dataPrevista')?.disable();
+        this.form.get('qtdVolumesDivergentes')?.disable();
+
       }
     }
 
@@ -347,9 +358,9 @@ export class PhysicalConferenceHeaderComponent {
    */
   loadContainers() {
     this.conferenceService.getContainers().subscribe({
-      next: (response: ServiceResult<any>) => {
+      next: (response: ServiceResult<ContainerAgendamentoModel[]>) => {
         if (response.status) {
-          this.containers = response.result;
+          this.containers = response.result ?? [];
         } else {
           if (!response.status && response.error != "") {
             Swal.fire({
@@ -461,18 +472,24 @@ export class PhysicalConferenceHeaderComponent {
   startPhysicalConference() {
     if (this.conference) {
       const inicio = new Date();
-      const cntr = this.selectedContainer;
-      const bl = this.selectedLote;
+      const cntr = this.selectedContainer?.autonum > 0 ? this.selectedContainer?.autonum : 0;
+      const bl = this.selectedLote?.autonum;
+
+      let autonumAgendaPosicao = this.selectedLote?.autonumAgendaPosicao;
+      if (!autonumAgendaPosicao) {
+        autonumAgendaPosicao = this.selectedContainer?.autonumAgendaPosicao;
+      }
+      this.conferenceService.updateConference({ inicio, cntr, bl, autonumAgendaPosicao, quantidadeVolumesDivergentes: 0 });
 
       let filter = { conteiner: cntr ?? this.conference.cntr, lote: bl ?? this.conference.bl };
 
-      this.conferenceService.updateConference({ inicio, cntr, bl });
+      // 
       this.conferenceService.startConference(this.conference).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.conferenceService.getConference(filter).subscribe((ret: ServiceResult<PhysicalConferenceModel>) => {
             if (ret.status && ret.result) {
               this.conferenceService.updateConference(ret.result);
-              this.selectedContainer = ret.result.cntr;
+              this.selectedContainer.autonum = ret.result.cntr;
               this.atualizarFormulario(this.conference);
               this.atualizarBotoes([
                 { nome: 'stop', enabled: true, visible: true },
@@ -494,7 +511,7 @@ export class PhysicalConferenceHeaderComponent {
       });
     }
 
-    console.log('Conferencia', this.conference);
+
 
   }
 
@@ -505,12 +522,11 @@ export class PhysicalConferenceHeaderComponent {
    */
   async filterConferences() {
     const filter = {
-      conteiner: this.selectedContainer || undefined,
-      lote: this.selectedLote || undefined,
+      conteiner: this.selectedContainer?.autonum || undefined,
+      lote: this.selectedLote?.autonum || undefined,
       numero: this.selectedNumero || undefined,
     };
 
-    //this.conferences = await this.storageService.searchConferences(filtro);
     this.conferenceService.getConference(filter).subscribe({
       next: (response: ServiceResult<PhysicalConferenceModel>) => {
         if (response.status) {
@@ -600,6 +616,15 @@ export class PhysicalConferenceHeaderComponent {
     this.atualizarFormulario(this.conferences[0]);
   }
 
+  onContainerChange(container: ContainerAgendamentoModel | null) {
+    console.log('Container selecionado:', container);
+    this.selectedContainer = container ?? new ContainerAgendamentoModel;
+
+    console.log('Selected:', container);
+
+  }
+
+
   updatePhysicalConference() {
     let conference = this.conferenceService.getCurrentConference();
     this.conferenceService
@@ -615,7 +640,7 @@ export class PhysicalConferenceHeaderComponent {
   /**
    * 🔍 Pesquisa uma conferência específica pelo CPF
    */
-  searchByCntr(cntr: string) {
+  searchByCntr(cntr: number) {
     this.storageService
       .searchByContainerNumber(cntr)
       .subscribe((conference) => {
@@ -666,19 +691,23 @@ export class PhysicalConferenceHeaderComponent {
         reg.qualificacao,
         "Ajudantes"
       );
+      if (this.ajudantes.find(op => op.cpf == reg.cpf)) {
+        this.notificationService.showMessage("CPF já cadastrado!", "info");
+      } else {
+        this.saveCadastroAdicional(cadastro).subscribe((result) => {
+          if (result) {
+            this.ajudantes.push(reg);
+          } else {
+            console.log("Falha no cadastro.");
+          }
+        });
+      }
 
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
-        if (result) {
-          this.ajudantes.push(reg);
-        } else {
-          console.log("Falha no cadastro.");
-        }
-      });
     });
 
     // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
-      this.excluirCadastroAdicional(id);
+      this.excluirCadastroAdicional(id, "Ajudantes");
     });
   }
 
@@ -701,20 +730,25 @@ export class PhysicalConferenceHeaderComponent {
         reg.nome,
         reg.cpf,
         reg.qualificacao,
-        "Representantes"
+        "Operador"
       );
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
-        if (result) {
-          this.operadores.push(reg);
-        } else {
-          console.log("Falha no cadastro.");
-        }
-      });
+      if (this.operadores.find(op => op.cpf == reg.cpf)) {
+        this.notificationService.showMessage("CPF já cadastrado!", "info");
+      } else {
+        this.saveCadastroAdicional(cadastro).subscribe((result) => {
+          if (result) {
+            this.operadores.push(reg);
+          } else {
+            console.log("Falha no cadastro.");
+          }
+        });
+      }
+
     });
 
     // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
-      this.excluirCadastroAdicional(id);
+      this.excluirCadastroAdicional(id, "Operador");
     });
   }
 
@@ -740,19 +774,23 @@ export class PhysicalConferenceHeaderComponent {
         reg.qualificacao,
         "Representantes"
       );
+      if (this.representantes.find(op => op.cpf == reg.cpf)) {
+        this.notificationService.showMessage("CPF já cadastrado!", "info");
+      } else {
+        this.saveCadastroAdicional(cadastro).subscribe((result) => {
+          if (result) {
+            this.representantes.push(reg);
+          } else {
+            console.log("Falha no cadastro.");
+          }
+        });
+      }
 
-      this.saveCadastroAdicional(cadastro).subscribe((result) => {
-        if (result) {
-          this.representantes.push(reg);
-        } else {
-          console.log("Falha no cadastro.");
-        }
-      });
     });
 
     // 🔥 Captura o evento de remoção
     modalRef.componentInstance.removeEvent.subscribe((id: number) => {
-      this.excluirCadastroAdicional(id);
+      this.excluirCadastroAdicional(id, "Representantes");
     });
   }
 
@@ -771,7 +809,7 @@ export class PhysicalConferenceHeaderComponent {
       .getTiposDocumentos()
       .subscribe((ret: ServiceResult<TiposDocumentos[]>) => {
         if (ret.status) {
-          modalRef.componentInstance.tiposDocumentos = ret.result;
+          modalRef.componentInstance.tiposDocumentos = ret.result?.filter(x => x.codigo == 'LPCO' || x.codigo == 'LI');
         }
       });
 
@@ -783,13 +821,17 @@ export class PhysicalConferenceHeaderComponent {
           reg.tipo
         );
 
-        this.saveDocumentoConferencia(cadastro).subscribe((result) => {
-          if (result) {
-            this.documentos.push(reg);
-          } else {
-            console.log("Falha no cadastro.");
-          }
-        });
+        if (this.documentos.find(op => op.numero == reg.numero)) {
+          this.notificationService.showMessage("Documento já cadastrado!", "info");
+        } else {
+          this.saveDocumentoConferencia(cadastro).subscribe((result) => {
+            if (result) {
+              this.documentos.push(reg);
+            } else {
+              console.log("Falha no cadastro.");
+            }
+          });
+        }
       }
     );
 
@@ -829,8 +871,9 @@ export class PhysicalConferenceHeaderComponent {
     modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaConferencia) => {
       this.conferenceService.saveAvariaConferencia(avaria).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
-          this.notificationService.showSuccess(ret);
+          this.notificationService.showToast("Avaria atualizada com sucesso!");
           this.loadAvariasConferencia(this.conference.id);
+          this.closeModal();
         } else {
           this.notificationService.showAlert(ret);
         }
@@ -896,7 +939,7 @@ export class PhysicalConferenceHeaderComponent {
    */
   excluirDocumentoConferencia(id: number): void {
     this.conferenceService
-      .deleteDocumentoConferencia(id)
+      .deleteDocumentoConferencia(id, this.conference.id)
       .subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
@@ -975,9 +1018,9 @@ export class PhysicalConferenceHeaderComponent {
    * Chama o metodo de exclusao de cadastro adicional
    * @param id
    */
-  excluirCadastroAdicional(id: number): void {
+  excluirCadastroAdicional(id: number, tipo: string): void {
     this.conferenceService
-      .deleteCadastroAdicional(id)
+      .deleteCadastroAdicional(id, this.conference.id, tipo)
       .subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
@@ -1039,7 +1082,7 @@ export class PhysicalConferenceHeaderComponent {
       } else { }
     });
 
-    this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
+    this.service.getProcessosByContainer(this.selectedContainer.autonum).subscribe((ret: ServiceResult<Foto[]>) => {
       console.log(ret.result)
       if (ret.status) {
         modalRef.componentInstance.fotos = ret.result;
@@ -1048,7 +1091,7 @@ export class PhysicalConferenceHeaderComponent {
 
     modalRef.componentInstance.salvarFotoEmitter.subscribe(async (resultado: Foto) => {
 
-      resultado.containerId = this.selectedContainer;
+      resultado.containerId = this.selectedContainer.display;
       await this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
           this.notificationService.showSuccess(ret);
@@ -1057,7 +1100,7 @@ export class PhysicalConferenceHeaderComponent {
         }
       });
 
-      await this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
+      await this.service.getProcessosByContainer(this.selectedContainer.autonum).subscribe((ret: ServiceResult<Foto[]>) => {
 
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;
@@ -1075,7 +1118,7 @@ export class PhysicalConferenceHeaderComponent {
         }
       });
 
-      await this.service.getProcessosByContainer(this.selectedContainer).subscribe((ret: ServiceResult<Foto[]>) => {
+      await this.service.getProcessosByContainer(this.selectedContainer.autonum).subscribe((ret: ServiceResult<Foto[]>) => {
 
         if (ret.status) {
           modalRef.componentInstance.fotos = ret.result;

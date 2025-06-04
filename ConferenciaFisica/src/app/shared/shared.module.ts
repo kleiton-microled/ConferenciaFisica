@@ -9,6 +9,7 @@ import { CameraModalComponent } from './microled-photos/camera-modal/camera-moda
 import { DateFormatPipe } from './pipes/date-mask.pipe';
 import { MicroledInputWithSelectComponent } from './microled-input-with-select/microled-input-with-select.component';
 import { DecimalInputDirective } from './directives/decimal-input.directive';
+import { CpfCnpjValidatorDirective } from './directives/cpf-cnpj-validator.directive';
 
 
 @NgModule({
@@ -20,19 +21,21 @@ import { DecimalInputDirective } from './directives/decimal-input.directive';
     MicroledPhotosComponent,
     MicroledInputWithSelectComponent,
     DateFormatPipe,
-    DecimalInputDirective],
+    DecimalInputDirective,
+    CpfCnpjValidatorDirective],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule
   ],
   exports: [
-    MicroledSelectComponent, 
-    ActionFooterComponent, 
+    MicroledSelectComponent,
+    ActionFooterComponent,
     MicroledPhotosComponent,
     MicroledInputWithSelectComponent,
     DateFormatPipe,
-    DecimalInputDirective
+    DecimalInputDirective,
+    CpfCnpjValidatorDirective
   ]
 })
 export class SharedModule { }

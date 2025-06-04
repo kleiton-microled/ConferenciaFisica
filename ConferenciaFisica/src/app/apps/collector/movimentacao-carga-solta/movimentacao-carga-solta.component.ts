@@ -22,17 +22,6 @@ import { MovimentacaoCargaSolta } from './carga.model';
 export class MovimentacaoCargaSoltaComponent implements OnInit {
 
   pageTitle: BreadcrumbItem[] = [];
-  items = [
-    { id: 1, name: "Item 1" },
-    { id: 2, name: "Item 2" },
-    { id: 3, name: "Item 3" },
-  ];
-
-  motivos = [
-    { id: 1, name: "Item 1" },
-    { id: 2, name: "Item 2" },
-    { id: 3, name: "Item 3" },
-  ];
 
   listaArmazens: Armazen[] = [];
 
@@ -55,10 +44,6 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private formBuilder: FormBuilder,
-    private modalService: NgbModal,
-    private conferenceService: PhysicalConferenceService,
-    private storageService: PhysicalConferenceStorageService,
     private notificationService: NotificationService,
     private descargaService: DescargaExportacaoService,
     private service: ColetorService,
@@ -102,6 +87,7 @@ export class MovimentacaoCargaSoltaComponent implements OnInit {
       this.movimentacaoCargaService.getCargaParaMovimentacao(marcante.value).subscribe((ret: ServiceResult<MovimentacaoCargaSolta>) => {
         if (ret.status && ret.result) {
           this.movimentacaoCargaService.updateCarga(ret.result);
+          
           this.movimentacaoCargaService.getCargaAtual().subscribe((ret: MovimentacaoCargaSolta | null) => {
           });
         } else if (!ret.status) {

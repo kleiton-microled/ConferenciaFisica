@@ -13,4 +13,5 @@ export class MovimentacaoCargaSolta {
     reserva: string = "";
     imo: string = "";
     uno: string = "";
+    motivo: number = 0;
 }

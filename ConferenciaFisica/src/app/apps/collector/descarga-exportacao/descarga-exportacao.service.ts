@@ -358,7 +358,7 @@ export class DescargaExportacaoService extends BaseService<DescargaExportacao> {
         );
     }
 
-    getProcessosByContainer(container: string): Observable<ServiceResult<Foto[]>> {
+    getProcessosByContainer(container: number): Observable<ServiceResult<Foto[]>> {
         return this.http.get<ServiceResult<Foto[]>>(`${this.urlApi}/processo-container/${container}`).pipe(
             map(response => {
                 if (!response.status) {

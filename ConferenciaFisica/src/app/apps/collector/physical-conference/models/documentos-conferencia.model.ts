@@ -13,7 +13,6 @@ export class DocumentosConferencia{
         cadastro.idConferencia = idConferencia;
         cadastro.numero= numero;
         cadastro.tipo = tipo;
-
         return cadastro;
     }
 }

@@ -37,7 +37,6 @@ export class DocumentosComponent {
   adicionarDocumento(): void {
     if (this.documentoForm.valid) {
       let novoDocumento: DocumentosConferencia = this.documentoForm.value;
-      console.log(novoDocumento);
       novoDocumento.tipoDescricao = this.tiposDocumentos.find(x=>x.id == novoDocumento.tipo)?.descricao ?? "";
 
       this.documentos.push(novoDocumento);

@@ -10,6 +10,7 @@ import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
 import { Armazen } from '../../models/armazens.model';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { Router } from '@angular/router';
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 
 @Component({
   selector: 'app-movimenta-carga',
@@ -24,7 +25,7 @@ export class MovimentaCargaComponent implements OnInit {
   modalForm!: FormGroup;
 
   locais = ['Depósito 1', 'Depósito 2'];
-  armazens: Armazen[] = [];
+  armazens: SelectizeModel[] = [];
   motivos = ['Transferência', 'Ajuste de estoque'];
 
   cargaSelecionada: MovimentacaoCargaSolta = new MovimentacaoCargaSolta();
@@ -72,12 +73,21 @@ export class MovimentaCargaComponent implements OnInit {
   }
 
   openModal(): void {
-    this.modalForm.reset();
-    this.modalService.open(this.modalMovimentacaoRef, { centered: true, size: 'lg' });
+    if (this.cargaSelecionada.idMarcante > 0) {
+      this.modalForm.reset();
+      this.modalService.open(this.modalMovimentacaoRef, { centered: true, size: 'lg' });
+    } else {
+      this.notificationService.showMessage("Selecione uma carga para movimentar.", "Info");
+    }
+
   }
 
   get armazenControl(): FormControl {
-    return this.form.get('armazem') as FormControl;
+    return this.modalForm.get('armazem') as FormControl;
+  }
+
+  get armazemControl(): FormControl {
+    return this.modalForm.get('armazem') as FormControl;
   }
 
   redirecionarHome() {
@@ -87,14 +97,13 @@ export class MovimentaCargaComponent implements OnInit {
   submitMovimentacao(modalRef: any): void {
     if (this.modalForm.valid) {
 
-      this.modalForm.get('idMarcante')?.setValue(this.cargaSelecionada.idMarcante);
-      const dados = this.modalForm.value;
+      this.cargaSelecionada.armazem = this.modalForm.controls['armazem'].value;
+      this.cargaSelecionada.local = this.modalForm.controls['local'].value;
+      this.cargaSelecionada.motivo = this.modalForm.controls['motivo'].value;
 
-      console.log('Movimentação confirmada:', dados);
-
-      this.service.movimentarCargaSolta(dados).subscribe((ret: ServiceResult<boolean>) => {
+      this.service.movimentarCargaSolta(this.cargaSelecionada).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
-          this.notificationService.showSuccess(ret);
+          this.notificationService.showMessage("Carga movimentada com sucesso!");
           this.service.getCargaParaMovimentacao(this.cargaSelecionada.idMarcante).subscribe((ret: ServiceResult<MovimentacaoCargaSolta>) => {
             if (ret.status && ret.result) {
               this.cargaSelecionada = ret.result;
@@ -119,7 +128,7 @@ export class MovimentaCargaComponent implements OnInit {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     const data = event.dataTransfer?.getData('text');
-    if (data === 'dragItem') {
+    if (data === 'dragItem' && this.cargaSelecionada.idMarcante > 0) {
       this.openModal(); // abre modal ao fazer drop
     }
   }
@@ -135,7 +144,6 @@ export class MovimentaCargaComponent implements OnInit {
   };
 
   onLocalSelecionado(local: { value: any; descricao: string }) {
-    console.log(local);
     if (!local.value) {
       this.modalForm.get('local')?.reset(); // limpa se inválido
     } else {
@@ -143,10 +151,20 @@ export class MovimentaCargaComponent implements OnInit {
     }
   }
 
+  onArmazemSelectChange(value: any) {
+    console.log(value);
+    this.form.controls['armazem'].setValue(value);
+  }
+
   buscarArmazens() {
     this.descargaService.getArmazens(2).subscribe((ret: ServiceResult<Armazen[]>) => {
-      if (ret.status) {
-        this.armazens = ret.result ?? [];
+      if (ret.status && ret.result) {
+        this.armazens = ret.result.map(c => ({
+          id: c.id,
+          label: c.descricao
+        }));
+      } else {
+        this.armazens = [];
       }
     });
   }

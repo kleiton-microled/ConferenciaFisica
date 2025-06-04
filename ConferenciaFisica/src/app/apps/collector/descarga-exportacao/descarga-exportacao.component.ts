@@ -29,6 +29,7 @@ import { ColetorService } from '../collector.service';
 import { EquipeModel } from '../models/equipe.model';
 import { AuthenticationService } from 'src/app/core/service/auth.service';
 import { ConfigService } from 'src/app/shared/services/config.service';
+import { TiposEmbalagens } from '../physical-conference/models/tipos-embalagens.model';
 
 @Component({
   selector: 'app-descarga-exportacao',
@@ -58,6 +59,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   // { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
 
   listOperacoes: SelectizeModel[] = [{ id: 1, label: 'Manual' }, { id: 2, label: 'Automatizada' }];
+  tiposEmbalagens: TiposEmbalagens[] = [];
 
   tiposAvarias: TiposAvarias[] = [];
   avariaDescarga!: AvariaDescarga;
@@ -122,7 +124,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   getEditItemForm(): FormGroup {
     return this.fb.group({
-      notaFiscal: ['', Validators.required],
+      notaFiscal: [{value:'', disabled: true}, Validators.required],
       quantidadeDescarga: ['', Validators.required],
       codigoEmbalagem: ['', Validators.required],
       embalagem: ['', Validators.required],
@@ -246,6 +248,14 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       if (!value)
         this.form.controls['conteiner'].reset();
     });
+
+    this.conferenceService
+          .getTiposEmbalagens()
+          .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
+            if (ret.status) {
+              this.tiposEmbalagens = ret.result ?? [];
+            }
+          });
 
     this.initAdvancedTableData();
   }
@@ -414,8 +424,11 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     // Passa os tipos de avarias e embalagens
     modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
-    modalRef.componentInstance.listLocal = [{ id: 1, codigo: 1, descricao: 'Fumigação' },
-    { id: 2, codigo: 2, descricao: 'Identificação' }];
+    modalRef.componentInstance.listLocal =
+      [
+        { id: 1, codigo: 1, descricao: 'Fumigação' },
+        { id: 2, codigo: 2, descricao: 'Identificação' }
+      ];
 
 
     // ✅ Ouvindo o evento de salvamento da modal
@@ -424,7 +437,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
       this.service.saveAvaria(avaria).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status) {
-          this.notificationService.showSuccess(ret);
+          this.notificationService.showToast("Avaria cadastrada com sucesso!");
         } else {
           this.notificationService.showAlert(ret);
         }
@@ -453,7 +466,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
     modalRef.componentInstance.urlPath = 'uploads/fotos';
     modalRef.componentInstance.urlBasePhotos = this.configService.getConfig('BASE_IMAGES');
-    
+
     modalRef.componentInstance.isDisabled = false;//this.descargaAtual.talie?.termino != null;
 
     this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {
@@ -672,12 +685,17 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   }
 
+   onEmbalagemChange(embalagem: any | null) {
+      this.editItemForm.controls['codigoEmbalagem'].setValue(embalagem);
+    }
+
   /**
    * Salvar alteracoes no item do talie
    * @param modal 
    */
   salvarAlteracoes(modal: any): void {
     if (this.editItemForm.valid) {
+      console.log('Item: ',this.editItemForm);
       this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarRegistro();

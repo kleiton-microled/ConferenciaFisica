@@ -3,7 +3,7 @@ import { LacresModel } from "./lacres.model";
 export class PhysicalConferenceModel {
     id: number = 0;
     tipo: number = 0;
-    cntr: string = "";
+    cntr: number = 0;
     numeroConteiner: string = "";
     bl: string = "";
     operacao: string = "";
@@ -22,7 +22,7 @@ export class PhysicalConferenceModel {
     cpfConferente: string = "";
     nomeConferente: string = "";
     qtdDocumento: number = 0;
-    telefoneConferente: number = 0;
+    telefoneConferente: string = "";
     quantidadeDivergente: number = 0;
     quantidadeVolumesDivergentes: number = 0;
     quantidadeRepresentantes: number = 0;
@@ -34,6 +34,7 @@ export class PhysicalConferenceModel {
     desunitizacao: number = 0;
     observacao: string = "";
     lacres: LacresModel[] = [];
+    autonumAgendaPosicao: number = 0;
 
     observacaoDivergencia: string = "";
 

@@ -51,7 +51,7 @@ export class LacresFormComponent implements OnInit {
   ngOnInit(): void {
     // 🔥 Escutar mudanças na conference e atualizar o formulário
     this.service.getCurrentConference().subscribe((ret: PhysicalConferenceModel) => {
-      if(ret){
+      if (ret) {
         this.idConferencia = ret.id;
       }
     });
@@ -114,7 +114,6 @@ export class LacresFormComponent implements OnInit {
     if (this.lacresForm.valid) {
       this.isLoading = true;
       const tipoLacreSelecionado = this.tiposLacres.find(tipo => tipo.id == this.lacresForm.value.TipoLacre);
-      console.log('GetCurrentConference: ', this.service.getCurrentConference());
       const novoLacre: LacresModel = {
         id: null,
         idConferencia: this.idConferencia,
@@ -124,25 +123,23 @@ export class LacresFormComponent implements OnInit {
         lacreFechamento: this.lacresForm.value.LacreFechamento
       };
 
-      this.saveLacre(novoLacre).subscribe((result) => {
-        if (result) {
-          this.isLoading = false;
-          this.lacresConferencia.push(novoLacre);
-          this.lacresForm.patchValue({
-            NumeroLacre: '',
-            TipoLacre: 0,
-            LacreFechamento: ''
-          });
-        } else {
-          console.log('Falha no cadastro.');
-        }
-      });
-
-      // setTimeout(() => {
-      //   this.lacresConferencia.push(novoLacre);
-      //   this.lacresForm.reset();
-      //   this.isLoading = false;
-      // }, 1000);
+      if (this.lacresConferencia.find(op => op.numero == novoLacre.numero)) {
+        this.notificationService.showMessage("Lacre já cadastrado!", "info");
+      } else {
+        this.saveLacre(novoLacre).subscribe((result) => {
+          if (result) {
+            this.isLoading = false;
+            this.lacresConferencia.push(novoLacre);
+            this.lacresForm.patchValue({
+              NumeroLacre: '',
+              TipoLacre: 0,
+              LacreFechamento: ''
+            });
+          } else {
+            console.log('Falha no cadastro.');
+          }
+        });
+      }
     }
   }
 

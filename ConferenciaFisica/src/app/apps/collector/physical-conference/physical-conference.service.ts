@@ -152,7 +152,7 @@ export class PhysicalConferenceService {
    * @param filtro (opcional) Filtro de busca
    * @returns Observable<ConferenceContainer[]>
    */
-  getConference(filter: { conteiner?: string; lote?: string; numero?: string }): Observable<ServiceResult<PhysicalConferenceModel>> {
+  getConference(filter: { conteiner?: number; lote?: string; numero?: string }): Observable<ServiceResult<PhysicalConferenceModel>> {
     this.notificationService.showLoading();
 
     // Construção dinâmica dos parâmetros
@@ -218,10 +218,6 @@ export class PhysicalConferenceService {
 
     return this.http.post<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/iniciar-conferencia`, conference).pipe(
       map(response => {
-        // if (!response.status) {
-        //   this.notificationService.showError(response);
-        //   throw new Error(response.error || 'Erro desconhecido');
-        // }
         return response;
       }),
       catchError((error: HttpErrorResponse) => {
@@ -304,8 +300,8 @@ export class PhysicalConferenceService {
    * @param id 
    * @returns 
    */
-  deleteCadastroAdicional(id: number): Observable<ServiceResult<boolean>> {
-    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-cadastro-adicional?id=${id}`,).pipe(
+  deleteCadastroAdicional(id: number, idConferencia: number, tipo: string): Observable<ServiceResult<boolean>> {
+    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-cadastro-adicional?id=${id}&idConferencia=${idConferencia}&tipo=${tipo}`,).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);
@@ -507,8 +503,8 @@ export class PhysicalConferenceService {
    * @param id 
    * @returns bool
    */
-  deleteDocumentoConferencia(id: number): Observable<ServiceResult<boolean>> {
-    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-documento-conferencia?id=${id}`,).pipe(
+  deleteDocumentoConferencia(id: number, idConferencia: number): Observable<ServiceResult<boolean>> {
+    return this.http.delete<ServiceResult<boolean>>(`${this.apiUrl}/conferencia/excluir-documento-conferencia?id=${id}&idConferencia=${idConferencia}`,).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showError(response);

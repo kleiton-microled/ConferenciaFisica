@@ -96,11 +96,11 @@ export class PhysicalConferenceStorageService {
     this.storageSubject.next(this.storage);
   }
 
-  searchByContainerNumber(cntr: string): Observable<PhysicalConferenceModel | undefined> {
+  searchByContainerNumber(cntr: number): Observable<PhysicalConferenceModel | undefined> {
     return of(this.storage.find(conference => conference.cntr === cntr));
   }
 
-  searchConferences(filter: { conteiner?: string; lote?: string; numero?: string }): Promise<PhysicalConferenceModel[]> {
+  searchConferences(filter: { conteiner?: number; lote?: string; numero?: string }): Promise<PhysicalConferenceModel[]> {
     console.log('Filter: ', filter);
     return new Promise(resolve => {
       const result = this.storage.filter(conference => {

@@ -262,10 +262,10 @@
         </div> -->
         <div class="col-3">
           <label for="conteiner" class="form-label">Conteiner</label>
-          <select class="form-select" id="conteiner" [(ngModel)]="selectedContainer" name="conteiner">
-            <option value="0">Selecione</option>
-            <option *ngFor="let container of containers" [value]="container.autonum">
-              {{ container.display }}
+          <select class="form-select" id="conteiner" [(ngModel)]="selectedContainer" name="conteiner" (ngModelChange)="onContainerChange($event)">
+            <option [ngValue]="null">Selecione</option>
+            <option *ngFor="let conteiner of containers" [ngValue]="conteiner">
+              {{ conteiner.display }}
             </option>
           </select>
         </div>
@@ -273,7 +273,7 @@
           <label for="nvocc" class="form-label">Lote</label>
           <select class="form-select" id="nvocc" [(ngModel)]="selectedLote" name="nvocc">
             <option value="0">Selecione</option>
-            <option *ngFor="let lote of lotes" [value]="lote.autonum">
+            <option *ngFor="let lote of lotes" [ngValue]="lote">
               {{ lote.display }}
             </option>
           </select>

@@ -48,7 +48,8 @@ export class MovimentacaoCargaSoltaService extends BaseService<any> {
             anvisa: '--',
             reserva: '--',
             imo: '--',
-            uno: '--'
+            uno: '--',
+            motivo: 0
         };
         this.cargaSubject.next(novaCarga);
     }

@@ -1,63 +1,69 @@
 <div class="modal-header">
-    <h5 class="modal-title">{{ titulo }}</h5>
-    <button type="button" class="btn-close" (click)="activeModal.dismiss()"></button>
-  </div>
-  
-  <div class="modal-body">
-    <p>{{ frase }}</p>
-  
-    <form [formGroup]="form">
-      <div class="row g-3">
-        <div class="col-4">
-          <label class="form-label">CPF</label>
-          <input type="text" class="form-control" formControlName="cpf" appCpfMask maxlength="14" placeholder="Digite o CPF">
+  <h5 class="modal-title">{{ titulo }}</h5>
+  <button type="button" class="btn-close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <p>{{ frase }}</p>
+
+  <form [formGroup]="form">
+    <div class="row g-3">
+      <div class="col-4">
+        <label class="form-label">CPF</label>
+        <input type="text" class="form-control" formControlName="cpf" cpfCnpjValidator appCpfMask maxlength="14"
+          placeholder="Digite o CPF" (blur)="form.get('cpf')?.updateValueAndValidity()" />
+        <div *ngIf="form.get('cpf')?.touched && form.get('cpf')?.hasError('cpfInvalid')">
+          <p style="color: red;">CPF inválido</p>
         </div>
-  
-        <div class="col-4">
-          <label class="form-label">Nome</label>
-          <input type="text" class="form-control" formControlName="nome" placeholder="Digite o Nome">
-        </div>
-  
-        <div class="col-2">
-          <label class="form-label">Ajudante</label>
-          <select class="form-select" formControlName="ajudante">
-            <option *ngFor="let opcao of opcoesSelect" [value]="opcao">{{ opcao }}</option>
-          </select>
-        </div>
-  
-        <div class="col-2 d-flex align-items-end">
-          <button type="button" class="btn btn-primary w-100" (click)="adicionarRegistro()" [disabled]="form.invalid">
-            Adicionar
-          </button>
+        <div *ngIf="form.get('cpf')?.touched && form.get('cpf')?.hasError('cnpjInvalid')">
+          <p style="color: red;">CNPJ inválido</p>
         </div>
       </div>
-    </form>
-  
-    <table class="table table-striped mt-3" *ngIf="registros.length > 0">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>CPF</th>
-          <th>Qualificação</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let reg of registros; let i = index">
-          <td>{{ reg.nome }}</td>
-          <td>{{ reg.cpf }}</td>
-          <td>{{ reg.qualificacao }}</td>
-          <td>
-            <button class="btn btn-danger btn-sm" (click)="removerRegistro(i)">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="activeModal.close()">Fechar</button>
-  </div>
-  
+
+      <div class="col-4">
+        <label class="form-label">Nome</label>
+        <input type="text" class="form-control" formControlName="nome" placeholder="Digite o Nome">
+      </div>
+
+      <div class="col-2">
+        <label class="form-label">Ajudante</label>
+        <select class="form-select" formControlName="ajudante">
+          <option *ngFor="let opcao of opcoesSelect" [value]="opcao">{{ opcao }}</option>
+        </select>
+      </div>
+
+      <div class="col-2 d-flex align-items-end">
+        <button type="button" class="btn btn-primary w-100" (click)="adicionarRegistro()" [disabled]="form.invalid">
+          Adicionar
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-striped mt-3" *ngIf="registros.length > 0">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Qualificação</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let reg of registros; let i = index">
+        <td>{{ reg.nome }}</td>
+        <td>{{ reg.cpf }}</td>
+        <td>{{ reg.qualificacao }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="removerRegistro(i)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.close()">Fechar</button>
+</div>
