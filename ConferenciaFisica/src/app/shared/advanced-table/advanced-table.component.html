@@ -95,8 +95,8 @@
     @if(pagination){
     <div class="d-flex flex-wrap justify-content-center align-items-center justify-content-md-between mt-2">
         <div>
-            Showing {{service.startIndex }} to
-            {{service.endIndex}} of {{service.totalRecords}} entries
+            Mostrando {{service.startIndex }} de
+            {{service.endIndex}} de {{service.totalRecords}} registros
         </div>
         <ngb-pagination class="pagination-rounded custom-pagination" [collectionSize]="service.totalRecords"
             [(page)]="service.page" [maxSize]="3" [rotate]="true" [pageSize]="service.pageSize"

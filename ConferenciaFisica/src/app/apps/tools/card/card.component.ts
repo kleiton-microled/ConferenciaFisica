@@ -18,10 +18,6 @@ export class CardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.tools;
-    // if (this.isDisabled) {
-    //   console.log('Filho: ', this.isDisabled);
-    //   this.tools = this.tools.map(tool => ({ ...tool, isDisabled: true }));
-    // }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

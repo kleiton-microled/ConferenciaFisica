@@ -166,10 +166,10 @@
     vite "5.4.6"
     watchpack "2.4.1"
 
-"@angular/cdk@^18.0.5":
-  version "18.2.11"
-  resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-18.2.11.tgz"
-  integrity sha512-FuvfhrSz2ch0gyOVHrkWq2C/I2PnOzKYSXlG/VEG+ize/WNrvlYy//5WVrTh/hv+HD9sdoWPr9ULXsfFfgbo7w==
+"@angular/cdk@^18.2.14":
+  version "18.2.14"
+  resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-18.2.14.tgz"
+  integrity sha512-vDyOh1lwjfVk9OqoroZAP8pf3xxKUvyl+TVR8nJxL4c5fOfUFkD7l94HaanqKSRwJcI2xiztuu92IVoHn8T33Q==
   dependencies:
     tslib "^2.3.0"
   optionalDependencies:

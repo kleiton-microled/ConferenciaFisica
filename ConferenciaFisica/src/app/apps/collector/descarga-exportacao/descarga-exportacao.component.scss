@@ -3,3 +3,24 @@
     opacity: 1; /* Evita que o Bootstrap reduza a opacidade */
 }
 
+/* Aplica o estilo somente para tablets e telas menores */
+@media (max-width: 991.98px) {
+  ::ng-deep .modal-tablet-90 .modal-dialog {
+    max-width: 90vw;
+    margin: auto;
+  }
+
+  ::ng-deep .modal-tablet-90 .modal-content {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+
+  ::ng-deep .modal-tablet-90 .modal-body {
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+}
+
+
+

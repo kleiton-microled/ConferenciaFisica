@@ -1,48 +1,41 @@
-.draggable {
-    cursor: grab;
-    user-select: none;
-  }
-  
-  .droppable {
-    min-height: 150px;
-    background: #f8f9fa;
-    border: 2px dashed #ccc;
-    padding: 10px;
-  }
-  
-  .badge {
-    cursor: grab;
-    user-select: none;
-  }
-  
-  .badge:hover {
-    opacity: 0.8;
-  }
-  
-  .draggable {
-    cursor: grab;
-  }
-  
-  .dropzone-container {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .dropzone {
-    height: 100px; /* Altura fixa */
-    overflow-y: auto; /* Ativa a rolagem quando necessário */
-    //background-color: #f8f9fa;
-    //border: 2px dashed #fc4040;
-    //border-radius: 5px;
-    padding: 10px;
+/* Garante que o formulário e os dropzones sejam responsivos */
+.responsive-row,
+.responsive-dropzones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Em telas maiores, exibimos os elementos lado a lado */
+@media (min-width: 768px) {
+  .responsive-row,
+  .responsive-dropzones {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  .dropzone-selecionados {
-    height: 150px; /* Altura fixa */
-    overflow-y: auto; /* Ativa a rolagem quando necessário */
-    background-color: #f8f9fa;
-    border: 2px dashed #40fcb1;
-    border-radius: 5px;
-    padding: 10px;
+  .responsive-row > div,
+  .responsive-dropzones > div {
+    flex: 1 1 25%; /* 4 por linha no form */
   }
-  
+
+  .responsive-dropzones > .dropzone-container {
+    flex: 1 1 50%; /* 2 por linha no drag-and-drop */
+  }
+}
+
+/* Visual da área de drop */
+.dropzone,
+.dropzone-selecionados {
+  min-height: 80px;
+  border: 2px dashed #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: border-color 0.3s ease;
+}
+
+.dropzone:hover,
+.dropzone-selecionados:hover {
+  border-color: #999;
+}

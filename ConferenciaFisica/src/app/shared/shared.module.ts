@@ -10,6 +10,7 @@ import { DateFormatPipe } from './pipes/date-mask.pipe';
 import { MicroledInputWithSelectComponent } from './microled-input-with-select/microled-input-with-select.component';
 import { DecimalInputDirective } from './directives/decimal-input.directive';
 import { CpfCnpjValidatorDirective } from './directives/cpf-cnpj-validator.directive';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { CpfCnpjValidatorDirective } from './directives/cpf-cnpj-validator.direc
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    DragDropModule
   ],
   exports: [
     MicroledSelectComponent,

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { TiposAvarias } from "./tipos-avarias.model";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "app-avarias-modal",
@@ -83,28 +84,34 @@ export class AvariasModalComponent<T extends Record<string, any>> implements OnI
     //this.activeModal.close();
   }
 
-  onDragStart(event: DragEvent, tipo: TiposAvarias): void {
-    event.dataTransfer?.setData("text", JSON.stringify(tipo));
-  }
+  // onDragStart(event: DragEvent, tipo: TiposAvarias): void {
+  //   event.dataTransfer?.setData("text", JSON.stringify(tipo));
+  // }
 
-  allowDrop(event: DragEvent) {
-    event.preventDefault();
-  }
+  // allowDrop(event: DragEvent) {
+  //   event.preventDefault();
+  // }
 
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-  }
+  // onDragOver(event: DragEvent) {
+  //   event.preventDefault();
+  // }
 
-  onDrop(event: DragEvent): void {
-    event.preventDefault();
-    const data = event.dataTransfer?.getData("text");
-    if (data) {
-      const avaria = JSON.parse(data) as TiposAvarias;
-      if (!this.avariasSelecionadas.some((a) => a.id === avaria.id)) {
-        this.avariasSelecionadas.push(avaria);
-      }
-    }
+  // onDrop(event: DragEvent): void {
+  //   event.preventDefault();
+  //   const data = event.dataTransfer?.getData("text");
+  //   if (data) {
+  //     const avaria = JSON.parse(data) as TiposAvarias;
+  //     if (!this.avariasSelecionadas.some((a) => a.id === avaria.id)) {
+  //       this.avariasSelecionadas.push(avaria);
+  //     }
+  //   }
+  // }
+ onDropAvaria(event: CdkDragDrop<TiposAvarias[]>) {
+  const avaria = event.item.data;
+  if (!this.avariasSelecionadas.some(a => a.id === avaria.id)) {
+    this.avariasSelecionadas.push(avaria);
   }
+}
 
   removerAvaria(avaria: TiposAvarias): void {
     this.avariasSelecionadas = this.avariasSelecionadas.filter((a) => a.id !== avaria.id);

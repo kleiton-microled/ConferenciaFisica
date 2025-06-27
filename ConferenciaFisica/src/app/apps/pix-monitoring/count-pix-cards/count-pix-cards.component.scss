@@ -1,0 +1,37 @@
+.cards-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.card {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 1.2rem;
+  text-align: left;
+  min-width: 150px;
+  box-shadow: none;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #333;
+  margin-top: 0.5rem;
+}
+
+.value.paid {
+  color: #3cb28d;
+}
+
+.value.canceled {
+  color: #e03b3b;
+}

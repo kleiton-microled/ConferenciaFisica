@@ -12,6 +12,7 @@ export class PhysicalConferenceModel {
     dataPrevista: Date = new Date();
     motivoAbertura: string = "";
     embalagem: number = 0;
+    codigoEmbalagem: number = 0;
     quantidade: number = 0;
     tipoConferencia: number = 0;
     inicio: Date = new Date();

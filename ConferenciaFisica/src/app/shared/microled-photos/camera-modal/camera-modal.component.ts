@@ -8,9 +8,9 @@ import { EnumValue } from '../../models/enumValue.model';
   templateUrl: './camera-modal.component.html',
   styleUrls: ['./camera-modal.component.scss'],
 })
-export class CameraModalComponent implements OnInit, OnDestroy  {
+export class CameraModalComponent implements OnInit, OnDestroy {
 
-  @Input() types: EnumValue[] = []; 
+  @Input() types: EnumValue[] = [];
   @Output() fotoCapturada = new EventEmitter<FotoCapturada>();
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('canvasElement') canvasElement!: ElementRef;
@@ -18,22 +18,45 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
   private stream: MediaStream | null = null;
   tipoSelecionado: number = 0;
 
-  constructor(public activeModal: NgbActiveModal, private renderer: Renderer2) {}
+  constructor(public activeModal: NgbActiveModal, private renderer: Renderer2) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.abrirCamera();
   }
 
+  // abrirCamera() {
+  //   navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+  //     this.stream = stream;
+  //     const video = this.videoElement.nativeElement;
+  //     this.renderer.setProperty(video, 'srcObject', stream);
+  //     video.play();
+  //   }).catch(err => {
+  //     console.error("Erro ao acessar a câmera:", err);
+  //     this.activeModal.dismiss();
+  //   });
+  // }
   abrirCamera() {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-      this.stream = stream;
-      const video = this.videoElement.nativeElement;
-      this.renderer.setProperty(video, 'srcObject', stream);
-      video.play();
-    }).catch(err => {
-      console.error("Erro ao acessar a câmera:", err);
-      this.activeModal.dismiss();
-    });
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } })
+      .then(stream => {
+        this.stream = stream;
+        const video = this.videoElement.nativeElement;
+        this.renderer.setProperty(video, 'srcObject', stream);
+        video.play();
+      })
+      .catch(err => {
+        console.warn('Câmera traseira não disponível, tentando padrão.', err);
+
+        // Fallback para câmera padrão
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+          this.stream = stream;
+          const video = this.videoElement.nativeElement;
+          this.renderer.setProperty(video, 'srcObject', stream);
+          video.play();
+        }).catch(err => {
+          console.error("Erro ao acessar a câmera:", err);
+          this.activeModal.dismiss();
+        });
+      });
   }
 
   capturarFoto() {
@@ -49,7 +72,7 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
       const fotoBase64 = canvas.toDataURL('image/png');
       let d = this.types.find(x => x.id == this.tipoSelecionado);
 
-      this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: d?.id?? 0, tipoDescription: d?.descricao ?? '', tipoProcesso: d?.codigo ?? 0 });
+      this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: d?.id ?? 0, tipoDescription: d?.descricao ?? '', tipoProcesso: d?.codigo ?? 0 });
     }
 
     this.fecharCamera();
@@ -67,9 +90,9 @@ export class CameraModalComponent implements OnInit, OnDestroy  {
 
     if (value) {
       console.log(value);
-        this.tipoSelecionado = value; 
+      this.tipoSelecionado = value;
     }
-}
+  }
 
 
   ngOnDestroy(): void {

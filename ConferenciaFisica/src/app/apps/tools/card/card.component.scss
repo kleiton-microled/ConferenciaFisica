@@ -57,8 +57,9 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
-  height: 150px;
-  width: 308px;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
   background-color: #5484fd;
   color: white;
   border-radius: 0px;
@@ -67,6 +68,13 @@
   text-align: center;
   text-decoration: none; /* Remove o sublinhado do link */
   cursor: pointer;
+}
+
+@media (min-width: 992px) {
+  .tool-card {
+    width: 308px;
+    height: 150px;     // largura fixa em telas grandes (notebook e desktop)
+  }
 }
 
 /* Animação ao passar o mouse */
@@ -123,4 +131,5 @@
   border: 1px dashed #999;
   color: #999;
 }
+
 

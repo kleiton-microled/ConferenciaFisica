@@ -69,7 +69,6 @@ export class TopbarComponent implements OnInit {
     this.leftSidebarType = config.leftSidebarType;
 
     this.loggedInUser = this.authService.currentUser();
-    console.log(this.loggedInUser.username);
 
     document.addEventListener("fullscreenchange", this.exitHandler);
     document.addEventListener("webkitfullscreenchange", this.exitHandler);

@@ -19,7 +19,7 @@ export class TalieItem {
     peso:number = 0;
     fragil!: boolean;
     madeira!: boolean;
-    codigoEmbalagem!: string;
+    codigoEmbalagem!: number;
     observacao!: string;
     carimbo: boolean = false;
     cargaNumerada: boolean = false;

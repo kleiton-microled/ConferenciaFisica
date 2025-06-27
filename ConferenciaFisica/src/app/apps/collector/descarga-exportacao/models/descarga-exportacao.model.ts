@@ -6,8 +6,9 @@ export class DescargaExportacao {
     placa!: string;
     reserva!: string;
     cliente!: string;
-    nomeConferente: string = "Microled";
+    nomeConferente!: string;
     conferente!: number;
+    //idConferente!: number;
     equipe: number = 0;
     isCrossDocking: boolean = false;
     conteiner: string = '';

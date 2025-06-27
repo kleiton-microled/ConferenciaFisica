@@ -102,8 +102,14 @@
                     <div class="row mb-3">
                         <div class="col-3">
                             <label for="conferente">Conferente</label>
-                            <p><span style="font-weight: bold;">Microled</span></p>
+                            <p>
+                                <span style="font-weight: bold;">
+                                    {{ form.controls['termino'].value == null ? loggedInUser.username : conferenteAtual
+                                    }}
+                                </span>
+                            </p>
                         </div>
+
                         <div class="col-4">
                             <app-microled-select label="Selecione a Equipe" [items]="listEquipes"
                                 [control]="equipeControl" (selectionChange)="onEquipeSelectChange($event)">
@@ -275,21 +281,16 @@
                     <label>Quantidade</label>
                     <input type="text" class="form-control" formControlName="quantidadeDescarga">
                 </div>
-                <div class="col-3">
-                    <!-- <label>Cod. Embalagem</label>
-                    <input type="text" class="form-control" formControlName="codigoEmbalagem"> -->
+                <div class="col-6">
                     <label for="embalagem">EMBALAGEM</label>
-                    <select class="form-select" id="embalagem" formControlName="embalagem"  (ngModelChange)="onEmbalagemChange($event)">
-                        <option value="null">Selecione uma embalagem</option>
+                    <select class="form-select" id="embalagem" formControlName="embalagem"
+                        (ngModelChange)="onEmbalagemChange($event)">
+                        <option [ngValue]="null">Selecione uma embalagem</option>
                         <option *ngFor="let embalagem of tiposEmbalagens" [ngValue]="embalagem.id">
                             {{ embalagem.id + ' - ' + embalagem.descricao }}
                         </option>
                     </select>
                 </div>
-                <!-- <div class="col-3">
-                    <label>Desc. Embalagem</label>
-                    <input type="text" class="form-control" formControlName="embalagem">
-                </div> -->
             </div>
 
             <div class="row mt-3">
@@ -305,19 +306,22 @@
                     <label>Altura</label>
                     <input type="text" class="form-control" formControlName="altura" appDecimalInput>
                 </div>
-                <div class="col-1 form-check">
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-2 form-check">
                     <input type="checkbox" class="form-check-input" formControlName="madeira">
                     <label class="form-check-label">Madeira</label>
                 </div>
-                <div class="col-1 form-check">
+                <div class="col-2 form-check">
                     <input type="checkbox" class="form-check-input" formControlName="fragil">
                     <label class="form-check-label">Frágil</label>
                 </div>
-                <div class="col-1 form-check">
+                <div class="col-2 form-check">
                     <input type="checkbox" class="form-check-input" formControlName="cargaNumerada">
                     <label class="form-check-label">Numerada</label>
                 </div>
-                <div class="col-1 form-check">
+                <div class="col-2 form-check">
                     <input type="checkbox" class="form-check-input" formControlName="carimbo">
                     <label class="form-check-label">Carimbo</label>
                 </div>

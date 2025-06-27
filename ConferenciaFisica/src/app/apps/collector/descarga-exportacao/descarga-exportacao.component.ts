@@ -41,6 +41,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   pageTitle: BreadcrumbItem[] = [];
 
+  loggedInUser: any = {};
+
   isDisabled: boolean = false; //usado para desabilitar o input withSelect
   private subscription!: Subscription;
   descargaAtual!: DescargaExportacao;
@@ -49,6 +51,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   marcante = new Marcante();
   listaMarcantes: Marcante[] = [];
   talieTeste: TalieItem = new TalieItem();
+
+  conferenteAtual: string = "";
 
   // Simulação de dados para o select de armazéns
   armazens: Armazen[] = [];
@@ -124,7 +128,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   getEditItemForm(): FormGroup {
     return this.fb.group({
-      notaFiscal: [{value:'', disabled: true}, Validators.required],
+      notaFiscal: [{ value: '', disabled: true }, Validators.required],
       quantidadeDescarga: ['', Validators.required],
       codigoEmbalagem: ['', Validators.required],
       embalagem: ['', Validators.required],
@@ -161,13 +165,15 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       cliente: new FormControl({ value: '', disabled: true }),
       isCrossDocking: new FormControl({ value: false, disabled: true }),
       conteiner: new FormControl({ value: "", disabled: false }, Validators.required),
-      conferente: new FormControl({ value: 'Microled', disabled: true }),
+      conferente: new FormControl({ value: '', disabled: true }),
       equipe: new FormControl(null, Validators.required),
       operacao: new FormControl('', Validators.required),
     });
   }
 
   ngOnInit(): void {
+    this.loggedInUser = this.authenticationService.currentUser();
+
     this.service.iniciarDescarga();
     this.coletorService.getEquipes().subscribe((ret: ServiceResult<EquipeModel[]>) => {
       if (ret.status && ret.result) {
@@ -250,12 +256,12 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     });
 
     this.conferenceService
-          .getTiposEmbalagens()
-          .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
-            if (ret.status) {
-              this.tiposEmbalagens = ret.result ?? [];
-            }
-          });
+      .getTiposEmbalagens()
+      .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
+        if (ret.status) {
+          this.tiposEmbalagens = ret.result ?? [];
+        }
+      });
 
     this.initAdvancedTableData();
   }
@@ -414,6 +420,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    */
   abrirModalAvarias<T extends Record<string, any>>(avariaModel: T) {
     const modalRef = this.modalService.open(AvariasModalComponent, {
+      windowClass: 'modal-tablet-90',
       size: "xl",
       backdrop: "static",
       centered: false,
@@ -581,12 +588,23 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   abrirModalEditarItem(id: any): void {
     const item = this.descargaAtual.talie?.talieItem.find(i => i.id == id);
-    console.log('Item Atual: ', item);
     if (!item) return;
 
     //Object.assign(this.talieTeste, item);
     //this.itemSelecionado = item;
     this.editItemForm.patchValue(item);
+    
+    // Setar o valor da embalagem usando o codigoEmbalagem
+    // Verificar se os tipos de embalagens já foram carregados
+    if (this.tiposEmbalagens.length > 0) {
+      this.editItemForm.controls['embalagem'].setValue(item?.codigoEmbalagem ?? null);
+    } else {
+      // Se ainda não foram carregados, aguardar um pouco e tentar novamente
+      setTimeout(() => {
+        this.editItemForm.controls['embalagem'].setValue(item?.codigoEmbalagem ?? null);
+      }, 100);
+    }
+    
     this.editItemForm.controls['imo'].setValue(item?.imo ?? '');
     this.editItemForm.controls['imO2'].setValue(item?.imO2 ?? '');
     this.editItemForm.controls['imO3'].setValue(item?.imO3 ?? '');
@@ -605,7 +623,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       Object.assign(item, updatedValues);
     });
 
-    this.modalService.open(this.editItemModal, { size: 'xl', backdrop: 'static', centered: false });
+    this.modalService.open(this.editItemModal, {windowClass: 'modal-tablet-90', size: 'xl', backdrop: 'static', centered: false });
   }
 
 
@@ -625,6 +643,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
     this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
       if (ret.status) {
         this.service.updateDescarga(ret.result);
+
         this.form.controls['equipe'].setValue(ret.result?.talie?.equipe.toString());
         this.form.controls['operacao'].setValue(ret.result?.talie?.operacao);
 
@@ -642,6 +661,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
         ]);
 
         if (!terminoVazio) {
+          this.conferenteAtual = ret.result?.talie?.conferente ?? "";
           this.bloquearForm();
         }
 
@@ -673,6 +693,8 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.descargaAtual.nomeConferente = this.loggedInUser.username;
+
     this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
       if (ret.status) {
         // Primeiro mostra o toast
@@ -685,9 +707,9 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
 
   }
 
-   onEmbalagemChange(embalagem: any | null) {
-      this.editItemForm.controls['codigoEmbalagem'].setValue(embalagem);
-    }
+  onEmbalagemChange(embalagem: any | null) {
+    this.editItemForm.controls['codigoEmbalagem'].setValue(embalagem);
+  }
 
   /**
    * Salvar alteracoes no item do talie
@@ -695,7 +717,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
    */
   salvarAlteracoes(modal: any): void {
     if (this.editItemForm.valid) {
-      console.log('Item: ',this.editItemForm);
+      console.log('Item: ', this.editItemForm);
       this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
         if (ret.status && ret.result) {
           this.buscarRegistro();

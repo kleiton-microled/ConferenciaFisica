@@ -4,7 +4,7 @@ export class Talie{
     id!: number;
     inicio!: string;
     termino!: string;
-    conferente: string = "Microled";
+    conferente!: string;
     equipe!: number;
     operacao!: number;
     observacao!: string;
