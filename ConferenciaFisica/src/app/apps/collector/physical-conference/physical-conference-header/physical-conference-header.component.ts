@@ -1175,6 +1175,11 @@ export class PhysicalConferenceHeaderComponent {
     this.avariasConferencia = new AvariaConferencia();
     this.isDisableBtnModal = true;
     this.limparLacres = true;
+    this.selectedContainer = new ContainerAgendamentoModel();
+    this.selectedLote = new LotesAgendamentoModel();
+    this.selectedNumero = '';
+    this.selectedAutonumAgendaPosicao = 0;
+    this.conference = new PhysicalConferenceModel();
     this.atualizarBotoes([
       { nome: 'save', enabled: false, visible: true },
       { nome: 'stop', enabled: false, visible: true },
