@@ -37,7 +37,7 @@ export class PhysicalConferenceModel {
     lacres: LacresModel[] = [];
     autonumAgendaPosicao: number = 0;
 
-    observacaoDivergencia: string = "";
+    observacaoDivergencias: string = "";
 
     constructor(init?: Partial<PhysicalConferenceModel>) {
         Object.assign(this, init);

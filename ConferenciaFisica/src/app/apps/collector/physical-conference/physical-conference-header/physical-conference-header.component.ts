@@ -53,6 +53,7 @@ export class PhysicalConferenceHeaderComponent {
   lotes: LotesAgendamentoModel[] = [];
   tipolacres: TipoLacre[] = [];
   lacresConferencia: LacresModel[] = [];
+  limparLacres: boolean = false;
 
   conferences: PhysicalConferenceModel[] = [];
   footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
@@ -213,7 +214,7 @@ export class PhysicalConferenceHeaderComponent {
       embalagem: [{ value: "", disabled: false }],
       quantidade: [{ value: "", disabled: true }],
       tipoConferencia: [{ value: "", disabled: false }],
-      inicioConferencia: [{ value: "", disabled: false }],
+      inicioConferencia: [{ value: "", disabled: true }],
       termino: [{ value: "", disabled: true }],
       cpfCliente: [{ value: "", disabled: false }],
       nomeCliente: [{ value: "", disabled: false }],
@@ -231,7 +232,8 @@ export class PhysicalConferenceHeaderComponent {
       divergenciaQualificacao: [{ value: '', disabled: false }],
       movimentacao: [{ value: "", disabled: false }],
       desunitizacao: [{ value: "", disabled: false }],
-      autonumAgendaPosicao: [{ value: 0 }]
+      autonumAgendaPosicao: [{ value: 0 }],
+      observacaoDivergencias: [{ value: "", disabled: false }]
     });
   }
 
@@ -255,7 +257,7 @@ export class PhysicalConferenceHeaderComponent {
         embalagem: conference?.embalagem,
         quantidade: conference?.quantidade,
         tipoConferencia: conference?.tipo,
-        inicioConferencia: this.formatarDataString(conference?.inicio),
+        inicioConferencia: dataFormatada,
         termino: this.formatarDataString(conference?.termino),
         cpfCliente: conference?.cpfCliente,
         nomeCliente: conference?.nomeCliente,
@@ -273,7 +275,8 @@ export class PhysicalConferenceHeaderComponent {
         divergenciaQualificacao: conference?.divergenciaQualificacao,
         movimentacao: conference?.movimentacao,
         desunitizacao: conference?.desunitizacao,
-        autonumAgendaPosicao: conference?.autonumAgendaPosicao
+        autonumAgendaPosicao: conference?.autonumAgendaPosicao,
+        observacaoDivergencias: conference?.observacaoDivergencias
       });
 
       this.conferenceService.updateConference(conference);
@@ -312,6 +315,7 @@ export class PhysicalConferenceHeaderComponent {
           }
         });
 
+
       if (conference.termino) {
         this.bloquearForm();
         this.atualizarBotoes([
@@ -329,6 +333,7 @@ export class PhysicalConferenceHeaderComponent {
       } else {
         this.desbloquearForm();
         this.form.get('termino')?.disable();
+        this.form.get('inicioConferencia')?.enable();
         this.form.get('quantidade')?.disable();
         this.form.get('numeroConteiner')?.disable();
         this.form.get('qtdDocumento')?.disable();
@@ -1169,6 +1174,7 @@ export class PhysicalConferenceHeaderComponent {
     this.ajudantes = [];
     this.avariasConferencia = new AvariaConferencia();
     this.isDisableBtnModal = true;
+    this.limparLacres = true;
     this.atualizarBotoes([
       { nome: 'save', enabled: false, visible: true },
       { nome: 'stop', enabled: false, visible: true },

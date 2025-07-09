@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TipoLacre } from '../models/tipo-lacre.model';
 import { PhysicalConferenceService } from '../physical-conference.service';
@@ -33,6 +33,7 @@ export class LacresFormComponent implements OnInit {
 
   @Input() tiposLacres: TipoLacre[] = [];
   @Input() lacresConferencia: LacresModel[] = [];
+  @Input() limparLacres: boolean = false;
 
   @Output() numeroLacreBlurEvent = new EventEmitter<TipoLacre>();
 
@@ -65,6 +66,11 @@ export class LacresFormComponent implements OnInit {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['limparLacres'] && this.limparLacres) {
+      this.lacresForm.reset();
+    }
+  }
 
   selecionarLacre(index: number): void {
     this.selectedIndex = index;
