@@ -25,18 +25,6 @@
             <button class="button-toggle-menu open-left d-block d-lg-none waves-effect waves-light" *ngIf="layoutType!=='horizontal'" (click)="toggleMobileMenu($event)">
                 <i class="mdi mdi-menu"></i>
             </button>
-
-            <!-- <div class="dropdown d-none d-xl-block" ngbDropdown>
-                <a class="nav-link dropdown-toggle waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown" href="javascript: void(0);" role="button" aria-haspopup="false" aria-expanded="false">
-                    Cadastros
-                    <i class="mdi mdi-chevron-down ms-1"></i>
-                </a>
-                <div class="dropdown-menu" ngbDropdownMenu>
-                   
-                    
-
-                </div>
-            </div> -->
         </div>
 
         <ul class="topbar-menu d-flex align-items-center">
@@ -115,6 +103,16 @@
                     <span class="ms-1 d-none d-md-inline-block">
                         {{this.loggedInUser.username}} <i class="mdi mdi-chevron-down"></i>
                     </span>
+                    
+                    <!-- Pátio Badge -->
+                    @if(userPatio){
+                    <div class="patio-badge ms-2">
+                        <span class="badge bg-primary rounded-pill">
+                            <i class="mdi mdi-map-marker me-1"></i>
+                            {{userPatio}}
+                        </span>
+                    </div>
+                    }
                 </a>
                 <div class="dropdown-menu dropdown-menu-end profile-dropdown" ngbDropdownMenu>
                     <!-- item-->

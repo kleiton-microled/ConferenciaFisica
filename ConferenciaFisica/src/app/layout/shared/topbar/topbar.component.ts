@@ -4,6 +4,7 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   Renderer2,
@@ -32,7 +33,7 @@ import { User } from "src/app/core/models/auth.models";
   templateUrl: "./topbar.component.html",
   styleUrls: ["./topbar.component.scss"],
 })
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   @Input() layoutType: string = "";
   @Input() leftSidebarTheme: string = "light";
   createMenuOptions: CreateNewMenuOption[] = [];
@@ -49,6 +50,7 @@ export class TopbarComponent implements OnInit {
   loggedInUser: any = {};
   topnavCollapsed: boolean = true;
   leftSidebarType: string = "";
+  userPatio: string = "";
   // output events
   @Output() mobileMenuButtonClicked = new EventEmitter();
   @Output() settingsButtonClicked = new EventEmitter();
@@ -69,11 +71,53 @@ export class TopbarComponent implements OnInit {
     this.leftSidebarType = config.leftSidebarType;
 
     this.loggedInUser = this.authService.currentUser();
+    
+    // Recupera o pátio do usuário logado
+    this.updateUserPatio();
+
+    // Listener para mudanças no sessionStorage
+    window.addEventListener('storage', this.handleStorageChange.bind(this));
 
     document.addEventListener("fullscreenchange", this.exitHandler);
     document.addEventListener("webkitfullscreenchange", this.exitHandler);
     document.addEventListener("mozfullscreenchange", this.exitHandler);
     this.onResize();
+  }
+
+  /**
+   * Atualiza o pátio do usuário
+   */
+  private updateUserPatio(): void {
+    if (this.loggedInUser?.patio?.descricao) {
+      this.userPatio = this.loggedInUser.patio.descricao;
+    } else {
+      this.userPatio = "";
+    }
+  }
+
+  /**
+   * Atualiza o pátio quando houver mudanças
+   */
+  public refreshUserPatio(): void {
+    this.loggedInUser = this.authService.currentUser();
+    this.updateUserPatio();
+  }
+
+  /**
+   * Handler para mudanças no sessionStorage
+   */
+  private handleStorageChange(event: StorageEvent): void {
+    if (event.key === 'currentUser') {
+      this.refreshUserPatio();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Remove event listeners
+    window.removeEventListener('storage', this.handleStorageChange.bind(this));
+    document.removeEventListener("fullscreenchange", this.exitHandler);
+    document.removeEventListener("webkitfullscreenchange", this.exitHandler);
+    document.removeEventListener("mozfullscreenchange", this.exitHandler);
   }
 
   @HostListener("window:resize", ["$event"])
