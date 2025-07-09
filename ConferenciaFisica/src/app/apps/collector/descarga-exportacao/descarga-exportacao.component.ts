@@ -299,6 +299,21 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Busca a descrição da embalagem baseado no código da embalagem
+   * @param codigoEmbalagem - O código da embalagem
+   * @returns A descrição da embalagem ou o código se não encontrar
+   */
+  getDescricaoEmbalagem(codigoEmbalagem: string | number): string {
+    if (!codigoEmbalagem || !this.tiposEmbalagens || this.tiposEmbalagens.length === 0) {
+      return codigoEmbalagem?.toString() || '';
+    }
+
+    const codigoStr = codigoEmbalagem.toString();
+    const tipoEmbalagem = this.tiposEmbalagens.find(tipo => tipo.id.toString() === codigoStr);
+    return tipoEmbalagem ? tipoEmbalagem.descricao : codigoStr;
+  }
+
+  /**
    * Inicia a tabela de itens
    */
   initAdvancedTableData(): void {
@@ -316,7 +331,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       {
         name: "embalagem",
         label: "Embalagem",
-        formatter: (item: TalieItem) => item.embalagem,
+        formatter: (item: TalieItem) => this.getDescricaoEmbalagem(item.codigoEmbalagem),
       },
       {
         name: "quantidadeNf",
@@ -336,6 +351,7 @@ export class DescargaExportacaoComponent implements OnInit, OnDestroy {
       },
     ];
   }
+
 
   onRowSelected(item: any): void {
     if (item) {
