@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h4 class="modal-title">📸 Capturar Foto</h4>
+</div>
+
+<div class="modal-body camera-modal-container">
+    <video #videoElement autoplay></video>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <select class="form-control" [ngClass]="{'is-invalid': !tipoSelecionado}"
+            (change)="onTipoSelecionado($any($event.target).value)">
+            <option value disabled selected>Selecione o tipo de foto</option>
+            <option *ngFor="let item of types" [value]="item.id">{{ item.descricao }}</option>
+        </select>
+    </div>
+    <button class="btn" 
+            [ngClass]="{'btn-secondary': !tipoSelecionado, 'btn-success': tipoSelecionado}"
+            [disabled]="!tipoSelecionado"
+            (click)="capturarFoto()">
+        📸 Capturar
+    </button>
+    <button class="btn btn-danger" (click)="fecharCamera()">❌ Fechar</button>
+</div>
+
+<!-- Canvas oculto para processar a imagem -->
+<canvas #canvasElement hidden></canvas>

@@ -1,0 +1,6 @@
+<div class="cards-container">
+  <div class="card" *ngFor="let card of cards">
+    <h3>{{ card.title }}</h3>
+    <p [class]="getClassByTitle(card.title)">{{ card.count }}</p>
+  </div>
+</div>

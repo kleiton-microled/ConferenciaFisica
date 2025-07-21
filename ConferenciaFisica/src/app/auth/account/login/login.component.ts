@@ -1,9 +1,10 @@
 
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
 
 @Component({
   selector: 'app-auth-login',
@@ -19,7 +20,9 @@ export class LoginComponent implements OnInit {
   error: string = '';
   showPassword: boolean = false;
 
-  constructor (
+  terminais: SelectizeModel[] = [{ id: 1, label: 'IPA - Importação' }, { id: 2, label: 'REDEX - Exportação' }];
+
+  constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
@@ -28,8 +31,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      email: ['kleitonsfreitas@gmail.com', [Validators.required, Validators.email]],
-      password: ['test', Validators.required]
+      username: ['', [Validators.required]],
+      password: ['', Validators.required],
+      terminal: [null, Validators.required]
     });
 
     // reset login status
@@ -44,7 +48,12 @@ export class LoginComponent implements OnInit {
    */
   get formValues() { return this.loginForm.controls; }
 
-
+  get terminalControl(): FormControl {
+    return this.loginForm.get("terminal") as FormControl;
+  }
+  onSelectTerminalChange(value: any) {
+    console.log(value);
+  }
   /**
    * On submit form
    */
@@ -52,7 +61,7 @@ export class LoginComponent implements OnInit {
     this.formSubmitted = true;
     if (this.loginForm.valid) {
       this.loading = true;
-      this.authenticationService.login(this.formValues.email?.value, this.formValues.password?.value)
+      this.authenticationService.login(this.formValues.username?.value, this.formValues.password?.value, this.formValues.terminal?.value)
         .pipe(first())
         .subscribe(
           (data: any) => {

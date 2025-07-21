@@ -1,0 +1,86 @@
+<!-- Modal -->
+<div class="modal-header">
+  <h5 class="modal-title">Cadastro de Avarias</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="fecharModal()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="avariasForm">
+
+    <!-- 🧩 Campos do formulário -->
+    <div class="row responsive-row">
+      <div class="col-md-3 col-12 mb-3" *ngIf="avariasForm.controls['quantidadeAvariada']">
+        <label>Quantidade Avariada</label>
+        <input type="text" class="form-control" formControlName="quantidadeAvariada" />
+      </div>
+
+      <div class="col-md-3 col-12 mb-3" *ngIf="avariasForm.controls['pesoAvariado']">
+        <label>Peso Avariado</label>
+        <input type="text" class="form-control" formControlName="pesoAvariado" />
+      </div>
+
+      <div class="col-md-3 col-12 mb-3" *ngIf="avariasForm.controls['local']">
+        <label>Local</label>
+        <select class="form-select" formControlName="local">
+          <option *ngFor="let local of listLocal" [value]="local.id">{{ local.descricao }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3 col-12 mb-3" *ngIf="avariasForm.controls['idEmbalagem']">
+        <label>Embalagem</label>
+        <select class="form-select" formControlName="idEmbalagem">
+          <option *ngFor="let embalagem of embalagens" [value]="embalagem.id">{{ embalagem.descricao }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3 col-12 mb-3" *ngIf="avariasForm.controls['conteiner']">
+        <label>Contêiner</label>
+        <input type="text" class="form-control" formControlName="conteiner" />
+      </div>
+
+      <div class="col-md-3 col-12 mt-2 form-check" *ngIf="avariasForm.controls['divergencia']">
+        <input class="form-check-input" type="checkbox" id="divergencia" formControlName="divergencia">
+        <label class="form-check-label" for="divergencia">Divergência</label>
+      </div>
+    </div>
+
+    <!-- 🧩 Drag and Drop -->
+    <div class="row responsive-dropzones mt-4">
+      <div class="col-md-6 col-12 dropzone-container mb-3">
+        <h5>Tipos de Avarias</h5>
+        <div class="d-flex flex-wrap gap-2 dropzone" cdkDropList id="tiposAvariasList" [cdkDropListData]="tiposAvarias"
+          [cdkDropListConnectedTo]="['selecionadosList']">
+          <span *ngFor="let tipo of tiposAvarias" class="badge badge-pill bg-danger p-2" cdkDrag [cdkDragData]="tipo">
+            {{ tipo.descricao }}
+          </span>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-12 dropzone-container mb-3">
+        <h5>Avarias Selecionadas</h5>
+        <div class="dropzone-selecionados" cdkDropList id="selecionadosList" [cdkDropListData]="avariasSelecionadas"
+          [cdkDropListConnectedTo]="['tiposAvariasList']" (cdkDropListDropped)="onDropAvaria($event)">
+          <div class="d-flex flex-wrap gap-2">
+            <span *ngFor="let avaria of avariasSelecionadas" class="badge badge-pill bg-success p-2">
+              {{ avaria.descricao }}
+              <i class="fas fa-times ms-2" (click)="removerAvaria(avaria)" style="cursor: pointer;"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Observação -->
+    <div class="row mt-4">
+      <div class="col-12" *ngIf="avariasForm.controls['observacao']">
+        <label>Observação</label>
+        <textarea class="form-control" formControlName="observacao"></textarea>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="fecharModal()">Fechar</button>
+  <button type="button" class="btn btn-primary" (click)="salvarAvarias()">Salvar</button>
+</div>

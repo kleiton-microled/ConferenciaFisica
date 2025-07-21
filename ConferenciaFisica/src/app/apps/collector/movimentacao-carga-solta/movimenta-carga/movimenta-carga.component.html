@@ -1,0 +1,152 @@
+<form [formGroup]="form">
+    <div class="d-flex gap-3">
+        <!-- Coluna A: Área Drag (70%) -->
+        <div style="flex: 0 0 60%;">
+            <div class="p-3 rounded" style="background-color: #f4f4f4;" draggable="true"
+                (dragstart)="onDragStart($event)" id="dragItem">
+                <!-- ROW 1 -->
+                <div class="row mb-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Marcante</label>
+                        <p class="mb-0">{{ form.get('numeroMarcante')?.value ||
+                            '---'}}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Lote</label>
+                        <p class="mb-0">{{ form.get('lote')?.value ||
+                            '---'}}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Reserva</label>
+                        <p class="mb-0">{{ form.get('reserva')?.value ||
+                            '---'}}</p>
+                    </div>
+                </div>
+
+                <!-- ROW 2 -->
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Etiqueta
+                            Prateleira</label>
+                        <p class="mb-0">{{ form.get('etiquetaPrateleira')?.value
+                            || '---'}}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Local
+                            Armazenado</label>
+                        <p class="mb-0">{{ form.get('local')?.value || '---'
+                            }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Embalagem</label>
+                        <p class="mb-0">{{ form.get('embalagem')?.value || '---'
+                            }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Anvisa</label>
+                        <p class="mb-0">{{ form.get('anvisa')?.value ||
+                            '---'}}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Quantidade</label>
+                        <p class="mb-0">{{ form.get('quantidade')?.value ||
+                            '---'}}</p>
+                    </div>
+                </div>
+
+                <!-- ROW 3 -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Armazem</label>
+                        <p class="mb-0">{{ form.get('armazem')?.value ||
+                            '---'}}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">IMO</label>
+                        <p class="mb-0">{{ form.get('imo')?.value || '---'}}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">UNO</label>
+                        <p class="mb-0">{{ form.get('uno')?.value || '---'}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ícone entre as colunas -->
+        <div class="col-md-1 d-flex justify-content-center align-items-center">
+            <i class="fas fa-arrow-right fa-2x text-secondary"></i>
+        </div>
+
+        <!-- Coluna B: Área Drop -->
+        <div style="flex: 1;" class="d-flex align-items-center justify-content-center">
+            <div class="w-100 h-100 border border-2 border-dashed d-flex align-items-center justify-content-center text-center rounded"
+                (dragover)="onDragOver($event)" (drop)="onDrop($event)" style="min-height: 250px; border-color: #888;">
+                <div class="text-center">
+                    <strong class="fs-5">Movimente a carga aqui!</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="openModal()" (startEvent)="''"
+        (cleanupEvent)="''" (avariasEvent)="''" (observacaoEvent)="''"
+        (exitEvent)="redirecionarHome()"></app-action-footer>
+</form>
+
+<!-- Modal -->
+<ng-template #modalMovimentacao let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Modal Movimentação</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <form [formGroup]="modalForm" (ngSubmit)="submitMovimentacao(modal)">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Local da
+                        movimentação</label>
+                    <microled-input-with-select [disabled]="false" [placeholder]="'Pesquise o local'"
+                        [fetchData]="buscarLocais.bind(this)" (selectedItem)="onLocalSelecionado($event)">
+                    </microled-input-with-select>
+                    <!-- <select class="form-select" formControlName="local">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let l of locais" [value]="l">{{ l }}</option>
+                    </select> -->
+                </div>
+                <div class="col-md-4 mb-3">
+                    <app-microled-select 
+                            label="Qual Armazém?" 
+                            [items]="armazens" 
+                            [control]="armazemControl"
+                            (selectionChange)="onArmazemSelectChange($event)">
+                    </app-microled-select>
+                    <!-- <select id="armazem" class="form-select" formControlName="armazem" (ngOnChange)>
+                        <option value="null">Selecione</option>
+                        <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.descricao }}</option>
+                    </select> -->
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Qual motivo da
+                        movimentação?</label>
+                    <select class="form-select" formControlName="motivo">
+                        <option value>Selecione</option>
+                        <option value="1">INSP. MADEIRA PÓS DESEMB </option>
+                        <option value="2">POSICIONAMENTO P/ CONFERENCIA FISICA
+                        </option>
+                        <option value="3">AMOSTRA COM INSP. MADEIRA - FCL
+                        </option>
+                        <!-- <option *ngFor="let m of motivos" [value]="m">{{ m }}</option> -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+            <button type="submit" class="btn btn-success" [disabled]="modalForm.invalid">Movimentar</button>
+        </div>
+    </form>
+
+</ng-template>

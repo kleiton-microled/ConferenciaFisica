@@ -1,0 +1,17 @@
+<div class="position-relative">
+    <input type="text" 
+           class="form-control"
+           [disabled]="disabled" 
+           [placeholder]="placeholder" 
+           [formControl]="inputControl" 
+           (focus)="showSuggestions = suggestions.length > 0" />
+    <ul *ngIf="showSuggestions" 
+        class="list-group position-absolute w-100 z-index-100 shadow" 
+        style="max-height: 200px; overflow-y: auto;">
+      <li class="list-group-item list-group-item-action" 
+      *ngFor="let item of suggestions" (click)="onSelect(item)">
+        {{ item.descricao }}
+      </li>
+    </ul>
+  </div>
+  

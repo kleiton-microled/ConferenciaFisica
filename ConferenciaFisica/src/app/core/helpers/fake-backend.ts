@@ -12,8 +12,8 @@ function getUsers(): User[] {
     // array in session storage for registered users
     let users: User[] = JSON.parse(sessionStorage.getItem('users')!) || [
         {
-            id: 1, username: 'admin', email: 'kleitonsfreitas@gmail.com', password: 'test', firstName: 'Kleiton', lastName: 'Freitas',
-            avatar: 'assets/images/users/user-1.jpg', location: 'Indaiatuba, BRA', title: 'Admin'
+            id: 1, username: 'microled', email: 'microled', password: 'vidigal', firstName: 'Microled', lastName: 'Sistemas',
+            avatar: '', location: 'São Paulo, BRA', title: 'Microled'
         }
     ];
     return users;

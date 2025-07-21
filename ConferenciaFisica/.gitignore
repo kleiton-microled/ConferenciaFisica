@@ -1,6 +1,10 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
+
+yarn.lock
+.yarn-integrity
+
 /dist
 /tmp
 /out-tsc
@@ -10,6 +14,7 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+
 
 # IDEs and editors
 .idea/

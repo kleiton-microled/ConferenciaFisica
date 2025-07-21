@@ -1,0 +1,61 @@
+/* Estilo personalizado para o botão */
+.btn-indigo {
+    width: 200px; /* Largura de 200px */
+    height: 50px; /* Altura de 50px */
+    background-color: rgb(255, 48, 93); /* Cor de fundo indigo */
+    font-weight: bold; /* Fonte em negrito */
+    color: white; /* Cor do texto */
+    border: none; /* Remove a borda padrão */
+    border-radius: 0px; /* Borda arredondada */
+    cursor: pointer; /* Muda o cursor para pointer ao passar o mouse */
+  }
+  
+  .btn-indigo:hover {
+    background-color: rgb(242, 12, 62); /* Cor de fundo ao passar o mouse */
+  }
+
+  .btn-servicos-executados {
+    width: 180px; /* Largura de 200px */
+    height: 35px; /* Altura de 50px */
+    background-color: rgb(48, 103, 255); /* Cor de fundo indigo */
+    font-weight: bold; /* Fonte em negrito */
+    font-size: 12px;
+    color: white; /* Cor do texto */
+    border: none; /* Remove a borda padrão */
+    border-radius: 0px; /* Borda arredondada */
+    cursor: pointer; /* Muda o cursor para pointer ao passar o mouse */
+  }
+  
+  .btn-servicos-executados:hover {
+    background-color: rgb(12, 16, 242); /* Cor de fundo ao passar o mouse */
+  }
+
+  .conferencia-container {
+    width: 100%;
+    padding: 15px;
+    border: 1px dashed #cccccc;
+    border-radius: 5px;
+    background-color: #f9f9f9; /* Cor de fundo leve para destaque */
+  }
+
+  .form-control:disabled {
+    background-color: #e9ecef !important; /* Cinza claro */
+    opacity: 1; /* Evita que o Bootstrap reduza a opacidade */
+}
+
+.badge-custom {
+  font-size: 0.75rem;  /* Ajusta o tamanho da fonte */
+  padding: 0.4em 0.6em; /* Controla o tamanho do badge */
+  min-width: 22px; /* Mantém um tamanho mínimo */
+  min-height: 22px;
+}
+
+.modal-90w .modal-dialog {
+  max-width: 90vw; /* 🔹 Define a largura como 90% da tela */
+  height: 90vh; /* 🔹 Define a altura como 90% da tela */
+  margin: auto;
+}
+
+.modal-90w .modal-content {
+  height: 100%;
+}

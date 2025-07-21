@@ -1,0 +1,116 @@
+import { Injectable } from '@angular/core';
+import Swal from 'sweetalert2';
+import { ServiceResult } from '../models/serviceresult.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+
+  private isLoading = false; // Variável de controle para o estado do loading
+
+  constructor() { }
+
+  // Exibe um alerta de sucesso baseado no ServiceResult<T>
+  showSuccess<T>(response: ServiceResult<T>, title: string = 'Sucesso') {
+    this.hideLoading(); // Garante que o loading seja fechado antes
+    Swal.fire({
+      title,
+      text: response.mensagens?.join('\n') || 'Operação realizada com sucesso!',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+
+  showAlert<T>(response: ServiceResult<T>, title: string = 'Info') {
+    this.hideLoading();
+    setTimeout(() => { // Pequeno delay para evitar que a modal de erro feche antes de abrir
+      Swal.fire({
+        title: 'Info',
+        text: response.mensagens[0],
+        icon: 'info',
+        confirmButtonText: 'Fechar'
+      });
+    }, 200);
+  }
+
+  // Exibe um alerta de erro formatado com base no ServiceResult<T>
+  showError(errorResponse: any) {
+    this.hideLoading();
+
+    let errorMessage = '';
+    if (errorResponse?.error) {
+     
+      const serviceResult = errorResponse.error as ServiceResult<any>;
+
+      console.log(serviceResult);
+      if (serviceResult.mensagens && serviceResult.mensagens.length > 0) {
+        errorMessage = serviceResult.mensagens.join('\n'); // Junta mensagens de erro
+      } else if (serviceResult) {
+        errorMessage =  errorResponse.error; // Usa a propriedade `error` se presente
+      }
+    }
+
+    setTimeout(() => { // Pequeno delay para evitar que a modal de erro feche antes de abrir
+      Swal.fire({
+        title: 'Erro',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Fechar'
+      });
+    }, 200);
+  }
+
+  // Exibe um alerta de carregamento
+  showLoading(message: string = 'Carregando dados...') {
+    this.isLoading = true;
+    Swal.fire({
+      title: message,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+  }
+
+  // Fecha o alerta de carregamento
+  hideLoading() {
+    if (this.isLoading) {
+      this.isLoading = false;
+      Swal.close();
+    }
+  }
+
+  showMessage(message: string, title: string = 'Sucesso') {
+    this.hideLoading(); // Garante que o loading seja fechado antes
+    Swal.fire({
+      title,
+      text: message,
+      icon: title == 'Sucesso' ? 'success' : 'info',
+      confirmButtonText: 'OK'
+    });
+  }
+
+  showToast(message: string, icon: 'success' | 'error' | 'info' | 'warning' = 'success') {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon,
+      title: message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      backdrop: false,
+      background: '#fff',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      stopKeydownPropagation: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+  }
+  
+}

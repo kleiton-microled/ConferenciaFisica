@@ -1,0 +1,115 @@
+<!-- Header da Modal -->
+<div class="modal-header">
+    <h4 class="modal-title">📸 Fotos Processos</h4>
+    <button type="button" class="btn-close" aria-label="Close"
+        (click)="fecharModal()"></button>
+</div>
+
+<!-- Corpo da Modal -->
+<div class="modal-body">
+    <form [formGroup]="fotosForm">
+    </form>
+
+    <!-- 📌 Tabela de Fotos -->
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>📷 Foto</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Observação</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let foto of fotos">
+                <td>
+                    <img *ngIf="foto.imagemPath; else imagem64"
+                        [src]="urlBasePhotos+'/' + foto.imagemPath"
+                        width="50" height="50" style="cursor: pointer;"
+                        (click)="ampliarFoto(urlBasePhotos+'/' + foto.imagemPath)">
+                
+                    <ng-template #imagem64>
+                        <img [src]="foto.imagemBase64" width="50" height="50" 
+                             style="cursor: pointer;"
+                             (click)="ampliarFoto(foto.imagemBase64)">
+                    </ng-template>
+                </td>
+                <td>{{foto.typeDescription}}</td>
+                <td>{{foto.descricao}}</td>
+                <td>{{foto.observacao}}</td>
+                <td>
+                    <td>
+                        <button class="btn btn-primary btn-sm"
+                            (click)="abrirModalEdicao(foto)" [ngClass]="{'disabled': isDisabled}" >
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm"
+                            (click)="excluirFoto(foto.id)" [ngClass]="{'disabled': isDisabled}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+        <button class="btn btn-success" (click)="abrirCamera()"  [ngClass]="{'disabled': isDisabled}">
+            <i class="fas fa-camera"></i> Tirar Foto
+        </button>
+        <button class="btn btn-primary" (click)="baixarFotosZip()">
+            <i class="bi bi-download"></i> Baixar todas as fotos
+        </button>
+          
+        <div>
+            <button class="btn btn-secondary"
+                (click)="fecharModal()">Fechar</button>
+        </div>
+    </div>
+
+    <!-- 📌 Modal de Edição (ng-template) -->
+    <ng-template #editPhotoModal>
+        <div class="modal-header">
+            <h4 class="modal-title">✏️ Editar Foto</h4>
+            <button type="button" class="btn-close" aria-label="Close"
+                (click)="fecharModalEdicao()"></button>
+        </div>
+
+        <div class="modal-body">
+            <form [formGroup]="fotosForm">
+                <div class="mb-3">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-control"
+                        formControlName="descricao">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Observação</label>
+                    <textarea class="form-control" formControlName="observacao"
+                        rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-primary" (click)="salvarEdicao()"
+                [disabled]="!fotosForm.valid">💾 Salvar</button>
+            <button class="btn btn-secondary"
+                (click)="fecharModalEdicao()">Fechar</button>
+        </div>
+    </ng-template>
+
+    <ng-template #viewPhotoModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Visualização da Foto</h4>
+            <button type="button" class="btn-close" aria-label="Close"
+                (click)="fecharVisualizacao(modal)"></button>
+        </div>
+        <div class="modal-body text-center">
+            <img [src]="fotoAmpliadaSrc" class="img-fluid" style="max-height: 80vh;">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="fecharVisualizacao(modal)">Fechar</button>
+        </div>
+    </ng-template>

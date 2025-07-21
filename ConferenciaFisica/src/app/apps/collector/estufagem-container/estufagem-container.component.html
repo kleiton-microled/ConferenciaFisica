@@ -1,0 +1,172 @@
+<app-page-title [breadcrumbItems]="pageTitle" title></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Estufagem Container</h4>
+                        <!-- Botão para abrir a modal -->
+                        <button class="btn btn-link p-0 ms-3 custom-btn" (click)="openModal(advancedFilterModal)">
+                            <strong><i class="fas fa-filter"></i> Filtrar</strong>
+                        </button>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="planejamento">planejamento</label>
+                            <input id="planejamento" type="text" class="form-control" formControlName="planejamento">
+                        </div>
+                        <div class="col-3">
+                            <label for="reserva">Reserva</label>
+                            <input id="reserva" type="text" class="form-control" formControlName="reserva">
+                        </div>
+                        <div class="col-3">
+                            <label for="cliente">Cliente</label>
+                            <input id="cliente" type="text" class="form-control" formControlName="cliente">
+                        </div>
+                        <div class="col-3">
+                            <label for="container">Conteiner</label>
+                            <input id="container" type="text" class="form-control" formControlName="conteiner">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="inicio">inicio</label>
+                            <p><span style="font-weight: bold;">{{this.form.get('inicio')?.value | date: 'dd/MM/yyyy
+                                    hh:mm' || '--'}}</span></p>
+                        </div>
+                        <div class="col-3">
+                            <label for="termino">Término</label>
+                            <p><span style="font-weight: bold;">{{this.form.get('termino')?.value | date: 'dd/MM/yyyy
+                                    hh:mm' || '--'}}</span></p>
+                            <!-- <input id="termino" type="text" class="form-control" formControlName="termino"> -->
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="conferente">conferente</label>
+                            <app-microled-select [items]="conferentes" [control]="conferenteControl"
+                                (selectionChange)="onConferenteSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                        <div class="col-3">
+                            <label for="equipe">equipe</label>
+                            <app-microled-select [items]="equipes" [control]="equipeControl"
+                                (selectionChange)="onEquipeSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                        <div class="col-3">
+                            <label for="modo">modo</label>
+                            <app-microled-select [items]="modos" [control]="modoControl"
+                                (selectionChange)="onModoSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <!-- <div class="col-3">
+                            <label for="produto">produto</label>
+                            <input id="produto" type="text" class="form-control" formControlName="produto">
+                        </div> -->
+                        <div class="col-3">
+                            <label for="plan">plan</label>
+                            <input id="plan" type="text" class="form-control" formControlName="plan">
+                        </div>
+                        <div class="col-3">
+                            <label for="ttl">ttl</label>
+                            <!-- <input id="ttl" type="text" class="form-control" formControlName="ttl"> -->
+                            <p><span style="font-weight: bold; font-size: large;">{{ttl}}</span></p>
+                        </div>
+                        <!-- <div class="col-3">
+                            <label for="lote">lote</label>
+                            <input id="lote" type="text" class="form-control" formControlName="lote">
+                        </div> -->
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="blockquote">Informe o Marcante, defina a quantidade e clique em Estufar</h4>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="local" class="form-label">Buscar Marcante</label>
+                            <microled-input-with-select [disabled]="isDisabled"
+                                [placeholder]="'Digite o numero do marcante...'"
+                                [fetchData]="buscarMarcantes.bind(this)" (selectedItem)="onMarcanteSelecionado($event)">
+                            </microled-input-with-select>
+                        </div>
+                        <div class="col-3">
+                            <label for="quantidade" class="form-label">Quantidade</label>
+                            <input id="quantidade" [disabled]="isDisabled" type="text" class="form-control"
+                                formControlName="quantidade">
+                            <div *ngIf="form.get('quantidade')?.errors && form.get('quantidade')?.touched"
+                                class="invalid-feedback d-block">
+                                <span *ngIf="form.get('quantidade')?.errors?.required">Campo obrigatório.</span>
+                                <span *ngIf="form.get('quantidade')?.errors?.min">Valor mínimo é 1.</span>
+                                <span *ngIf="form.get('quantidade')?.errors?.max">Valor máximo permitido: {{ saldo }}.</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <h4>Itens Estufados</h4>
+                    <div *ngIf="this.estufagemList.length == 0">
+                        <p>Nenhum intem disponível</p>
+                    </div>
+                    <div *ngIf="this.estufagemList.length > 0">
+                        <app-advanced-table #advancedTable (handleTableLoad)="''" [tableData]="estufagemList"
+                            [columns]="columns" [pagination]="false" [hasRowSelection]="false"
+                            (search)="searchData($event)" [isSortable]="false" tableClasses="table-centered"
+                            theadClasses="table-light">
+                        </app-advanced-table>
+                    </div>
+                </div>
+
+                <!-- <div class="row mt-4">
+                    <h4>Etiquetas</h4>
+                    <div *ngIf="this.etiquetasList.length == 0">
+                        <p>Nenhuma etiqueta disponível</p>
+                    </div>
+                    <div *ngIf="this.etiquetasList.length > 0">
+                        <app-advanced-table #advancedTable (handleTableLoad)="''" [tableData]="estufagemList"
+                            [columns]="columns" [pagination]="false" [hasRowSelection]="false"
+                            (search)="searchData($event)" [isSortable]="false" tableClasses="table-centered"
+                            theadClasses="table-light">
+                        </app-advanced-table>
+                    </div>
+
+                </div> -->
+            </div>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="onSubmit()"
+                (startEvent)="iniciarEstufagem()" (cleanupEvent)="clearFomulario()" (avariasEvent)="''"
+                (observacaoEvent)="''" (exitEvent)="''" (marcanteEvent)="''" (estufarEvent)="estufar()"
+                (finalizarEvent)="finalizar()">
+            </app-action-footer>
+        </div>
+    </div>
+</div>
+
+<!-- Template da modal -->
+<ng-template #advancedFilterModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Filtro Avançado</h5>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="formFilter">
+            <div class="row">
+                <div class="col-6">
+                    <label for="pesquisa" class="form-label">Buscar Planejamento</label>
+                    <input id="pesquisa" type="text" class="form-control" formControlName="planejamento" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+            Fechar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="filterConferences()">
+            Aplicar Filtro
+        </button>
+    </div>
+</ng-template>

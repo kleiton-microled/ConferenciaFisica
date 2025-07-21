@@ -1,0 +1,1047 @@
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
+import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
+import { DescargaExportacaoItens } from './models/descarga-exportacao-itens.model';
+import { NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AvariasModalComponent } from 'src/app/shared/avarias/avarias-modal.component';
+import { TiposAvarias } from 'src/app/shared/avarias/tipos-avarias.model';
+import { DescargaExportacaoService } from './descarga-exportacao.service';
+import { ServiceResult } from 'src/app/shared/models/serviceresult.model';
+import { DescargaExportacao } from './models/descarga-exportacao.model';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { Foto, MicroledPhotosComponent } from 'src/app/shared/microled-photos/microled-photos.component';
+import { map, Observable, Subscription } from 'rxjs';
+import { TalieItem } from '../models/talie-item.model';
+import { PhysicalConferenceService } from '../physical-conference/physical-conference.service';
+import { AvariaDescarga } from './models/avaria-descarga.model';
+import Swal from 'sweetalert2';
+import { Armazen } from '../models/armazens.model';
+import { Marcante } from '../models/marcante.model';
+import { Router } from '@angular/router';
+import { EnumValue } from 'src/app/shared/models/enumValue.model';
+import { BASE_IMAGES, DESCARGA_EXPORTACAO_URL } from 'src/app/Http/Config/config';
+import { FormValidationService } from 'src/app/shared/services/Messages/form-validation.service';
+import { FormControlToggleService } from 'src/app/core/services/form-control-toggle.service';
+import { SelectizeModel } from 'src/app/shared/microled-select/microled-select.component';
+import { ColetorService } from '../collector.service';
+import { EquipeModel } from '../models/equipe.model';
+import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { ConfigService } from 'src/app/shared/services/config.service';
+import { TiposEmbalagens } from '../physical-conference/models/tipos-embalagens.model';
+
+@Component({
+  selector: 'app-descarga-exportacao',
+  templateUrl: './descarga-exportacao.component.html',
+  styleUrls: ['./descarga-exportacao.component.scss']
+})
+export class DescargaExportacaoComponent implements OnInit, OnDestroy {
+
+
+  pageTitle: BreadcrumbItem[] = [];
+
+  loggedInUser: any = {};
+
+  isDisabled: boolean = false; //usado para desabilitar o input withSelect
+  private subscription!: Subscription;
+  descargaAtual!: DescargaExportacao;
+
+  gravarIsDisabled: boolean = true;
+  marcante = new Marcante();
+  listaMarcantes: Marcante[] = [];
+  talieTeste: TalieItem = new TalieItem();
+
+  conferenteAtual: string = "";
+
+  // Simulação de dados para o select de armazéns
+  armazens: Armazen[] = [];
+
+  listEquipes: SelectizeModel[] = [];
+  // [{ id: 1, name: 'EQUIPE MANHÃ (07h-15h' },
+  // { id: 2, name: 'EQUIPE TARDE (15h-23h' },
+  // { id: 3, name: 'EQUIPE NOITE (23h-07h' }];
+
+  listOperacoes: SelectizeModel[] = [{ id: 1, label: 'Manual' }, { id: 2, label: 'Automatizada' }];
+  tiposEmbalagens: TiposEmbalagens[] = [];
+
+  tiposAvarias: TiposAvarias[] = [];
+  avariaDescarga!: AvariaDescarga;
+
+  footerButtonsState: { [key: string]: { enabled: boolean; visible: boolean } } = {
+    start: { enabled: false, visible: false },
+    stop: { enabled: false, visible: true },
+    alert: { enabled: false, visible: true },
+    clear: { enabled: false, visible: true },
+    exit: { enabled: true, visible: true },
+    save: { enabled: false, visible: true },
+    delete: { enabled: false, visible: true },
+    photo: { enabled: false, visible: true },
+    marcante: { enabled: false, visible: true },
+    observacao: { enabled: false, visible: true },
+    estufar: { enabled: false, visible: true }
+  };
+
+  columns: Column[] = [];
+  @ViewChild("advancedTable") advancedTable: any;
+  editItemForm: FormGroup;
+  itemSelecionado!: TalieItem;
+
+  @ViewChild('editItemModal') editItemModal!: TemplateRef<any>;
+  itensList: TalieItem[] = [];
+  form: FormGroup;
+  observacaoForm: FormGroup;
+
+  marcanteForm: FormGroup;
+
+  constructor(private router: Router,
+    private fb: FormBuilder,
+    private service: DescargaExportacaoService,
+    private conferenceService: PhysicalConferenceService,
+    private notificationService: NotificationService,
+    private sanitizer: DomSanitizer,
+    private modalService: NgbModal,
+    public messageValidationService: FormValidationService,
+    private toggleService: FormControlToggleService,
+    private coletorService: ColetorService,
+    private authenticationService: AuthenticationService,
+    private configService: ConfigService) {
+    this.form = this.getMainForm();
+
+    this.editItemForm = this.getEditItemForm();
+
+    this.observacaoForm = this.fb.group({
+      observacao: ['', Validators.required]
+    });
+
+    this.marcanteForm = this.getMarcanteForm();
+  }
+
+  getMarcanteForm(): FormGroup {
+    return this.fb.group({
+      marcante: ['', Validators.required],
+      quantidade: [null, [Validators.required]],
+      armazem: ['', Validators.required],
+      local: ['', Validators.required]
+    })
+  }
+
+  getEditItemForm(): FormGroup {
+    return this.fb.group({
+      notaFiscal: [{ value: '', disabled: true }, Validators.required],
+      quantidadeDescarga: ['', Validators.required],
+      codigoEmbalagem: ['', Validators.required],
+      embalagem: ['', Validators.required],
+      comprimento: [''],
+      largura: [''],
+      altura: [''],
+      madeira: [false],
+      fragil: [false],
+      cargaNumerada: [false],
+      carimbo: [false],
+      peso: [0],
+      imo: ['', Validators.maxLength(3)],
+      imO2: ['', Validators.maxLength(3)],
+      imO3: ['', Validators.maxLength(3)],
+      imO4: ['', Validators.maxLength(3)],
+      uno: ['', Validators.maxLength(4)],
+      unO2: ['', Validators.maxLength(4)],
+      unO3: ['', Validators.maxLength(4)],
+      unO4: ['', Validators.maxLength(4)],
+      fumigacao: [''],
+      remonte: [''],
+      observacao: ['']
+    });
+  }
+
+  getMainForm(): FormGroup {
+    return this.fb.group({
+      id: new FormControl({ value: '', disabled: false }, Validators.required),
+      inicio: new FormControl({ value: '', disabled: true }),
+      termino: new FormControl({ value: '', disabled: false }),
+      talie: new FormControl({ value: '', disabled: true }),
+      placa: new FormControl({ value: '', disabled: true }),
+      reserva: new FormControl({ value: '', disabled: true }),
+      cliente: new FormControl({ value: '', disabled: true }),
+      isCrossDocking: new FormControl({ value: false, disabled: true }),
+      conteiner: new FormControl({ value: "", disabled: false }, Validators.required),
+      conferente: new FormControl({ value: '', disabled: true }),
+      equipe: new FormControl(null, Validators.required),
+      operacao: new FormControl('', Validators.required),
+    });
+  }
+
+  ngOnInit(): void {
+    this.loggedInUser = this.authenticationService.currentUser();
+
+    this.service.iniciarDescarga();
+    this.coletorService.getEquipes().subscribe((ret: ServiceResult<EquipeModel[]>) => {
+      if (ret.status && ret.result) {
+        this.listEquipes = ret.result.map(c => ({
+          id: c.id,
+          label: c.nome
+        }));
+      } else {
+        this.listEquipes = [];
+      }
+    })
+
+    /**
+     * Atualiza o form com o resultada da API
+     */
+    this.subscription = this.service.getCurrentDescarga().subscribe(descarga => {
+      if (descarga) {
+        this.descargaAtual = descarga;
+        this.itensList = descarga.talie?.talieItem ?? [];
+        this.form.patchValue({
+          ...this.descargaAtual,
+          talie: this.descargaAtual.talie?.id,
+          inicio: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.inicio ?? null),
+          termino: this.convertDateToNgbDateStruct(this.descargaAtual?.talie?.termino ?? null),
+        });
+
+      }
+    });
+
+    /**
+     * Atualiza a descargaatual em tempo real
+     */
+    this.form.valueChanges.subscribe((values) => {
+      if (!this.descargaAtual) return;
+
+      // Atualiza normalmente os valores
+      Object.assign(this.descargaAtual, values);
+
+      // Atualiza especificamente o "termino" dentro do objeto talie
+      if (this.descargaAtual.talie) {
+        this.descargaAtual.talie.termino = values.termino;//;
+      }
+
+      //Verifica se há algum campo sujo que NÃO seja o 'registro'
+      const algumCampoAlterado = Object.keys(this.form.controls).some(key =>
+        key !== 'id' && this.form.get(key)?.dirty
+      );
+
+      if (algumCampoAlterado) {
+        this.atualizarBotoes([{ nome: 'save', enabled: true, visible: true }]);
+      }
+
+      if (this.form.pristine) {
+        this.atualizarBotoes([{ nome: 'save', enabled: false, visible: true }]);
+      }
+
+    });
+
+    this.marcanteForm.valueChanges.subscribe((values) => {
+      if (!this.marcante) return;
+
+      Object.assign(this.marcante, values);
+    });
+
+    this.marcanteForm.controls['quantidade'].valueChanges.subscribe(value => {
+      if (value > this.itemSelecionado.quantidadeNf) {
+        this.notificationService.showMessage('Quantidade não pode ser maior que: ' + this.itemSelecionado.quantidadeNf, 'Info');
+        this.marcanteForm.controls['quantidade'].reset();
+      }
+
+      if (value === 0) {
+        this.marcanteForm.controls['quantidade'].reset();
+      }
+
+    });
+
+    this.form.controls['isCrossDocking'].valueChanges.subscribe(value => {
+      if (!value)
+        this.form.controls['conteiner'].reset();
+    });
+
+    this.conferenceService
+      .getTiposEmbalagens()
+      .subscribe((ret: ServiceResult<TiposEmbalagens[]>) => {
+        if (ret.status) {
+          this.tiposEmbalagens = ret.result ?? [];
+        }
+      });
+
+    this.initAdvancedTableData();
+  }
+
+  ngAfterViewInit(): void {
+    document.addEventListener('click', (event: any) => this.handleActionClick(event));
+  }
+
+  // Atualiza os dados no Subject sempre que houver alterações no form
+  atualizarDescarga(): void {
+    if (this.form.valid) {
+      const dadosAtualizados: DescargaExportacao = {
+        ...this.descargaAtual,
+        ...this.form.value,
+        inicio: this.convertNgbDateStructToString(this.form.value.inicio),
+        termino: this.convertNgbDateStructToString(this.form.value.termino),
+      };
+
+      this.service.updateDescarga(dadosAtualizados);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  get equipeControl(): FormControl {
+    return this.form.get('equipe') as FormControl;
+  }
+
+  get operacaoControl(): FormControl {
+    return this.form.get('operacao') as FormControl;
+  }
+
+  /**
+   * Busca a descrição da embalagem baseado no código da embalagem
+   * @param codigoEmbalagem - O código da embalagem
+   * @returns A descrição da embalagem ou o código se não encontrar
+   */
+  getDescricaoEmbalagem(codigoEmbalagem: string | number): string {
+    if (!codigoEmbalagem || !this.tiposEmbalagens || this.tiposEmbalagens.length === 0) {
+      return codigoEmbalagem?.toString() || '';
+    }
+
+    const codigoStr = codigoEmbalagem.toString();
+    const tipoEmbalagem = this.tiposEmbalagens.find(tipo => tipo.id.toString() === codigoStr);
+    return tipoEmbalagem ? tipoEmbalagem.descricao : codigoStr;
+  }
+
+  /**
+   * Inicia a tabela de itens
+   */
+  initAdvancedTableData(): void {
+    this.columns = [
+      {
+        name: "notafiscal",
+        label: "NF",
+        formatter: (item: TalieItem) => item.notaFiscal
+      },
+      {
+        name: "item",
+        label: "Item",
+        formatter: (item: TalieItem) => item.id,
+      },
+      {
+        name: "embalagem",
+        label: "Embalagem",
+        formatter: (item: TalieItem) => this.getDescricaoEmbalagem(item.codigoEmbalagem),
+      },
+      {
+        name: "quantidadeNf",
+        label: "Quantidade NF",
+        formatter: (item: TalieItem) => item.quantidadeNf,
+      },
+      {
+        name: "quantidadeDescarregada",
+        label: "Quantidade Descarga",
+        formatter: (item: TalieItem) => item.quantidadeDescarga,
+      },
+      {
+        name: "Action",
+        label: "Action",
+        sort: false,
+        formatter: this.serviceActionFormatter.bind(this),
+      },
+    ];
+  }
+
+
+  onRowSelected(item: any): void {
+    if (item) {
+      this.itemSelecionado = item;
+      this.buscarArmazens();
+      this.buscarMarcantesTalieItem(item.id);
+      this.atualizarBotoes([
+        { nome: 'marcante', enabled: true, visible: true }
+      ]);
+    } else {
+      this.atualizarBotoes([
+        { nome: 'marcante', enabled: false, visible: true }
+      ]);
+    }
+
+  }
+
+  handleTableLoad(event: any): void {
+    document.querySelectorAll(".service").forEach((e) => {
+      e.addEventListener("click", () => {
+        // this.router.navigate(["../order/details"], {
+        //   relativeTo: this.route,
+        //   queryParams: { id: e.id },
+        // });
+      });
+    });
+  }
+
+  serviceActionFormatter(item: TalieItem): any {
+    return this.sanitizer.bypassSecurityTrustHtml(`
+      <a href="javascript:void(0);" class="action-icon edit-btn" data-id="${item.id}">
+        <i class="mdi mdi-square-edit-outline"></i>
+      </a>
+      <a href="javascript:void(0);" class="action-icon delete-btn ${this.isDisabled ? 'disabled' : ''}" 
+       data-id="${item.id}"
+       style="${this.isDisabled ? 'pointer-events: none; opacity: 0.5;' : ''}">
+      <i class="mdi mdi-delete"></i>
+    </a>
+    `);
+  }
+
+  buscarLocais = (termo: string): Observable<{ value: any; descricao: string }[]> => {
+    return this.service.getYard(termo).pipe(
+      // Transforma o retorno em { value, descricao }
+      map((res: any[]) => res.map(item => ({
+        value: item.id,           // ou o campo correto da sua API
+        descricao: item.descricao // ou nome, label, etc
+      })))
+    );
+  };
+
+  onLocalSelecionado(local: { value: any; descricao: string }) {
+    if (!local.value) {
+      this.marcanteForm.get('local')?.reset(); // limpa se inválido
+    } else {
+      this.marcanteForm.get('local')?.setValue(local.descricao); // ou local.value
+    }
+  }
+
+
+  abrirModal(content: any) {
+    this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+  }
+
+  abrirModalMarcante(content: any) {
+    this.marcanteForm.reset();
+    this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+  }
+
+  //#region MODAIS
+  /**
+     * Modal Avarias
+     */
+  getModalAvaria() {
+    this.avariaDescarga = new AvariaDescarga();
+    this.abrirModalAvarias<AvariaDescarga>(this.avariaDescarga);
+  }
+
+  /**
+   * Faz a abertura da modal de itens recebendo a Modal que será utilizada
+   * @param avariaModel 
+   */
+  abrirModalAvarias<T extends Record<string, any>>(avariaModel: T) {
+    const modalRef = this.modalService.open(AvariasModalComponent, {
+      windowClass: 'modal-tablet-90',
+      size: "xl",
+      backdrop: "static",
+      centered: false,
+    });
+
+    // Passa a model genérica para a modal
+    modalRef.componentInstance.avariaModel = avariaModel;
+
+    // Passa os tipos de avarias e embalagens
+    modalRef.componentInstance.tiposAvarias = this.tiposAvarias;
+    modalRef.componentInstance.listLocal =
+      [
+        { id: 1, codigo: 1, descricao: 'Fumigação' },
+        { id: 2, codigo: 2, descricao: 'Identificação' }
+      ];
+
+
+    // ✅ Ouvindo o evento de salvamento da modal
+    modalRef.componentInstance.avariasSalvas.subscribe((avaria: AvariaDescarga) => {
+      avaria.talieId = this.descargaAtual.talie?.id ?? 0;
+
+      this.service.saveAvaria(avaria).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showToast("Avaria cadastrada com sucesso!");
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
+
+    // ✅ Tratando o fechamento da modal
+    modalRef.result
+      .then((dados) => {
+        if (dados) {
+          console.log("Avarias salvas:", dados);
+        }
+      })
+      .catch(() => { });
+  }
+
+  /**
+   * Abre a modal de fotos
+   */
+  abrirModalFotos() {
+    const modalRef = this.modalService.open(MicroledPhotosComponent, {
+      size: 'xl',
+      backdrop: 'static',
+      centered: false
+    });
+
+    modalRef.componentInstance.urlPath = 'uploads/fotos';
+    modalRef.componentInstance.urlBasePhotos = this.configService.getConfig('BASE_IMAGES');
+
+    modalRef.componentInstance.isDisabled = false;//this.descargaAtual.talie?.termino != null;
+
+    this.service.getListarTiposProcessos('app-descarga-exportacao').subscribe((ret: ServiceResult<EnumValue[]>) => {
+      if (ret.status) {
+        modalRef.componentInstance.photosTypes = ret.result;
+      } else { }
+    });
+
+    this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+      if (ret.status) {
+        modalRef.componentInstance.fotos = ret.result;
+      } else { }
+    });
+
+    modalRef.componentInstance.salvarFotoEmitter.subscribe(async (resultado: Foto) => {
+
+      resultado.talieId = this.descargaAtual.talie?.id ?? 0;
+      await this.service.postProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+          this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+            if (ret.status) {
+              modalRef.componentInstance.fotos = ret.result;
+            } else { }
+          });
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+
+      await this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+
+        if (ret.status) {
+          modalRef.componentInstance.fotos = ret.result;
+        } else { }
+      });
+    });
+
+    modalRef.componentInstance.salvarAlteracaoFotoEmitter.subscribe(async (resultado: Foto) => {
+
+      await this.service.putProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+
+      await this.service.getProcessosByTalie(this.descargaAtual.talie?.id ?? 0).subscribe((ret: ServiceResult<Foto[]>) => {
+
+        if (ret.status) {
+          modalRef.componentInstance.fotos = ret.result;
+        } else { }
+      });
+    });
+
+    modalRef.componentInstance.excluirFotoEmitter.subscribe(async (resultado: Foto) => {
+
+      await this.service.deleteProcessoFoto(resultado).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    });
+
+    modalRef.componentInstance.downloadFotosEmitter.subscribe(() => {
+      const talieId = this.descargaAtual.talie?.id;
+      if (!talieId) return;
+
+      this.service.downloadZipFotos(talieId);
+
+      // ou se quiser usar HttpClient:
+      // this.service.downloadZip(talieId);
+    });
+
+  }
+
+  /**
+   * Abre a modal para edicao de itens 
+   * @param item 
+   */
+  handleActionClick(event: any): void {
+    const target = event.target.closest('.action-icon');
+    if (!target) return;
+
+    const id = target.getAttribute('data-id');
+    if (!id) return;
+
+    if (target.classList.contains('edit-btn')) {
+      let registro = this.form.controls['id'].value;
+      this.abrirModalEditarItem(id);
+
+      // this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>)=>{
+      //   if(ret.status && ret.result){
+      //     const item = ret.result.talie?.talieItem.find(i => i.id == id);
+      //     if (!item) return;
+
+      //     this.editItemForm.patchValue(item);
+      //     this.abrirModalEditarItem(id);
+      //   }
+
+      // });
+
+    } else if (target.classList.contains('delete-btn')) {
+      this.deletarItem(id);
+    } else if (target.classList.contains('view-btn')) {
+      //this.visualizarItem(id);
+    }
+  }
+
+  abrirModalEditarItem(id: any): void {
+    const item = this.descargaAtual.talie?.talieItem.find(i => i.id == id);
+    if (!item) return;
+
+    //Object.assign(this.talieTeste, item);
+    //this.itemSelecionado = item;
+    this.editItemForm.patchValue(item);
+    
+    // Setar o valor da embalagem usando o codigoEmbalagem
+    // Verificar se os tipos de embalagens já foram carregados
+    if (this.tiposEmbalagens.length > 0) {
+      this.editItemForm.controls['embalagem'].setValue(item?.codigoEmbalagem ?? null);
+    } else {
+      // Se ainda não foram carregados, aguardar um pouco e tentar novamente
+      setTimeout(() => {
+        this.editItemForm.controls['embalagem'].setValue(item?.codigoEmbalagem ?? null);
+      }, 100);
+    }
+    
+    this.editItemForm.controls['imo'].setValue(item?.imo ?? '');
+    this.editItemForm.controls['imO2'].setValue(item?.imO2 ?? '');
+    this.editItemForm.controls['imO3'].setValue(item?.imO3 ?? '');
+    this.editItemForm.controls['imO4'].setValue(item?.imO4 ?? '');
+    this.editItemForm.controls['uno'].setValue(item?.uno ?? '');
+    this.editItemForm.controls['unO2'].setValue(item?.unO2 ?? '');
+    this.editItemForm.controls['unO3'].setValue(item?.unO3 ?? '');
+    this.editItemForm.controls['unO4'].setValue(item?.unO4 ?? '');
+    this.editItemForm.controls['fumigacao'].setValue(item?.fumigacao ?? '');
+    this.editItemForm.controls['comprimento'].setValue(item?.comprimento ?? '');
+    this.editItemForm.controls['largura'].setValue(item?.largura ?? '');
+    this.editItemForm.controls['altura'].setValue(item?.altura ?? '');
+    this.editItemForm.controls['observacao'].setValue(item?.observacao ?? '');
+
+    this.editItemForm.valueChanges.subscribe(updatedValues => {
+      Object.assign(item, updatedValues);
+    });
+
+    this.modalService.open(this.editItemModal, {windowClass: 'modal-tablet-90', size: 'xl', backdrop: 'static', centered: false });
+  }
+
+
+  fecharTalieItemModal(modal: any) {
+    Object.assign(this.itemSelecionado, this.talieTeste);
+    modal.close()
+  }
+
+  //#endregion MODAIS
+  //#region METODOS SERVICE
+  /**
+   * Executa a busca pelo numero do registro
+   * @param registro 
+   */
+  buscarRegistro() {
+    let registro = this.form.controls['id'].value;
+    this.service.findById(registro).subscribe((ret: ServiceResult<DescargaExportacao>) => {
+      if (ret.status) {
+        this.service.updateDescarga(ret.result);
+
+        this.form.controls['equipe'].setValue(ret.result?.talie?.equipe.toString());
+        this.form.controls['operacao'].setValue(ret.result?.talie?.operacao);
+
+        const terminoVazio = ret.result?.talie?.termino == null;
+        this.form.get('isCrossDocking')?.[terminoVazio ? 'enable' : 'disable']();
+
+        this.atualizarBotoes([
+          { nome: 'stop', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          // { nome: 'save', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'alert', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'clear', enabled: true, visible: true },
+          { nome: 'delete', enabled: false, visible: true },
+          { nome: 'observacao', enabled: ret.result?.talie?.termino == null ? true : false, visible: true },
+          { nome: 'photo', enabled: true, visible: true },
+        ]);
+
+        if (!terminoVazio) {
+          this.conferenteAtual = ret.result?.talie?.conferente ?? "";
+          this.bloquearForm();
+        }
+
+        this.observacaoForm.controls['observacao'].setValue(this.descargaAtual.talie?.observacao);
+
+        this.conferenceService
+          .getTiposAvarias()
+          .subscribe((ret: ServiceResult<TiposAvarias[]>) => {
+            if (ret.status) {
+              this.tiposAvarias = ret.result ?? [];
+            }
+          });
+
+        this.buscarArmazens();
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+
+    this.form.markAsPristine();
+  }
+
+  /**
+   * Executa o metodo de gravacao da descarga
+   */
+  gravarDescarga() {
+    if (this.form.get('isCrossDocking')?.value && this.form.get('conteiner')?.invalid) {
+      this.notificationService.showMessage('Para descarga Crossdocking por favor informa o numero do conteiner!!!', 'Info');
+      return;
+    }
+
+    this.descargaAtual.nomeConferente = this.loggedInUser.username;
+
+    this.service.saveDescargaExportacao(this.descargaAtual).subscribe((ret: ServiceResult<boolean>) => {
+      if (ret.status) {
+        // Primeiro mostra o toast
+        this.notificationService.showToast('Descarga gravada com sucesso!', 'success');
+        this.buscarRegistro();
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+
+  }
+
+  onEmbalagemChange(embalagem: any | null) {
+    this.editItemForm.controls['codigoEmbalagem'].setValue(embalagem);
+  }
+
+  /**
+   * Salvar alteracoes no item do talie
+   * @param modal 
+   */
+  salvarAlteracoes(modal: any): void {
+    if (this.editItemForm.valid) {
+      console.log('Item: ', this.editItemForm);
+      this.service.saveTalieItem(this.itemSelecionado, this.descargaAtual.registro).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status && ret.result) {
+          this.buscarRegistro();
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+      modal.close();
+    }
+  }
+
+  /**
+   * Salvar Observacao
+   */
+  salvarObservacao(): void {
+    if (this.observacaoForm.valid) {
+      let observacao = this.observacaoForm.value.observacao;
+      let talieId = this.descargaAtual.talie?.id ?? 0;
+
+      this.service.saveObservacao(observacao, talieId).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status) {
+
+          this.notificationService.showSuccess(ret);
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+      //modal.close();
+    }
+  }
+
+  salvarMarcante() {
+    if (this.marcanteForm.valid) {
+
+      this.marcante.registro = this.descargaAtual.registro;
+      this.marcante.talieId = this.descargaAtual.talie?.id ?? 0;
+      this.marcante.talieItemId = this.itemSelecionado.id;
+      this.marcante.marcante = this.marcante.marcante.length < 12 ? this.marcante.marcante.padStart(12, '0') : this.marcante.marcante;
+
+      this.service.saveMarcante(this.marcante).subscribe((ret: ServiceResult<boolean>) => {
+        if (ret.status && ret.result) {
+          this.buscarMarcantesTalieItem(this.marcante.talieItemId);
+          this.notificationService.showSuccess(ret);
+          this.marcanteForm.reset();
+        } else {
+          this.notificationService.showAlert(ret);
+        }
+      });
+    }
+  }
+
+  getArmazemDescricao(id: number): string {
+    const armazem = this.armazens.find(a => a.id === id);
+    return armazem ? armazem.descricao : 'Desconhecido';
+  }
+
+  /**
+   * Lista os armazens
+   */
+  buscarArmazens() {
+    this.service.getArmazens(2).subscribe((ret: ServiceResult<Armazen[]>) => {
+      if (ret.status) {
+        this.armazens = ret.result ?? [];
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+  }
+  /**
+   * Exclui o talie Item
+   * @param id 
+   */
+  deletarItem(id: number): void {
+    Swal.fire({
+      title: 'Excluir Registro!!!',
+      text: "Tem certeza que deseja excluir o registro? Ação não poderá ser desfeita!!!",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'SIM',
+      cancelButtonText: 'NÃO',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let notaFiscal = this.descargaAtual.talie?.talieItem.find(x => x.id == id)?.notaFiscal ?? "";
+        this.service.deleteTalieItem(id, this.descargaAtual.registro, notaFiscal).subscribe((ret: ServiceResult<boolean>) => {
+          if (ret.status && ret.result) {
+            this.buscarRegistro();
+            this.notificationService.showSuccess(ret);
+          } else {
+            this.notificationService.showAlert(ret);
+          }
+        });
+      }
+    })
+  }
+  /**
+   * Excluir marcante do talie item
+   * @param id 
+   */
+  deletarMarcanteTalieItem(id: number): void {
+    Swal.fire({
+      title: 'Excluir Registro!!!',
+      text: "Tem certeza que deseja excluir o registro? Ação não poderá ser desfeita!!!",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'SIM',
+      cancelButtonText: 'NÃO',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.deleteMarcanteTalieItem(id).subscribe((ret: ServiceResult<boolean>) => {
+          if (ret.status && ret.result) {
+            this.notificationService.showSuccess(ret);
+            this.buscarMarcantesTalieItem(this.descargaAtual.talie?.id ?? 0);
+          } else {
+            this.notificationService.showAlert(ret);
+          }
+        });
+      }
+    })
+  }
+
+  /**
+   * Carrega os marcantes do talie item
+   */
+  buscarMarcantesTalieItem(id: number) {
+    this.service.getMarcanteTaliItem(id).subscribe((ret: ServiceResult<Marcante[]>) => {
+      if (ret.status) {
+        this.listaMarcantes = ret.result ?? [];
+      } else {
+        this.notificationService.showAlert(ret);
+      }
+    });
+  }
+
+  /**
+   * Chama o servico de finaliziar processo
+   */
+  finalizarProcessoDescarga() {
+    if (this.form.get('isCrossDocking')?.value && this.form.get('conteiner')?.invalid) {
+      this.notificationService.showMessage('Para descarga Crossdocking por favor informa o numero do conteiner!!!', 'Info');
+      return;
+    }
+
+    if (this.descargaAtual.talie?.id) {
+      this.service.getFinalizarProcesso(this.descargaAtual.talie?.id, this.form.get('isCrossDocking')?.value,
+        this.authenticationService.currentUser()?.email,
+        this.form.get('conteiner')?.value).subscribe((ret: ServiceResult<boolean>) => {
+          if (ret.status) {
+            this.notificationService.showSuccess(ret);
+            this.buscarRegistro();
+          } else {
+            this.notificationService.showAlert(ret);
+          }
+        });
+    }
+  }
+
+
+  //#endregion SERVICE
+
+  //#region HELPERS
+  // 🔄 Converte a string da API para NgbDateStruct
+  private convertDateToNgbDateStruct(dateString: string | null): NgbDateStruct | null {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
+  }
+
+  // 🔄 Converte o NgbDateStruct de volta para string ISO antes de enviar para API
+  private convertNgbDateStructToString(date: NgbDateStruct | null): string | null {
+    if (!date) return null;
+    return `${date.year}-${date.month.toString().padStart(2, '0')}-${date.day.toString().padStart(2, '0')}T00:00:00`;
+  }
+
+  /**
+   * Atualiza o estado dos botoes do action footer
+   * @param botoes 
+   */
+  atualizarBotoes(botoes: { nome: string; enabled?: boolean; visible?: boolean }[]): void {
+    const novoEstado = { ...this.footerButtonsState };
+
+    botoes.forEach(botao => {
+      if (novoEstado[botao.nome]) {
+        if (botao.enabled !== undefined) {
+          novoEstado[botao.nome].enabled = botao.enabled;
+        }
+        if (botao.visible !== undefined) {
+          novoEstado[botao.nome].visible = botao.visible;
+        }
+      }
+    });
+
+    this.footerButtonsState = novoEstado;
+  }
+
+  /**
+   * Limpeza do formulario
+   */
+  limpar() {
+    Swal.fire({
+      title: "Limpar Descarga!!!",
+      text: "Deseja limpar a descarga atual?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "SIM",
+      cancelButtonText: "NÃO",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.Reset();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      }
+    });
+  }
+
+  Reset() {
+    this.isDisabled = false;
+    this.form = this.getMainForm();
+    this.editItemForm = this.getEditItemForm();
+    this.marcanteForm = this.getMarcanteForm();
+    this.service.deletarDescarga();
+    this.form.controls['conferente'].setValue('Microled');
+    this.itensList = [];
+
+    this.atualizarBotoes([
+      { nome: 'stop', enabled: false, visible: true },
+      { nome: 'alert', enabled: false, visible: true },
+      { nome: 'clear', enabled: false, visible: true },
+      { nome: 'delete', enabled: false, visible: true },
+      { nome: 'marcante', enabled: false, visible: true },
+      { nome: 'observacao', enabled: false, visible: true },
+      { nome: 'save', enabled: false, visible: true },
+      { nome: 'photo', enabled: false, visible: true }
+    ]);
+  }
+
+  limparData(campo: string) {
+    this.form.controls[campo].setValue(null);
+  }
+
+  onEquipeSelectChange(value: any) {
+    console.log(value);
+    this.form.controls['equipe'].setValue(value);
+  }
+
+  onOperacaoSelectChange(value: any) {
+    this.form.controls['operacao'].setValue(value);
+  }
+
+  validarDataTermino(value: any): void {
+    let isValid = false;
+    if (!value)
+      isValid = false;
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Remove a hora para comparar apenas a data
+
+    const dataSelecionada = new Date(value.year, value.month - 1, value.day);
+
+    if (dataSelecionada < hoje) {
+      isValid = false;
+      this.form.controls['termino'].setValue(null); // Reseta o campo se for inválido
+    } else {
+      isValid = true;
+    }
+
+    // ✅ Chama o método desejado se a data for válida
+    this.liberarBtnFinalizar(isValid);
+  }
+
+  liberarBtnFinalizar(value: boolean): void {
+    if (value) {
+      this.atualizarBotoes([{ nome: 'stop', enabled: true, visible: true }]);
+    } else {
+      this.atualizarBotoes([{ nome: 'stop', enabled: false, visible: true }]);
+    }
+
+  }
+
+  bloquearForm() {
+    //bloquear form principal
+    this.toggleService.toggleFormControls(this.form, true);
+    //bloquear form de item
+    this.toggleService.toggleFormControls(this.editItemForm, true);
+    // bloquear form de observacao
+    this.toggleService.toggleFormControls(this.observacaoForm, true);
+    //bloquear form do marcante
+    this.toggleService.toggleFormControls(this.marcanteForm, true);
+
+    this.isDisabled = true;
+  }
+
+  desbloquearForm() {
+    //bloquear form principal
+    this.toggleService.toggleFormControls(this.form, false);
+    //bloquear form de item
+    this.toggleService.toggleFormControls(this.editItemForm, false);
+    // bloquear form de observacao
+    this.toggleService.toggleFormControls(this.observacaoForm, false);
+    //bloquear form do marcante
+    this.toggleService.toggleFormControls(this.marcanteForm, false);
+
+    this.isDisabled = false;
+
+  }
+
+  sair() {
+    this.router.navigate(['/apps/tools']);
+  }
+
+  //#endregion
+}

@@ -1,0 +1,33 @@
+.patio-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  
+  .badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50rem;
+    background-color: #3b7ddd !important;
+    color: white;
+    white-space: nowrap;
+    
+    i {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .patio-badge {
+    .badge {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.4rem;
+      
+      i {
+        font-size: 0.75rem;
+      }
+    }
+  }
+}

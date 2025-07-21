@@ -1,0 +1,119 @@
+<app-page-title [breadcrumbItems]="pageTitle" title></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Talie Coletor Descarga</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <div class="row mb-3">
+
+                        <div class="col-3">
+                            <label for="marcante"
+                                class="required">Marcante</label>
+                            <input id="marcante" type="text"
+                                class="form-control"
+                                formControlName="marcante"
+                                [ngClass]="{'is-invalid': form.get('marcante')?.invalid && form.get('marcante')?.touched}">
+
+                            <div
+                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('marcante'),
+                                'marcante')}}
+                            </div>
+                        </div>
+                        <!-- <div class="col-3">
+                            <label for="marcante">marcante</label>
+                            <input id="marcante" type="text"
+                                class="form-control"
+                                formControlName="marcante">
+                        </div> -->
+                        <div class="col-3">
+                            <label for="local">local</label>
+                            <input id="local" type="text" class="form-control"
+                                formControlName="local">
+                        </div>
+                        <div class="col-3">
+                            <label for="inicio">Inicio</label>
+                            <input id="inicio" type="text" class="form-control"
+                                formControlName="inicio">
+                        </div>
+                        <div class="col-3">
+                            <label for="quantidade">quantidade</label>
+                            <input id="quantidade" type="text"
+                                class="form-control"
+                                formControlName="quantidade" [disabled]="true">
+                        </div>
+
+                    </div>
+                    <div class="row mb-3">
+
+                        
+                        <div class="col-3">
+                            <label for="lote">lote</label>
+                            <input id="lote" type="text" class="form-control"
+                                formControlName="lote">
+                        </div>
+                        <div class="col-3">
+                            <!-- <label for="marcante">Veiculos</label> -->
+                            <app-microled-select
+                                placeholder="Selecione o Veiculo"
+                                [items]="veiculos"
+                                [control]="veiculosControl"
+                                (selectionChange)="onSelectVeiculoChange($event)">
+                            </app-microled-select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-primary me-2"
+                                (click)="buscar()">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+                <app-advanced-table #advancedTable
+                    (handleTableLoad)="handleTableLoad($event)"
+                    [tableData]="itensList"
+                    [columns]="columns"
+                    [pagination]="true"
+                    [hasRowSelection]="false"
+                    [isSearchable]="false"
+                    (rowSelected)="onRowSelected($event)" (search)="''"
+                    [isSortable]="false"
+                    tableClasses="table-centered"
+                    theadClasses="table-light"
+                    [singleRowSelection]="true">
+                </app-advanced-table>
+
+                <app-advanced-table #advancedTable
+                    (handleTableLoad)="handleTableLoad($event)"
+                    [tableData]="ordensList"
+                    [columns]="columnsOrdens"
+                    [pagination]="true"
+                    [hasRowSelection]="false"
+                    [isSearchable]="false"
+                    (rowSelected)="onRowSelected($event)" (search)="''"
+                    [isSortable]="false"
+                    tableClasses="table-centered"
+                    theadClasses="table-light"
+                    [singleRowSelection]="true">
+                </app-advanced-table>
+
+                <app-action-footer
+                    [buttonsState]="footerButtonsState"
+                    (saveEvent)="gravar()"
+                    (startEvent)="iniciar()"
+                    (cleanupEvent)="limpar()"
+                    (avariasEvent)="''"
+                    (finalizarEvent)="gravar()"
+                    (observacaoEvent)="''"
+                    (exitEvent)="redirecionarHome()"
+                    (marcanteEvent)="''"></app-action-footer>
+
+            </div>
+        </div>
+    </div>
+</div>

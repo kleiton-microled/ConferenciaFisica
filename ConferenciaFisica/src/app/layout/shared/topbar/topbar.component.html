@@ -25,47 +25,6 @@
             <button class="button-toggle-menu open-left d-block d-lg-none waves-effect waves-light" *ngIf="layoutType!=='horizontal'" (click)="toggleMobileMenu($event)">
                 <i class="mdi mdi-menu"></i>
             </button>
-
-            <div class="dropdown d-none d-xl-block" ngbDropdown>
-                <a class="nav-link dropdown-toggle waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown" href="javascript: void(0);" role="button" aria-haspopup="false" aria-expanded="false">
-                    Cadastros
-                    <i class="mdi mdi-chevron-down ms-1"></i>
-                </a>
-                <div class="dropdown-menu" ngbDropdownMenu>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <i class="fe-user me-1"></i>
-                        <span>Clientes</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <i class="fe-circle me-1"></i>
-                        <span>Veículos</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <i class="fe-bar-chart-line- me-1"></i>
-                        <span>Serviços</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <i class="fe-users me-1"></i>
-                        <span>Funcionários</span>
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <i class="fe-headphones me-1"></i>
-                        <span>Suporte</span>
-                    </a>
-
-                </div>
-            </div>
         </div>
 
         <ul class="topbar-menu d-flex align-items-center">
@@ -111,90 +70,13 @@
                                             <i class="mdi mdi-comment-account-outline"></i>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
+                                    <!-- <div class="flex-grow-1 text-truncate ms-2">
                                         <h5 class="noti-item-title fw-semibold font-14">Kleiton Freitas <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
                                         <small class="noti-item-subtitle text-muted">Realizou um agendamento...</small>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card unread-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-14">Rafael Vieira <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">Realizou um agendamento...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <h5 class="text-muted font-13 fw-normal mt-0">Ontem</h5>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card unread-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-14">Marcelo Carvalho <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">Realizou um agendamento...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <h5 class="text-muted font-13 fw-normal mt-0">10 Novembro 2024</h5>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card unread-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-14">Sonia Garcia <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">Realizou um agendamento...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card unread-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-14">Maria da Silva <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">Realizou um agendamento...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
                         <div class="text-center">
                             <i class="mdi mdi-dots-circle mdi-spin text-muted h3 mt-0"></i>
                         </div>
@@ -204,7 +86,6 @@
                     <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item border-top border-light py-2">
                         Ver todas
                     </a>
-
                 </div>
             </li>
 
@@ -218,10 +99,20 @@
             <!-- User Dropdown -->
             <li class="dropdown" ngbDropdown>
                 <a ngbDropdownToggle class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="assets/images/users/user-1.jpg" alt="user-image" class="rounded-circle">
+                    <!-- <img src="assets/images/users/user-1.jpg" alt="user-image" class="rounded-circle"> -->
                     <span class="ms-1 d-none d-md-inline-block">
-                        Kleiton <i class="mdi mdi-chevron-down"></i>
+                        {{this.loggedInUser.username}} <i class="mdi mdi-chevron-down"></i>
                     </span>
+                    
+                    <!-- Pátio Badge -->
+                    @if(userPatio){
+                    <div class="patio-badge ms-2">
+                        <span class="badge bg-primary rounded-pill">
+                            <i class="mdi mdi-map-marker me-1"></i>
+                            {{userPatio}}
+                        </span>
+                    </div>
+                    }
                 </a>
                 <div class="dropdown-menu dropdown-menu-end profile-dropdown" ngbDropdownMenu>
                     <!-- item-->

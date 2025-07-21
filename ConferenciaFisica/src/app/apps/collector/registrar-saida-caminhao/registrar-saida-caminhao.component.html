@@ -1,0 +1,129 @@
+<app-page-title [breadcrumbItems]="pageTitle" title></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Registrar Saida
+                            Caminhão</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="numeroProtocolo" class="required">N
+                                Protocolo</label>
+                            <input id="numeroProtocolo" type="text"
+                                class="form-control"
+                                formControlName="numeroProtocolo"
+                                [ngClass]="{'is-invalid': form.get('numeroProtocolo')?.invalid && form.get('numeroProtocolo')?.touched}">
+
+                            <div
+                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('numeroProtocolo'),
+                                'Numero Protocolo')}}
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <label for="anoProtocolo" class="required">Ano
+                                Protocolo</label>
+                            <input id="anoProtocolo" type="text"
+                                class="form-control"
+                                formControlName="anoProtocolo"
+                                [ngClass]="{'is-invalid': form.get('anoProtocolo')?.invalid && form.get('anoProtocolo')?.touched}">
+
+                            <div
+                                class="invalid-feedback">{{formValidationService.getErrorMessage(form.get('anoProtocolo'),
+                                'Ano Protocolo')}}
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <label for="placa" >Placa</label>
+                            <input id="placa" type="text" class="form-control"
+                                formControlName="placa">
+
+                        </div>
+                        <div class="col-3">
+                            <label for="placaCarreta">Placa Carreta</label>
+                            <input id="placaCarreta" type="text"
+                                class="form-control"
+                                formControlName="placaCarreta">
+
+                        </div>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="row">
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-primary me-2"
+                                (click)="buscarRegistro()">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+                <app-action-footer
+                    [buttonsState]="footerButtonsState"
+                    (saveEvent)="''"
+                    (startEvent)="''"
+                    (cleanupEvent)="limpar()"
+                    (avariasEvent)="''"
+                    (observacaoEvent)="''"
+                    (exitEvent)="redirecionarHome()"
+                    (marcanteEvent)="''"></app-action-footer>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #cargaModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Registrar Saida Caminhão</h4>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="formModal">
+            <div class="row justify-content-center mb-3">
+                <div class="col-md-5 col-10">
+                    <label for="protocolo">Protocolo</label>
+                    <input id="protocolo" type="text" class="form-control"
+                        formControlName="protocolo">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="placa">Placa</label>
+                    <input id="placa" type="text" class="form-control"
+                        formControlName="placa">
+                </div>
+            </div>
+            <div class="row justify-content-center mb-3">
+                <div class="col-md-5 col-10">
+                    <label for="ticketEntrada">Ticket Entrada</label>
+                    <input id="ticketEntrada" type="text" class="form-control"
+                        formControlName="ticketEntrada">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="pesoBruto">Peso Bruto</label>
+                    <input id="pesoBruto" type="text" class="form-control"
+                        formControlName="pesoBruto">
+                </div>
+                <div class="col-md-5 col-10">
+                    <label for="placaCarreta">Placa Carreta</label>
+                    <input id="placaCarreta" type="text" class="form-control"
+                        formControlName="placaCarreta">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-between">
+        
+        <button type="button" class="btn btn-primary" (click)="RegitrarSaida()">
+            Registrar Saída
+        </button>
+
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
+            Fechar
+        </button>
+    </div>
+</ng-template>

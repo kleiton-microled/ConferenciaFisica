@@ -1,0 +1,343 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-3">
+          <div class="row mt-3">
+            <div class="col-2">
+              <label for="numeroConteiner">NUMERO CONTEINER</label>
+              <input id="numeroConteiner" type="text" class="form-control" formControlName="numeroConteiner" />
+            </div>
+            <div class="col-2">
+              <label for="numeroLote">LOTE (BL)</label>
+              <input id="numeroLote" type="text" class="form-control" formControlName="bl"/>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-2">
+              <label for="tipoCarga">TIPO CARGA</label>
+              <input id="tipoCarga" type="text" class="form-control" formControlName="tipoCarga" />
+            </div>
+            <div class="col-2">
+              <label for="viagem">VIAGEM</label>
+              <input id="viagem" type="text" class="form-control" formControlName="viagem" />
+            </div>
+            <div class="col-2">
+              <label for="dataPrevista">Data Prevista</label>
+              <input id="dataPrevista" type="text" class="form-control" formControlName="dataPrevista" />
+            </div>
+            <div class="col-2">
+              <label for="motivoAbertura">MOTIVO ABERTURA</label>
+              <input id="motivoAbertura" type="text" class="form-control" formControlName="motivoAbertura" />
+            </div>
+            <div class="col-2">
+              <label for="embalagem">EMBALAGEM</label>
+              <select class="form-select" id="embalagem" formControlName="embalagem">
+                <option value="0">Selecione uma embalagem</option>
+                <option *ngFor="let embalagem of tiposEmbalagens" [value]="embalagem.id">
+                  {{ embalagem.descricao }}
+                </option>
+              </select>
+              <!-- <select id="embalagem" class="form-select" formControlName="embalagem">
+                <option value="0">Selecione</option>
+                <option value="1">Caixa</option>
+                <option value="2">Saco</option>
+              </select> -->
+            </div>
+            <div class="col-2">
+              <label for="quantidade">QUANTIDADE</label>
+              <input id="quantidade" type="number" class="form-control" formControlName="quantidade" />
+            </div>
+          </div>
+
+          <div class="conferencia-container mt-3">
+            <div class="row mt-3">
+              <div class="col-2">
+                <label for="tipoConferencia">Tipo Conferência</label>
+                <select id="tipoConferencia" class="form-select" formControlName="tipoConferencia">
+                  <option value="0">Selecione</option>
+                  <option value="1">FÍSICA</option>
+                  <option value="2">REMOTA</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="inicioConferencia">Inicio Conferência</label>
+                <input id="inicioConferencia" type="text" class="form-control" formControlName="inicioConferencia" />
+              </div>
+              <div class="col-2">
+                <label for="termino">Fim Conferência</label>
+                <input id="termino" type="text" class="form-control" formControlName="termino" />
+              </div>
+              <!-- <div class="col-2">
+                <label for="cpfCliente">Cpf Cliente</label>
+                <input id="cpfCliente" type="text" appCpfMask maxlength="14" class="form-control"
+                  formControlName="cpfCliente" />
+              </div> -->
+              <div class="col-2">
+                <label for="cpfCliente">Cpf Cliente</label>
+                <input id="cpfCliente" type="text"
+                       appCpfMask maxlength="14"
+                       class="form-control"
+                       [class.is-invalid]="form.get('cpfCliente')?.invalid && form.get('cpfCliente')?.touched"
+                       formControlName="cpfCliente" />
+              
+                <!-- <span class="text-danger small mt-1 d-block"
+                      *ngIf="form.get('cpfCliente')?.invalid && form.get('cpfCliente')?.touched">
+                  {{ validationService.getErrorMessage(form.get('cpfCliente'), 'CPF do Cliente') }}
+                </span> -->
+              </div>
+              
+              <div class="col-2">
+                <label for="nomeCliente">Nome Cliente</label>
+                <input id="nomeCliente" type="text" class="form-control" formControlName="nomeCliente" />
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-2">
+                <label for="retiradaAmostra">Retirada Amostra</label>
+                <select id="retiradaAmostra" class="form-select" formControlName="retiradaAmostra">
+                  <option value="0">SIM</option>
+                  <option value="1">Não</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="cpfConferente">Cpf Conferente</label>
+                <input id="cpfConferente" type="text" appCpfMask maxlength="14" class="form-control"
+                  formControlName="cpfConferente" />
+              </div>
+              <div class="col-2">
+                <label for="nomeConferente">Nome Conferente</label>
+                <input id="nomeConferente" type="text" class="form-control" formControlName="nomeConferente" />
+              </div>
+              <div class="col-2">
+                <label for="qtdDocumento">Qtd. Documento</label>
+                <input id="qtdDocumento" type="text" class="form-control" [value]="documentos.length" formControlName="qtdDocumento" />
+              </div>
+               <div class="col-2">
+                <label for="telefoneConferente">Telefone Conferente</label>
+                <input id="telefoneConferente" type="text" class="form-control" formControlName="telefoneConferente" />
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-2">
+                <label for="tipoConferencia">Quantidade Divergente?</label>
+                <select id="quantidadeDivergente" class="form-select" formControlName="quantidadeDivergente">
+                  <option value="0">Selecione</option>
+                  <option value="1">SIM</option>
+                  <option value="2">NÃO</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="qtdVolumesDivergentes">Qtd. de Volumes Divergentes</label>
+                <input id="qtdVolumesDivergentes" type="text" class="form-control"
+                  formControlName="qtdVolumesDivergentes" />
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalRepresentantes()" [disabled]="isDisableBtnModal">
+                  Cad. de Representantes
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
+                    {{ representantes.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalAjudantes()" [disabled]="isDisableBtnModal">
+                  Cadastro de Ajudantes
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
+                    {{ ajudantes.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button class="btn btn-primary w-100 position-relative" (click)="abrirModalOperadores()" [disabled]="isDisableBtnModal">
+                  Cadastro de Operadores
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
+                    {{ operadores.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button class="btn btn-primary w-100 position-relative" 
+                        (click)="abrirModalDocumentos()" 
+                        [disabled]="isDisableBtnModal">
+                  Cad. de Documentos
+                  <span
+                    class="badge bg-success badge-custom position-absolute top-0 start-100 translate-middle rounded-pill">
+                    {{ documentos.length }}
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-2 d-flex align-items-end position-relative">
+                <button type="submit" #btnServicosExecutados 
+                (click)="openModal(servicosModal)"
+                [disabled]="isDisableBtnModal"
+                class="btn btn-servicos-executados mt-3">
+                  SERVIÇOS EXECUTADOS
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-2">
+              <label for="divergenciaQualificacao">Divergencia de Qualificação</label>
+              <select id="divergenciaQualificacao" class="form-select" formControlName="divergenciaQualificacao">
+                <option value="0">Selecione</option>
+                <option [ngValue]=true>SIM</option>
+                <option [ngValue]=false>NÃO</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <label for="movimentacao">Movimentação</label>
+              <select id="movimentacao" class="form-select" formControlName="movimentacao">
+                <option value="0">Selecione</option>
+                <option value="1">MECÂNICA</option>
+                <option value="2">MANUAL</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <label for="desunitizacao">Desunitização</label>
+              <select id="desunitizacao" class="form-select" formControlName="desunitizacao">
+                <option value="0">Selecione</option>
+                <option value="1">SIM</option>
+                <option value="2">NÃO</option>
+                <option value="3">PARCIAL</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12">
+              <app-lacres-form [tiposLacres]="tipolacres" [lacresConferencia]="lacresConferencia" [limparLacres]="limparLacres"></app-lacres-form>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-6">
+              <label for="divergenciaQualificacao">Observação sobre as Divergências</label>
+              <textarea class="form-control" id="observacaoDivergencias" rows="5" formControlName="observacaoDivergencias"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <app-action-footer [buttonsState]="footerButtonsState" 
+                         (saveEvent)="updatePhysicalConference()"
+                         (startEvent)="openModal(advancedFilterModal)" 
+                         (cleanupEvent)="limparConferenciaAtual()"
+                         (avariasEvent)="getModalAvaria()"
+                         (finalizarEvent)="finalizarConferencia()"
+                         (photoEvent)="abrirModalFotos()"
+                         (exitEvent)="sair()"></app-action-footer>
+    </div>
+  </div>
+</div>
+
+<!-- Template da modal -->
+<ng-template #advancedFilterModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Filtro Avançado</h5>
+    <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <!-- <div class="col-3">
+          <label for="pesquisa" class="form-label">Pesquisa</label>
+          <input id="pesquisa" type="text" class="form-control" />
+        </div> -->
+        <div class="col-3">
+          <label for="conteiner" class="form-label">Conteiner</label>
+          <select class="form-select" id="conteiner" [(ngModel)]="selectedContainer" name="conteiner" (ngModelChange)="onContainerChange($event)">
+            <option [ngValue]="null">Selecione</option>
+            <option *ngFor="let conteiner of containers" [ngValue]="conteiner">
+              {{ conteiner.display }}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="nvocc" class="form-label">Lote</label>
+          <select class="form-select" id="nvocc" [(ngModel)]="selectedLote" name="nvocc">
+            <option value="0">Selecione</option>
+            <option *ngFor="let lote of lotes" [ngValue]="lote">
+              {{ lote.display }}
+            </option>
+          </select>
+        </div>
+        <!-- <div class="col-3">
+          <label for="numero" class="form-label">Numero</label>
+          <input id="numero" type="text" class="form-control" [(ngModel)]="selectedNumero" name="numero" />
+        </div> -->
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">
+      Fechar
+    </button>
+    <button type="button" class="btn btn-primary" (click)="filterConferences()">
+      Aplicar Filtro
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #servicosModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Adicionar Serviço</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="servicoForm">
+      <div class="row">
+        <!-- Quantidade -->
+        <div class="col-4">
+          <label for="quantidade" class="form-label">Quantidade:</label>
+          <input type="number" id="quantidade" class="form-control" formControlName="quantidade">
+        </div>
+
+        <!-- Serviços -->
+        <div class="col-4">
+          <label for="servico" class="form-label">Serviço:</label>
+          <select id="servico" class="form-select" formControlName="servico">
+            <option value="">Selecione</option>
+            <option *ngFor="let serv of listaServicos" [value]="serv.id">{{ serv.nome }}</option>
+          </select>
+        </div>
+
+        <!-- Botão Adicionar -->
+        <div class="col-4 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="button" (click)="adicionarServico()">Adicionar</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Tabela -->
+    <div class="table-responsive mt-4" *ngIf="servicosAdicionados.length > 0">
+      <table class="table table-bordered table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Serviço</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of servicosAdicionados">
+            <td>{{ s.nome }}</td>
+            <td>{{ s.quantidade }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Fechar</button>
+  </div>
+</ng-template>

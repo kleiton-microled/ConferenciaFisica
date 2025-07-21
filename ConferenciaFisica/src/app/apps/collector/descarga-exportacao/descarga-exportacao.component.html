@@ -1,0 +1,438 @@
+<app-page-title [breadcrumbItems]="pageTitle" title=""></app-page-title>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <h4 style="font-weight: 100">Descarga Exportação</h4>
+                    </div>
+                </div>
+                <form [formGroup]="form">
+                    <!-- Row 1 -->
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="id">Registro</label>
+                            <input id="id" type="text" class="form-control" formControlName="id">
+                        </div>
+                        <div class="col-3 position-relative">
+                            <label for="inicio">Início</label>
+                            <div class="input-group">
+                                <input id="inicio" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
+                                    #d1="ngbDatepicker" appNgbDatepickerPt formControlName="inicio">
+
+                                <button class="btn btn-outline-secondary" (click)="d1.toggle()" type="button"
+                                    [disabled]="this.isDisabled">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" *ngIf="form.controls['inicio'].value"
+                                    (click)="limparData('inicio')" type="button" [disabled]="this.isDisabled">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <ng-template #footerTemplate>
+                                <div class="d-flex justify-content-end p-2">
+                                    <button class="btn btn-sm btn-danger" (click)="limparData('inicio')">Limpar
+                                        Data</button>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <div class="col-3 position-relative">
+                            <label for="termino">Término</label>
+                            <div class="input-group">
+                                <input id="termino" class="form-control" placeholder="dd/mm/aaaa" ngbDatepicker
+                                    #d2="ngbDatepicker" appNgbDatepickerPt formControlName="termino">
+                                <button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button"
+                                    [disabled]="this.isDisabled">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" *ngIf="form.controls['termino'].value"
+                                    (click)="limparData('termino')" type="button" [disabled]="this.isDisabled">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <ng-template #footerTemplate>
+                                <div class="d-flex justify-content-end p-2">
+                                    <button class="btn btn-sm btn-danger" (click)="limparData('termino')">Limpar
+                                        Data</button>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="col-3">
+                            <label for="talie">Talie</label>
+                            <input id="talie" type="text" class="form-control" formControlName="talie">
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="placa">Placa</label>
+                            <input id="placa" type="text" class="form-control" formControlName="placa">
+                        </div>
+                        <div class="col-3">
+                            <label for="reserva">Reserva</label>
+                            <input id="reserva" type="text" class="form-control" formControlName="reserva">
+                        </div>
+                        <div class="col-3">
+                            <label for="cliente">Cliente</label>
+                            <input id="cliente" type="text" class="form-control" formControlName="cliente">
+                        </div>
+                        <div class="col-3">
+                            <label for="isCrossDocking" class="d-block">Cross Docking</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isCrossDocking"
+                                    formControlName="isCrossDocking">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="form.get('isCrossDocking')?.value">
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <label for="conteiner">Container</label>
+                                <input id="conteiner" type="text" class="form-control" formControlName="conteiner">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Row 3 -->
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="conferente">Conferente</label>
+                            <p>
+                                <span style="font-weight: bold;">
+                                    {{ form.controls['termino'].value == null ? loggedInUser.username : conferenteAtual
+                                    }}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="col-4">
+                            <app-microled-select label="Selecione a Equipe" [items]="listEquipes"
+                                [control]="equipeControl" (selectionChange)="onEquipeSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                        <div class="col-4">
+                            <app-microled-select label="Selecione a Operação" [items]="listOperacoes"
+                                [control]="operacaoControl" (selectionChange)="onOperacaoSelectChange($event)">
+                            </app-microled-select>
+                        </div>
+                    </div>
+                    <app-advanced-table #advancedTable (handleTableLoad)="handleTableLoad($event)"
+                        [tableData]="itensList" [columns]="columns" [pagination]="true" [hasRowSelection]="false"
+                        [isSearchable]="false" (rowSelected)="onRowSelected($event)" (search)="''" [isSortable]="false"
+                        tableClasses="table-centered" theadClasses="table-light" [singleRowSelection]="true">
+                    </app-advanced-table>
+
+                    <!-- Botões -->
+                    <div class="row">
+                        <div class="col text-end">
+                            <button type="button" style="width: 250px; height: 50px; font-size: large;"
+                                class="btn btn-primary me-2" (click)="buscarRegistro()"
+                                [disabled]="this.form.get('id')?.invalid || this.form.disabled">Buscar</button>
+                            <!-- <button type="button" class="btn btn-secondary" (click)="limpar()">Limpar</button> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <app-action-footer [buttonsState]="footerButtonsState" (saveEvent)="gravarDescarga()" (startEvent)="''"
+                (cleanupEvent)="limpar()" (avariasEvent)="getModalAvaria()"
+                (observacaoEvent)="abrirModal(observacaoModal)" (marcanteEvent)="abrirModalMarcante(marcanteModal)"
+                (exitEvent)="sair()" (finalizarEvent)="finalizarProcessoDescarga()"
+                (photoEvent)="abrirModalFotos()"></app-action-footer>
+        </div>
+    </div>
+</div>
+
+<!-- Template da Modal Observacao -->
+<ng-template #observacaoModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Adicionar Observação</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="observacaoForm">
+            <div class="mb-3">
+                <label for="observacao" class="form-label">Observação:</label>
+                <textarea id="observacao" class="form-control" rows="8" formControlName="observacao"></textarea>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarObservacao(); modal.close()">Salvar</button>
+    </div>
+</ng-template>
+
+<!-- Template da Modal Marcante-->
+<ng-template #marcanteModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Adicionar Marcante</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="marcanteForm">
+            <div class="row">
+                <!-- Marcante -->
+                <div class="col-3">
+                    <label for="marcante" class="form-label">Marcante:</label>
+                    <input type="text" id="marcante" class="form-control" formControlName="marcante" [ngClass]="{'is-invalid': (marcanteForm.get('marcante')?.invalid && 
+                    marcanteForm.get('marcante')?.touched)}">
+
+                    <div class="invalid-feedback">
+                        {{messageValidationService.getErrorMessage(marcanteForm.get('marcante'), 'Numero Marcante')}}
+                    </div>
+                </div>
+
+                <!-- Quantidade -->
+                <div class="col-3">
+                    <label for="quantidade" class="form-label">Quantidade:</label>
+                    <input type="number" id="quantidade" class="form-control" formControlName="quantidade"
+                        [ngClass]="{'is-invalid': (marcanteForm.get('quantidade')?.invalid && 
+                                                      marcanteForm.get('quantidade')?.touched) ||
+                                                     (marcanteForm.get('quantidade')?.value > this.itemSelecionado.quantidadeNf)}">
+
+                    <div class="invalid-feedback">
+                        {{messageValidationService.getErrorMessage(marcanteForm.get('quantidade'), 'Quantidade')}}</div>
+
+                </div>
+
+                <!-- Armazém -->
+                <div class="col-3">
+                    <label for="armazem" class="form-label">Armazém:</label>
+                    <select id="armazem" class="form-select" formControlName="armazem">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let arm of armazens" [value]="arm.id">{{ arm.descricao }}</option>
+                    </select>
+                </div>
+
+                <!-- Local -->
+                <div class="col-3">
+                    <label for="local" class="form-label">Local Planejado:</label>
+                    <microled-input-with-select [disabled]="isDisabled" [placeholder]="'Buscar cliente...'"
+                        [fetchData]="buscarLocais.bind(this)" (selectedItem)="onLocalSelecionado($event)">
+                    </microled-input-with-select>
+                </div>
+            </div>
+        </form>
+
+        <!-- Tabela de Marcantes -->
+        <div class="mt-4">
+            <h5 class="mb-3">Lista de Marcantes</h5>
+            <table class="table table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Número Marcante</th>
+                        <th>Quantidade</th>
+                        <th>Armazém</th>
+                        <th>Local</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let marcante of listaMarcantes; let i = index">
+                        <td>{{ marcante.numero }}</td>
+                        <td>{{ marcante.quantidade }}</td>
+                        <td>{{ getArmazemDescricao(marcante.armazem) }}</td>
+                        <td>{{ marcante.local }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" (click)="deletarMarcanteTalieItem(marcante.id)">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="listaMarcantes.length === 0">
+                        <td colspan="5" class="text-center text-muted">Nenhum marcante adicionado</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarMarcante()"
+            [disabled]="this.marcanteForm.invalid">Salvar</button>
+    </div>
+</ng-template>
+
+
+<!-- Modal de Edição de Item -->
+<ng-template #editItemModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Editar Item</h5>
+        <button type="button" class="btn-close" (click)="fecharTalieItemModal(modal)"></button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="editItemForm">
+            <div class="row">
+                <div class="col-3">
+                    <label>Nota Fiscal</label>
+                    <input type="text" class="form-control" formControlName="notaFiscal">
+                </div>
+                <div class="col-3">
+                    <label>Quantidade</label>
+                    <input type="text" class="form-control" formControlName="quantidadeDescarga">
+                </div>
+                <div class="col-6">
+                    <label for="embalagem">EMBALAGEM</label>
+                    <select class="form-select" id="embalagem" formControlName="embalagem"
+                        (ngModelChange)="onEmbalagemChange($event)">
+                        <option [ngValue]="null">Selecione uma embalagem</option>
+                        <option *ngFor="let embalagem of tiposEmbalagens" [ngValue]="embalagem.id">
+                            {{ embalagem.id + ' - ' + embalagem.descricao }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-2">
+                    <label>Comprimento</label>
+                    <input type="text" class="form-control" formControlName="comprimento" appDecimalInput>
+                </div>
+                <div class="col-2">
+                    <label>Largura</label>
+                    <input type="text" class="form-control" formControlName="largura" appDecimalInput>
+                </div>
+                <div class="col-2">
+                    <label>Altura</label>
+                    <input type="text" class="form-control" formControlName="altura" appDecimalInput>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="madeira">
+                    <label class="form-check-label">Madeira</label>
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="fragil">
+                    <label class="form-check-label">Frágil</label>
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="cargaNumerada">
+                    <label class="form-check-label">Numerada</label>
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="carimbo">
+                    <label class="form-check-label">Carimbo</label>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label>IMO</label>
+                    <input type="text" class="form-control" formControlName="imo"
+                        [ngClass]="{'is-invalid': editItemForm.get('imo')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imo'),
+                        'Imo')}}
+                    </div>
+
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="imO2"
+                        [ngClass]="{'is-invalid': editItemForm.get('imO2')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imO2'),
+                        'Imo2')}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="imO3"
+                        [ngClass]="{'is-invalid': editItemForm.get('imO3')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imO3'),
+                        'Imo3')}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="imO4"
+                        [ngClass]="{'is-invalid': editItemForm.get('imO4')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('imO4'),
+                        'Imo4')}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label>UNO</label>
+                    <input type="text" class="form-control" formControlName="uno"
+                        [ngClass]="{'is-invalid': editItemForm.get('uno')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('uno'),
+                        'Uno')}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="unO2"
+                        [ngClass]="{'is-invalid': editItemForm.get('uno2')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('unO2'),
+                        'Uno2')}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="unO3"
+                        [ngClass]="{'is-invalid': editItemForm.get('uno3')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('unO3'),
+                        'Uno3')}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label>-</label>
+                    <input type="text" class="form-control" formControlName="unO4"
+                        [ngClass]="{'is-invalid': editItemForm.get('uno4')?.invalid}">
+
+                    <div class="invalid-feedback">{{messageValidationService.getErrorMessage(editItemForm.get('unO4'),
+                        'Uno4')}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label>Peso</label>
+                    <input type="text" class="form-control" formControlName="peso">
+                </div>
+                <div class="col-3">
+                    <label>Fumigação</label>
+                    <input type="text" class="form-control" formControlName="fumigacao">
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" formControlName="remonte">
+                    <label class="form-check-label">Remonte</label>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-6">
+                    <label>Observação</label>
+                    <textarea class="form-control" rows="5" formControlName="observacao"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fecharTalieItemModal(modal)">Fechar</button>
+        <button class="btn btn-primary" (click)="salvarAlteracoes(modal)" [disabled]="this.editItemForm.invalid">Salvar
+            Alterações</button>
+    </div>
+</ng-template>

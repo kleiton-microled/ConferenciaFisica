@@ -4,4 +4,5 @@ export interface ToolsModel{
     description?: string;
     version?: number;
     link?: string;
+    isDisabled?: boolean;
 }
