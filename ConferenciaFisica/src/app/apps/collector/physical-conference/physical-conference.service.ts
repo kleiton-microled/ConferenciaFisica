@@ -82,10 +82,17 @@ export class PhysicalConferenceService {
    * @param filtro (opcional) Filtro de busca
    * @returns Observable<ConferenceContainer[]>
    */
-  getContainers(): Observable<ServiceResult<ContainerAgendamentoModel[]>> {
+  getContainers(patioId?: number): Observable<ServiceResult<ContainerAgendamentoModel[]>> {
     this.notificationService.showLoading(); // Mostra loading
 
-    return this.http.get<ServiceResult<ContainerAgendamentoModel[]>>(`${this.apiUrl}/conferencia/conteineres`).pipe(
+    let url = `${this.apiUrl}/conferencia/conteineres`;
+    if (patioId) {
+      // Se patioId = 1, o filtro deve ser 1,7
+      const filtro = patioId === 1 ? '1,7' : patioId.toString();
+      url += `?filtro=${filtro}`;
+    }
+
+    return this.http.get<ServiceResult<ContainerAgendamentoModel[]>>(url).pipe(
       map(response => {
         if (!response.status && response.error) {
           this.notificationService.showError(response);
@@ -103,12 +110,20 @@ export class PhysicalConferenceService {
 
   /**
    * Tras uma lista de lotes agendados
+   * @param patioId ID do pátio (opcional)
    * @returns LotesAgendamentoModel[]
    */
-  getLotes(): Observable<ServiceResult<LotesAgendamentoModel[]>> {
+  getLotes(patioId?: number): Observable<ServiceResult<LotesAgendamentoModel[]>> {
     this.notificationService.showLoading(); // Mostra loading
 
-    return this.http.get<ServiceResult<LotesAgendamentoModel[]>>(`${this.apiUrl}/conferencia/lotes`).pipe(
+    let url = `${this.apiUrl}/conferencia/lotes`;
+    if (patioId) {
+      // Se patioId = 1, o filtro deve ser 1,7
+      const filtro = patioId === 1 ? '1,7' : patioId.toString();
+      url += `?filtro=${filtro}`;
+    }
+
+    return this.http.get<ServiceResult<LotesAgendamentoModel[]>>(url).pipe(
       map(response => {
         if (!response.status) {
           this.notificationService.showAlert(response);

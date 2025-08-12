@@ -41,6 +41,7 @@ import { EnumValue } from "src/app/shared/models/enumValue.model";
 import { ConfigService } from "src/app/shared/services/config.service";
 import { FormControlToggleService } from "src/app/core/services/form-control-toggle.service";
 import { ContainerAgendamentoModel } from "../models/conteiner.model";
+import { AuthenticationService } from "src/app/core/service/auth.service";
 
 @Component({
   selector: "app-physical-conference-header",
@@ -137,6 +138,7 @@ export class PhysicalConferenceHeaderComponent {
     private router: Router,
     private config: ConfigService,
     private toggleService: FormControlToggleService,
+    private authService: AuthenticationService,
   ) { }
 
   ngOnInit(): void {
@@ -362,7 +364,11 @@ export class PhysicalConferenceHeaderComponent {
    * Carregar os conteiners disponíveis para conferencia
    */
   loadContainers() {
-    this.conferenceService.getContainers().subscribe({
+    // Recupera o pátio do usuário logado
+    const currentUser = this.authService.currentUser();
+    const patioId = currentUser?.patio?.id;
+
+    this.conferenceService.getContainers(patioId).subscribe({
       next: (response: ServiceResult<ContainerAgendamentoModel[]>) => {
         if (response.status) {
           this.containers = response.result ?? [];
@@ -393,7 +399,11 @@ export class PhysicalConferenceHeaderComponent {
    * Carregar os lotes
    */
   loadLotes() {
-    this.conferenceService.getLotes().subscribe({
+    // Recupera o pátio do usuário logado
+    const currentUser = this.authService.currentUser();
+    const patioId = currentUser?.patio?.id;
+    
+    this.conferenceService.getLotes(patioId).subscribe({
       next: (response: ServiceResult<LotesAgendamentoModel[]>) => {
         if (response.status) {
           this.lotes = response.result ?? [];
@@ -404,7 +414,11 @@ export class PhysicalConferenceHeaderComponent {
   }
 
   loadEmbalagens() {
-    this.conferenceService.getLotes().subscribe({
+    // Recupera o pátio do usuário logado
+    const currentUser = this.authService.currentUser();
+    const patioId = currentUser?.patio?.id;
+    
+    this.conferenceService.getLotes(patioId).subscribe({
       next: (response: ServiceResult<LotesAgendamentoModel[]>) => {
         if (response.status) {
           this.lotes = response.result ?? [];
